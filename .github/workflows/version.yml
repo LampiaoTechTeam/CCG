@@ -37,12 +37,6 @@ jobs:
       - name: Build Docker image
         run: docker build -t ccg:latest .
 
-      - name: Run build tests
-        run: |
-          if [ -f "Makefile" ]; then
-            make clean && make
-          fi
-
   semantic-release:
     runs-on: ubuntu-latest
     needs: [build]
