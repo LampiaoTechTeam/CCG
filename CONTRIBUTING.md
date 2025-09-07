@@ -17,7 +17,42 @@ Aqui estão algumas orientações rápidas para mantermos o projeto organizado.
 
 ---
 
-## 📏 Padrões de código
+## � Padrão de Commits (Conventional Commits)
+Utilizamos o padrão [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) para mensagens de commit:
+
+```
+<tipo>[escopo opcional]: <descrição>
+
+[corpo opcional]
+
+[rodapé(s) opcional(is)]
+```
+
+### Tipos de commit:
+- `feat`: Nova funcionalidade
+- `fix`: Correção de bug
+- `docs`: Mudanças na documentação
+- `style`: Formatação, ponto e vírgula ausente, etc (sem mudança de código)
+- `refactor`: Refatoração de código (sem nova feature ou correção)
+- `perf`: Melhoria de performance
+- `test`: Adição ou correção de testes
+- `build`: Mudanças no sistema de build ou dependências
+- `ci`: Mudanças nos arquivos de CI
+- `chore`: Outras mudanças que não modificam src ou test
+
+### Exemplos:
+```bash
+feat: adicionar sistema de batalha
+fix: corrigir cálculo de dano das cartas
+docs: atualizar README com instruções de instalação
+feat!: mudar estrutura da API (BREAKING CHANGE)
+```
+
+**Importante**: Commits que quebram compatibilidade devem usar `!` após o tipo ou incluir `BREAKING CHANGE:` no rodapé.
+
+---
+
+## �📏 Padrões de código
 - Linguagem: **C99**
 - Indentação: **2 espaços**
 - Variáveis declaradas no **início do escopo**
@@ -38,6 +73,7 @@ Aqui estão algumas orientações rápidas para mantermos o projeto organizado.
 - [ ] Código compila e roda (`make` sem erros)
 - [ ] Alterações testadas manualmente
 - [ ] Código segue padrão do projeto
+- [ ] Mensagem de commit segue o padrão Conventional Commits
 - [ ] Comentários/documentação atualizados
 
 ---

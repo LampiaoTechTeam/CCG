@@ -127,3 +127,17 @@ $(OBJ_DIR)/%.o: $(SRC_PATH)/%.c
 distclean: clean
 
 .PHONY: all clean distclean directories 
+
+# DOCKER TARGETS
+docker-build:
+	docker build -t ccg:latest .
+
+docker-run:
+	docker run -it --rm ccg:latest
+
+docker-run-interactive:
+	docker run -it --rm --entrypoint /bin/sh ccg:latest
+
+docker-test: docker-build docker-run
+
+.PHONY: docker-build docker-run docker-run-interactive docker-test

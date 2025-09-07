@@ -6,6 +6,7 @@ O projeto é pensado para ser **leve, didático e open source**, servindo tanto 
 ---
 
 ## ✨ Features principais
+
 - Sistema de **jogadores** e **monstros**
 - **Decks** configuráveis
 - Mercado / loja para compra de cartas
@@ -19,6 +20,7 @@ O projeto é pensado para ser **leve, didático e open source**, servindo tanto 
 ---
 
 ## 📂 Estrutura do projeto
+
 ```
 ├── include/          # Cabeçalhos (.h)
 ├── src/              # Implementações (.c)
@@ -29,13 +31,9 @@ O projeto é pensado para ser **leve, didático e open source**, servindo tanto 
 ```
 
 ---
-## Conceitos e mecânicas 
-- Checar doc/game_concepts.md (em ingles) para futuras implementações e discussões correntes.
-- Orientação/idéias sobre novos pull requests podem ser encontradas aqui 
----
-
 
 ## 🛠️ Como compilar
+
 Requisitos: GCC ou Clang + Make
 
 ```bash
@@ -51,6 +49,7 @@ make
 ```
 
 Limpar artefatos:
+
 ```bash
 make clean
 ```
@@ -58,19 +57,35 @@ make clean
 ---
 
 ## 🤝 Como contribuir
+
 1. Faça um **fork** do repositório
 2. Crie um branch:
+
    ```bash
    git checkout -b feature/minha-feature
    ```
-3. Commit suas mudanças (use mensagens claras!)
+
+3. Commit suas mudanças seguindo o padrão [Conventional Commits](https://www.conventionalcommits.org/):
+
+   ```bash
+   git commit -m "feat: adicionar nova funcionalidade"
+   git commit -m "fix: corrigir bug no sistema de batalha"
+   ```
+
 4. Abra um **Pull Request** 🎉
 
-Consulte o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) para mais detalhes.
+**Configure os Git hooks** para validação automática:
+
+```bash
+./scripts/setup-git-hooks.sh
+```
+
+Consulte o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) para mais detalhes sobre padrões de commit e código.
 
 ---
 
 ## 🗺️ Roadmap inicial
+
 - [ ] Melhorar loop de batalha
 - [ ] Adicionar testes unitários
 - [ ] Suporte a diferentes modos de jogo

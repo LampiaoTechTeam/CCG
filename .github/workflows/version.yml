@@ -1,0 +1,161 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-commits:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate Conventional Commits
+        uses: wagoid/commitlint-github-action@v5
+        with:
+          configFile: .commitlintrc.json
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [validate-commits]
+    if: always() && (needs.validate-commits.result == 'success' || github.event_name == 'push')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: docker build -t ccg:latest .
+
+      - name: Run build tests
+        run: |
+          if [ -f "Makefile" ]; then
+            make clean && make
+          fi
+
+  semantic-release:
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    outputs:
+      new-release-published: ${{ steps.semantic.outputs.new-release-published }}
+      new-release-version: ${{ steps.semantic.outputs.new-release-version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install semantic-release
+        run: |
+          npm install -g semantic-release
+          npm install -g @semantic-release/changelog
+          npm install -g @semantic-release/git
+          npm install -g @semantic-release/github
+
+      - name: Run semantic release
+        id: semantic
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: semantic-release
+
+  build-binaries:
+    runs-on: ubuntu-latest
+    needs: [semantic-release]
+    if: needs.semantic-release.outputs.new-release-published == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc make mingw-w64
+
+      - name: Build Linux binary
+        run: |
+          make clean
+          make LINUX=1
+          mkdir -p dist
+          cp bin/card_game dist/card_game-linux-amd64
+          chmod +x dist/card_game-linux-amd64
+
+      - name: Build Windows binary
+        run: |
+          make clean
+          make WINDOWS=1
+          cp bin/card_game.exe dist/card_game-windows-amd64.exe
+
+      - name: Upload Linux binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: card_game-linux-amd64
+          path: dist/card_game-linux-amd64
+
+      - name: Upload Windows binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: card_game-windows-amd64
+          path: dist/card_game-windows-amd64.exe
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [semantic-release, build-binaries]
+    if: needs.semantic-release.outputs.new-release-published == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Linux binary
+        uses: actions/download-artifact@v4
+        with:
+          name: card_game-linux-amd64
+          path: dist/
+
+      - name: Download Windows binary
+        uses: actions/download-artifact@v4
+        with:
+          name: card_game-windows-amd64
+          path: dist/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.semantic-release.outputs.new-release-version }}
+          name: Release v${{ needs.semantic-release.outputs.new-release-version }}
+          files: |
+            dist/card_game-linux-amd64
+            dist/card_game-windows-amd64.exe
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  docker-release:
+    runs-on: ubuntu-latest
+    needs: [semantic-release]
+    if: needs.semantic-release.outputs.new-release-published == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and tag Docker image
+        run: |
+          docker build -t ccg:latest -t ccg:${{ needs.semantic-release.outputs.new-release-version }} .
+          echo "Built Docker image with tags: latest, ${{ needs.semantic-release.outputs.new-release-version }}"

@@ -1,0 +1,28 @@
+# Git files
+.git
+.gitignore
+.github
+
+# Documentation
+README.md
+CONTRIBUTING.md
+ENVIRONMENT.md
+
+# Build artifacts (these will be built fresh in container)
+obj/
+bin/
+log/
+
+# Editor files
+.vscode/
+*.swp
+*.tmp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files (no need to copy into build context)
+Dockerfile
+.dockerignore
