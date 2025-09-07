@@ -4,8 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN make clean 
-RUN make LINUX=1
+RUN /app/scripts/mkall_linux.sh
 
 FROM alpine:3.14 AS runner
 
