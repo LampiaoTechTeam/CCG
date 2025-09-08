@@ -39,8 +39,6 @@ jobs:
 
       - name: Run build tests
         run: |
-          cd scripts
-          chmod +x mkall_linux.sh
           ./mkall_linux.sh
 
   semantic-release:
@@ -93,23 +91,19 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y gcc make mingw-w64
+          sudo apt-get install -y gcc mingw-w64
 
       - name: Build Linux binary
         run: |
           cd scripts
-          chmod +x mkall_linux.sh
           ./mkall_linux.sh
           cd ..
           mkdir -p dist
           cp bin/card_game dist/card_game-linux-amd64
-          chmod +x dist/card_game-linux-amd64
 
       - name: Build Windows binary
         run: |
-          make clean
           cd scripts
-          chmod +x mkall_win32.sh
           ./mkall_win32.sh
           cd ..
           cp bin/card_game.exe dist/card_game-windows-amd64.exe
