@@ -37,10 +37,15 @@ jobs:
       - name: Build Docker image
         run: docker build -t ccg:latest .
 
+      - name: Run build tests
+        run: |
+          cd scripts
+          chmod +x mkall_linux.sh
+          ./mkall_linux.sh
+
   semantic-release:
     runs-on: ubuntu-latest
     needs: [build]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     outputs:
       new-release-published: ${{ steps.semantic.outputs.new-release-published }}
       new-release-version: ${{ steps.semantic.outputs.new-release-version }}
@@ -63,7 +68,15 @@ jobs:
           npm install -g @semantic-release/git
           npm install -g @semantic-release/github
 
-      - name: Run semantic release
+      - name: Run semantic release (dry-run for PR)
+        if: github.event_name == 'pull_request'
+        id: semantic-dry
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: semantic-release --dry-run
+
+      - name: Run semantic release (publish for main)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -72,7 +85,7 @@ jobs:
   build-binaries:
     runs-on: ubuntu-latest
     needs: [semantic-release]
-    if: needs.semantic-release.outputs.new-release-published == 'true'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && needs.semantic-release.outputs.new-release-published == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -84,8 +97,10 @@ jobs:
 
       - name: Build Linux binary
         run: |
-          make clean
-          make LINUX=1
+          cd scripts
+          chmod +x mkall_linux.sh
+          ./mkall_linux.sh
+          cd ..
           mkdir -p dist
           cp bin/card_game dist/card_game-linux-amd64
           chmod +x dist/card_game-linux-amd64
@@ -93,7 +108,10 @@ jobs:
       - name: Build Windows binary
         run: |
           make clean
-          make WINDOWS=1
+          cd scripts
+          chmod +x mkall_win32.sh
+          ./mkall_win32.sh
+          cd ..
           cp bin/card_game.exe dist/card_game-windows-amd64.exe
 
       - name: Upload Linux binary
@@ -111,7 +129,7 @@ jobs:
   create-release:
     runs-on: ubuntu-latest
     needs: [semantic-release, build-binaries]
-    if: needs.semantic-release.outputs.new-release-published == 'true'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && needs.semantic-release.outputs.new-release-published == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -141,7 +159,7 @@ jobs:
   docker-release:
     runs-on: ubuntu-latest
     needs: [semantic-release]
-    if: needs.semantic-release.outputs.new-release-published == 'true'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && needs.semantic-release.outputs.new-release-published == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
