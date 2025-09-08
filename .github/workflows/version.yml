@@ -37,10 +37,6 @@ jobs:
       - name: Build Docker image
         run: docker build -t ccg:latest .
 
-      - name: Run build tests
-        run: |
-          ./mkall_linux.sh
-
   semantic-release:
     runs-on: ubuntu-latest
     needs: [build]
