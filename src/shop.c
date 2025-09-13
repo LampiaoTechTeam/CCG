@@ -18,7 +18,7 @@ static void vPrintShopHeader(void) {
 }
 
 void vAddPlayerReward(PSTRUCT_PLAYER pstPlayer) {
-  double dGoldRewarded = SHOP_STD_GOLD_AMOUNT_REWARD * SHOP_GOLD_MULTIPLIYER * giLevel;
+  double dGoldRewarded = SHOP_STD_GOLD_AMOUNT_REWARD + (SHOP_GOLD_MULTIPLIYER * giLevel);
   pstPlayer->iGold += (int) dGoldRewarded;
 
   {
