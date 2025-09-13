@@ -89,6 +89,7 @@ int main(int argc, char *argv[]) {
       snprintf(szMsg, sizeof(szMsg), "\n*** Nivel %d completo! ***", giLevel);
       vPrintHighlitedLine(szMsg, INSERT_NEW_LINE);
       
+      vAddPlayerReward(&gstPlayer);
       vOpenShop(&stDeck);
 
       giLevel++;

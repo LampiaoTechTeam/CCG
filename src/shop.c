@@ -4,6 +4,7 @@
 #include <terminal_utils.h>
 #include <input.h>
 #include <trace.h>
+#include <card_game.h>
 
 static void vPrintShopHeader(void) {
   char sz[128];
@@ -14,6 +15,19 @@ static void vPrintShopHeader(void) {
   vPrintLine("1) Upgrade de uma carta (+2 valor, -0 custo) [20 ouro]", INSERT_NEW_LINE);
   vPrintLine("2) Comprar carta nova: Poison (custo:1, aplica 3 veneno) [15 ouro]", INSERT_NEW_LINE);
   vPrintLine("q) Sair", INSERT_NEW_LINE);
+}
+
+void vAddPlayerReward(PSTRUCT_PLAYER pstPlayer) {
+  double dGoldRewarded = SHOP_STD_GOLD_AMOUNT_REWARD * SHOP_GOLD_MULTIPLIYER * giLevel;
+  pstPlayer->iGold += (int) dGoldRewarded;
+
+  {
+    char szMsg[128];
+
+    snprintf(szMsg, sizeof(szMsg), "\n*** Voce recebeu %d de gold para o nivel %d! ***", (int) dGoldRewarded , giLevel);
+    vPrintHighlitedLine(szMsg, INSERT_NEW_LINE);
+    vSleepSeconds(5);
+  }
 }
 
 void vOpenShop(PSTRUCT_DECK pstDeck)
