@@ -24,7 +24,11 @@ void vAddPlayerReward(PSTRUCT_PLAYER pstPlayer) {
   {
     char szMsg[128];
 
-    snprintf(szMsg, sizeof(szMsg), "\n*** Voce recebeu %d de gold para o nivel %d! ***", (int) dGoldRewarded , giLevel);
+    snprintf(szMsg, sizeof(szMsg),
+  "\n*** Voce recebeu %d de gold para o nivel %d! ***", 
+      (int) dGoldRewarded , 
+      giLevel
+    );
     vPrintHighlitedLine(szMsg, INSERT_NEW_LINE);
     vSleepSeconds(5);
   }
