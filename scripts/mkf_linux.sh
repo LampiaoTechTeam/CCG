@@ -1,0 +1,1 @@
+make LINUX=1 FAKE=1 bin/card_game

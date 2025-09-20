@@ -58,6 +58,19 @@ int main(int argc, char *argv[]) {
   vInitPlayer(&stDeck);
   vInitMonstersForLevel(astMonsters, giLevel, &iMonsterCount);
   vInitDialog();
+
+  #ifdef FAKE
+
+    PSTRUCT_DECK pstDeck = &stDeck;
+    PSTRUCT_CARD pstCard = pstDeck->astHand;
+
+    gstPlayer.iGold += 100;
+    vOpenShop(pstDeck);
+    vDiscardHand(pstDeck);
+    iDrawMultipleCard(INIT_HAND_CARDS, pstDeck);
+    vShuffle(pstCard, stDeck.iHandCount);
+
+  #endif
   
   while (bRunning) {
     vClearTerminal();
