@@ -13,8 +13,9 @@
   #define CARD_TYPE_DEFFENSIVE 2
   #define CARD_TYPE_DEBUFF     3
   #define CARD_TYPE_SUPPORT    4
-  #define CARD_TARGET_SINGLE   5
-  #define CARD_TARGET_MULTIPLE 6
+
+  #define CARD_TARGET_SINGLE   1
+  #define CARD_TARGET_MULTIPLE 2
 
   #define CARD_NONE     0
   #define CARD_STRIKE   1
