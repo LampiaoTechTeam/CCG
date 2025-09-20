@@ -8,21 +8,25 @@
   #define MAX_HAND 10
   #define INIT_HAND_CARDS 6
 
-  #define CARD_TYPE_OFFENSIVE  0
-  #define CARD_TYPE_DEFFENSIVE 1
-  #define CARD_TYPE_DEBUFF     2
-  #define CARD_TYPE_SUPPORT    3
-  #define CARD_TARGET_SINGLE   1
-  #define CARD_TARGET_MULTIPLE 2
-  #define CARD_STRIKE   0
-  #define CARD_DEFEND   1
-  #define CARD_HEAL     2
-  #define CARD_FIREBALL 3
-  #define CARD_POISON   4
-  #define CARD_PARALIZE 5
+  #define CARD_TYPE_NONE       0
+  #define CARD_TYPE_OFFENSIVE  1
+  #define CARD_TYPE_DEFFENSIVE 2
+  #define CARD_TYPE_DEBUFF     3
+  #define CARD_TYPE_SUPPORT    4
+  #define CARD_TARGET_SINGLE   5
+  #define CARD_TARGET_MULTIPLE 6
+
+  #define CARD_NONE     0
+  #define CARD_STRIKE   1
+  #define CARD_DEFEND   2
+  #define CARD_HEAL     3
+  #define CARD_FIREBALL 4
+  #define CARD_POISON   5
+  #define CARD_PARALIZE 6
   #define CARD_NULL    -1
 
   #define DEBUFF_POISON_CYCS 3
+  #define DEBUFF_PARALISE_CYCS 3
 
   #define TARGET_ALL 99
 

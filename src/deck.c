@@ -4,11 +4,13 @@
 #include <terminal_utils.h>
 
 char *pszCardTypeDesc[] ={
+  " ",
   "Strike",
   "Block",
   "Heal",
   "Spell",
   "Veneno",
+  "Paralisar",
   NULL
 };
 
@@ -259,15 +261,21 @@ void vShowDeck(PSTRUCT_DECK pstDeck) {
   for (ii = 0; ii < pstDeck->iHandCount; ii++)
   {
     int iLineCt = ii+1;
-    int iPadding = (iLineCt % MAX_HAND) ?  1: 0; 
+    int iPadding = (iLineCt % MAX_HAND) ?  1: 0;
+    char szFormat[128];
+    sprintf(szFormat, "%d", pstDeck->astHand[ii].iValue);
+    if(pstDeck->astHand[ii].iType == CARD_PARALIZE) {
+      sprintf(szFormat, "\?\?/%d", DEBUFF_PARALISE_CYCS);
+    }
+
     memset(szLine,0, sizeof(szLine));
-    snprintf(szLine, sizeof(szLine), "  [%d]%*.*s%-*.*s (custo:%d, %s:%d)",
-             iLineCt, iPadding, iPadding, " ", 
-             MAX_HAND, MAX_HAND, pstDeck->astHand[ii].szName,
-             pstDeck->astHand[ii].iCost,
-             pszCardTypeDesc[pstDeck->astHand[ii].iType],
-             pstDeck->astHand[ii].iValue
-    );
+    snprintf(szLine, sizeof(szLine),
+    "  [%d]%*.*s%-*.*s (custo:%d, %s:%s)",
+    iLineCt, iPadding, iPadding, " ", 
+    MAX_HAND, MAX_HAND, pstDeck->astHand[ii].szName,
+    pstDeck->astHand[ii].iCost,
+    pszCardTypeDesc[pstDeck->astHand[ii].iType],
+    szFormat);
     vPrintLine(szLine, INSERT_NEW_LINE);
   }
 } 

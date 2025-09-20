@@ -75,6 +75,16 @@ void vShowDebuffList(PSTRUCT_DEBUFF pstDebuff, int iDebuffCt){
       );
       vPrintColored(szLine, TERMINAL_COLOR_BGREEN);
     }
+    else if ( pstWrkDbf->iType == DEBUFF_TYPE_PARALYZE && pstWrkDbf->iRounds > 0 ) {
+      char szLine[1024];
+      memset(szLine, 0, sizeof(szLine));
+      vPrintLine(" | ", NO_NEW_LINE);
+      snprintf(szLine, sizeof(szLine),
+        "Paralizia/Turnos=%d",
+        pstWrkDbf->iRounds
+      );
+      vPrintColored(szLine, TERMINAL_COLOR_GREEN);
+    }
     pstWrkDbf++;
   }
 
@@ -119,6 +129,17 @@ void vShowMonsters(PSTRUCT_MONSTER pastMonster, int iCount) {
   }
 }
 
+void vFixDebuffs(PSTRUCT_MONSTER pstMonster) {
+  if ( pstMonster->iDebuffCt ){
+    // int iDbf = 0;
+    vTraceMonster(pstMonster);
+    iClearDebuff(&pstMonster->astDebuff[0], pstMonster->iDebuffCt);
+    // pstMonster->iDebuffCt -= iDbf;
+    if ( pstMonster->iDebuffCt < 0 ) pstMonster->iDebuffCt = 0;
+    vTraceMonster(pstMonster);
+  }
+}
+
 void vDoEnemyActions(PSTRUCT_MONSTER pastMonster, int iMonsterCount) {
   int ii;
   char szLine[128];
@@ -131,13 +152,45 @@ void vDoEnemyActions(PSTRUCT_MONSTER pastMonster, int iMonsterCount) {
     int iChoice;
     int jj;
     PSTRUCT_DEBUFF pstDebuff;
+    int bIsParalized = FALSE;
 
-    if (pastMonster[ii].iHP <= 0) continue; /* monstro morto não age */
+    /* monstro morto ou paralisado não age */
+    if (pastMonster[ii].iHP <= 0) continue;
 
     iChoice = rand() % 3; /* 0 = attack, 1 = defend, 2 = heal */
 
     vPrintLine("", INSERT_NEW_LINE);
     
+    for ( jj = 0; jj < pastMonster[ii].iDebuffCt; jj++ ){
+      pstDebuff = &pastMonster[ii].astDebuff[jj];
+      if (pstDebuff->iType == DEBUFF_TYPE_POISON && pstDebuff->iRounds > 0){
+        pastMonster[ii].iHP -= pstDebuff->iDamage;
+        pstDebuff->iRounds--;
+        snprintf(szLine, sizeof(szLine),
+      "%s recebe %d de dano do veneno.",
+          pastMonster[ii].szName,
+          pstDebuff->iDamage
+        );
+        vPrintLine(szLine, INSERT_NEW_LINE);
+      }
+      if (pstDebuff->iType == DEBUFF_TYPE_PARALYZE && pstDebuff->iRounds > 0){
+        pstDebuff->iRounds--;
+        snprintf(szLine, sizeof(szLine),
+          "%s esta paralizado.",
+          pastMonster[ii].szName
+        );
+        vPrintLine(szLine, INSERT_NEW_LINE);
+        bIsParalized = TRUE;
+      }
+    }
+
+    vFixDebuffs(&pastMonster[ii]);
+
+    if (bIsParalized){
+      vSleepSeconds(3);
+      continue;
+    }
+
     if (iChoice == 0) {
       int iDamage = pastMonster[ii].iAttack;
       if (gstPlayer.iBlock > 0) {
@@ -175,27 +228,6 @@ void vDoEnemyActions(PSTRUCT_MONSTER pastMonster, int iMonsterCount) {
         pastMonster[ii].iHP
       );
       vPrintLine(szLine, INSERT_NEW_LINE);
-    }
-    for ( jj = 0; jj < pastMonster[ii].iDebuffCt; jj++ ){
-      pstDebuff = &pastMonster[ii].astDebuff[jj];
-      if (pstDebuff->iType == DEBUFF_TYPE_POISON && pstDebuff->iRounds > 0){
-        pastMonster[ii].iHP -= pstDebuff->iDamage;
-        pstDebuff->iRounds--;
-        snprintf(szLine, sizeof(szLine),
-      "%s recebe %d de dano do veneno.",
-          pastMonster[ii].szName,
-          pstDebuff->iDamage
-        );
-        vPrintLine(szLine, INSERT_NEW_LINE);
-      }
-    }
-    if ( pastMonster[ii].iDebuffCt ){
-      // int iDbf = 0;
-      vTraceMonster(&pastMonster[ii]);
-      iClearDebuff(&pastMonster[ii].astDebuff[0], pastMonster[ii].iDebuffCt);
-      // pastMonster[ii].iDebuffCt -= iDbf;
-      if ( pastMonster[ii].iDebuffCt < 0 ) pastMonster[ii].iDebuffCt = 0;
-      vTraceMonster(&pastMonster[ii]);
     }
     
     vSleepSeconds(2);
