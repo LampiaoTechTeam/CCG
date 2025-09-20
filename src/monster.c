@@ -131,11 +131,9 @@ void vShowMonsters(PSTRUCT_MONSTER pastMonster, int iCount) {
 
 void vFixDebuffs(PSTRUCT_MONSTER pstMonster) {
   if ( pstMonster->iDebuffCt ){
-    // int iDbf = 0;
-    vTraceMonster(pstMonster);
     iClearDebuff(&pstMonster->astDebuff[0], pstMonster->iDebuffCt);
-    // pstMonster->iDebuffCt -= iDbf;
-    if ( pstMonster->iDebuffCt < 0 ) pstMonster->iDebuffCt = 0;
+    if ( pstMonster->iDebuffCt < 0 ) 
+      pstMonster->iDebuffCt = 0;
     vTraceMonster(pstMonster);
   }
 }
@@ -315,9 +313,6 @@ int iClearDebuff(PSTRUCT_DEBUFF pstDebuff, int iDebuffCt){
     if ( pWrkDebuff->iRounds <= 0 ){
       pWrkDebuff->iType = DEBUFF_TYPE_NONE;
       pWrkDebuff->iRounds = 0;
-      // memcpy(pWrkDebuff, &(*(pWrkDebuff+sizeof(STRUCT_DEBUFF))), sizeof(STRUCT_DEBUFF));
-      // pWrkDebuff++;
-      // memset(pWrkDebuff, 0, sizeof(STRUCT_DEBUFF));
       jj++;
     }
   }
