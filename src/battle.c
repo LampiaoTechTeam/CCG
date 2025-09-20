@@ -19,10 +19,26 @@ int iSelectMonsterFromList(int iMonsterCt){
   return (iChoice-48);
 }
 
+/**
+ * @brief
+ *  Imprime a mesa de jogo:
+ *  - Dados do jogador
+ *  - Cartas na mão
+ *  - Monstros / inimigos
+ */
+void vShowTable(PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCount){
+  vShowPlayer();
+  vShowDeck(pstDeck);
+  vShowMonsters(pastMonsters, iMonsterCount);
+}
+
 int iHandlePlayerActionByCard(PSTRUCT_CARD pstCard, PSTRUCT_MONSTER pastMonsters, int iMonsterCt){
   int iTarget = 0;
   int ii = 0;
+  int bAlreadyApplied = FALSE;
+  int bUsed = FALSE;
 
+  /** TODO: Melhorar esta logica - Cartas terao macrotipos e depois tipos (suporte-heal, suporte- paralize, offensivo-strike, etc.) */
   switch ( pstCard->iType ){
     case CARD_STRIKE:
     case CARD_FIREBALL:
@@ -38,9 +54,11 @@ int iHandlePlayerActionByCard(PSTRUCT_CARD pstCard, PSTRUCT_MONSTER pastMonsters
         iTarget--;
       }
       
-      if ( pstCard->iTarget == CARD_TARGET_MULTIPLE )
+      if ( pstCard->iTarget == CARD_TARGET_MULTIPLE ){
+        bAlreadyApplied = FALSE;
         iTarget = iMonsterCt;
-      
+      }
+
       for ( ; ii <= iTarget; ii++ ) {
         char szLine[1024];
         if ( iTarget < iMonsterCt ) ii = iTarget;
@@ -53,6 +71,7 @@ int iHandlePlayerActionByCard(PSTRUCT_CARD pstCard, PSTRUCT_MONSTER pastMonsters
           pastMonsters[ii].astDebuff[pastMonsters[ii].iDebuffCt].iRounds = DEBUFF_POISON_CYCS;
           pastMonsters[ii].iDebuffCt++;
           vPrintLine("Voce aplicou Veneno!", INSERT_NEW_LINE);
+          bUsed = TRUE;
         }
         else {
           pastMonsters[ii].iBlock  -= pstCard->iValue;
@@ -64,8 +83,18 @@ int iHandlePlayerActionByCard(PSTRUCT_CARD pstCard, PSTRUCT_MONSTER pastMonsters
             pastMonsters[ii].iHP   -= pstCard->iValue;
             
           memset(szLine,0,sizeof(szLine));
-          sprintf(szLine, "Voce aplicou %d de dano ao monstro %s", pstCard->iValue, pastMonsters[ii].szName);
+          sprintf(szLine, "Voce utilizou %s:", pstCard->szName);
+          
+          if ( !bAlreadyApplied )
+            vPrintLine(szLine, INSERT_NEW_LINE);
+
+          if ( pstCard->iTarget == CARD_TARGET_MULTIPLE  ){
+            bAlreadyApplied = TRUE;
+          }
+          sprintf(szLine, " - Causando %d dano a %s", pstCard->iValue, pastMonsters[ii].szName);
           vPrintLine(szLine, INSERT_NEW_LINE);
+
+          bUsed = TRUE;
           
           if ( iTarget < iMonsterCt ) ii++;
         }
@@ -74,12 +103,14 @@ int iHandlePlayerActionByCard(PSTRUCT_CARD pstCard, PSTRUCT_MONSTER pastMonsters
     case CARD_DEFEND:
       gstPlayer.iBlock += pstCard->iValue;
       vPrintLine("Voce se defendeu.", INSERT_NEW_LINE);
+      bUsed = TRUE;
       break;
     case CARD_HEAL:
       gstPlayer.iHP    += pstCard->iValue;
       if ( gstPlayer.iHP >= PLAYER_HP_MAX )
         gstPlayer.iHP = PLAYER_HP_MAX;
-        
+      
+      bUsed = TRUE;
       vPrintLine("Voce se curou.", INSERT_NEW_LINE);
       break;
     case CARD_PARALIZE:
@@ -129,27 +160,33 @@ int iHandlePlayerActionByCard(PSTRUCT_CARD pstCard, PSTRUCT_MONSTER pastMonsters
     default:
       return CARD_NONE;
 
-    vSleepSeconds(1);
+    vSleepSeconds(3);
   }
+  
+  if ( !bUsed ) return CARD_NULL; 
+  
   return pstCard->iType;
 }
 
 void vPlayCard(int iCardIndex, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCount){
   PSTRUCT_CARD pstCard;
 
-  if (iCardIndex < 0 || iCardIndex > pstDeck->iHandCount)
+  if (iCardIndex <= 0 || iCardIndex > pstDeck->iHandCount)
     return;
 
   pstCard = &pstDeck->astHand[iCardIndex - 1];
   
+  if (gstPlayer.iEnergy <= 0 || pstCard->iCost > gstPlayer.iEnergy ) {
+    char szMsg[128];
+    vTraceVarArgsFn("Not enough energy to play card[%s]", pstCard->szName);
+    sprintf(szMsg, "Energia insuficiente [%d/%d]", pstCard->iCost, gstPlayer.iEnergy);
+    vPrintHighlitedLine(szMsg, INSERT_NEW_LINE);
+    return;
+  }
+
   vPrintHighlitedLine("Carta Escolhida: ", NO_NEW_LINE);
   vPrintHighlitedLine(pstCard->szName, INSERT_NEW_LINE);
   vSleepSeconds(1);
-
-  if (gstPlayer.iEnergy <= 0 || pstCard->iCost > gstPlayer.iEnergy ) {
-    vTraceVarArgsFn("Not enough energy to play card[%s]", pstCard->szName);
-    return;
-  }
   
   if ( iHandlePlayerActionByCard(pstCard, pastMonsters, iMonsterCount) == CARD_NONE ) 
     return;

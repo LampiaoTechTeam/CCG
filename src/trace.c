@@ -136,7 +136,7 @@ void _vTraceVarArgsFn(char *pszModuleName, const int kiLine, const char *kpszFun
   char szPath[_MAX_PATH + _MAX_PATH + 8];
   char szName[_MAX_PATH];
   char szExt[_MAX_PATH];
-  char szFullTitle[_MAX_PATH];
+  char szFullTitle[_MAX_PATH+16];
   char szDbg[2048];
   struct tm *st_tm_Now;
   struct timeval tv;

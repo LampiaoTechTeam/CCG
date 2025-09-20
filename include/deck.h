@@ -1,5 +1,6 @@
 #include <trace.h>
 #include <stddef.h>
+#include <monster.h>
 
 #ifndef DECK_H
   #define DECK_H
@@ -34,10 +35,28 @@
   #define TRACE_DRAW_PILE    0x01
   #define TRACE_HAND         0x02
   #define TRACE_DISCARD_PILE 0x04
+
+  /**  @brief 
+   * TRACE_DECK_ALL ->
+   *    TRACE_DRAW_PILE 0x01 = 0001
+   *    | TRACE_HAND    0x02 = 0010    
+   *    | TRACE_DISCARD_PILE = 0100
+   * 
+   *  TRACE DECK ALL -> 0x07 == 0111
+   * */
   #define TRACE_DECK_ALL     TRACE_DRAW_PILE | TRACE_HAND | TRACE_DISCARD_PILE
 
+  /**
+   * @brief
+   *   TEST_TRACE_OPT(OPT, TRACE_MASK) ->
+   *   Tests OPT for specific binary mask
+   *   In other words if OPT contains mask returns true
+   * 
+   */
+  #define TEST_TRACE_OPT(OPT, TRACE_MASK) (OPT & TRACE_MASK)
 
   typedef struct STRUCT_CARD{
+    int iClass;
     int iType;
     int iTarget;
     int iCost;
@@ -66,7 +85,7 @@
   void vDiscardCard(PSTRUCT_DECK pstDeck, int iCardIx);
   void vAddCardToDiscard(PSTRUCT_DECK pstDeck, STRUCT_CARD stCard);
   void vAddDiscardPile2Deck(PSTRUCT_DECK pstDeck);
-  void vLogDeck(PSTRUCT_DECK pstDeck, int iTraceLevel);
+  void vTraceDeck(PSTRUCT_DECK pstDeck, int iTraceLevel);
   STRUCT_CARD stMakeCard(int iType, const char *pszName, int iCost, int iValue, int iTarget);
   
 #endif

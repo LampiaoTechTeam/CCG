@@ -32,5 +32,6 @@
   int iClearDebuff(PSTRUCT_DEBUFF pstDebuff, int iDebuffCt);
   void vTraceMonsters(PSTRUCT_MONSTER pastMonster, int iMonsterCt);
   void vTraceMonster(PSTRUCT_MONSTER pstMonster);
+  void vTraceDebuffList(PSTRUCT_DEBUFF pstDebuff, int iDebuffCt);
   
 #endif

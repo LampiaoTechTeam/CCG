@@ -36,6 +36,6 @@
   extern STRUCT_PLAYER gstPlayer;
 
   void vInitPlayer(PSTRUCT_DECK pstGameDeck);
-  void vShowPlayer(int bTrace);
+  void vShowPlayer();
   int  iDoPlayerTurn(int *bRunning, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonster, int iMonsterCt);
 #endif

@@ -15,6 +15,25 @@
 #include <monster.h>
 #include <terminal_utils.h>
 
+void vTracePlayer(){
+  char szDbg[1024];
+
+  memset(szDbg, 0, sizeof(szDbg));
+  sprintf(szDbg, 
+"Jogador =[%s] "
+"Energia =[%d] "
+"Escudo  =[%d] "
+"Dinheiro=[%d] ",
+    gstPlayer.szPlayerName,
+    gstPlayer.iEnergy,
+    gstPlayer.iBlock,
+    gstPlayer.iGold
+  );
+  vTraceVarArgsFn(szDbg);
+  vTraceDeck(gstPlayer.pstPlayerCards, TRACE_DECK_ALL);
+  vTraceDebuffList(gstPlayer.stDebuff, gstPlayer.iDebuffCt);
+}
+
 void vInitPlayer(PSTRUCT_DECK pstGameDeck)
 {
   gstPlayer.iHP = PLAYER_HP_MAX;
@@ -25,52 +44,51 @@ void vInitPlayer(PSTRUCT_DECK pstGameDeck)
   gstPlayer.pstPlayerCards = pstGameDeck;
 }
 
-void vShowPlayer(int bTrace) {
+void vShowPlayer() {
   int ii;
   char szLine[1024];
-  char szDbg[5096];
 
-  memset(szDbg, 0,sizeof(szDbg));
   memset(szLine, 0,sizeof(szLine));
+  vPrintLine(" ", INSERT_NEW_LINE);
+
   snprintf(szLine, sizeof(szLine),
-"   Jogador=%s",
+// "   Jogador=%s",
+"%4.4s%-10.10s",
+    " ",
     gstPlayer.szPlayerName
   );
-  vPrintColored(szLine, TERMINAL_COLOR_BLUE);
-  strcat(szDbg, szLine);
+  vPrintColored(szLine, TERMINAL_COLOR_BBLUE);
 
   snprintf(szLine, sizeof(szLine),
-" Vida=[%d/%d]",
+// " HP=[%d/%d]",
+" [%d/%d]",
     gstPlayer.iHP, 
     PLAYER_HP_MAX
   );
   vPrintColored(szLine, TERMINAL_COLOR_RED);
-  strcat(szDbg, szLine);
   
   snprintf(szLine, sizeof(szLine),
-" Defesa=[%d]",
+// " Escudo=[%d]",
+" [%d]",
     gstPlayer.iBlock
   );
-  vPrintColored(szLine, TERMINAL_COLOR_CYAN);
-  strcat(szDbg, szLine);
+  vPrintColored(szLine, TERMINAL_COLOR_BCYAN);
 
   snprintf(szLine, sizeof(szLine),
-" Energia=[%d/%d]",
+  // " Energia=[%d/%d]",
+" [%d/%d]",
     gstPlayer.iEnergy, PLAYER_ENERGY_MAX
   );
   vPrintColored(szLine, TERMINAL_COLOR_YELLOW);
-  strcat(szDbg, szLine);
 
-  snprintf(szLine, sizeof(szLine),
-" Gold=[%d]\n\n",
-    gstPlayer.iGold
-  );
-  vPrintColored(szLine, TERMINAL_COLOR_BYELLOW);
-  strcat(szDbg, szLine);
-  if (bTrace){
-    strtok(szDbg, "\n");
-    vTraceVarArgsFn("%s", szDbg);
-  }  
+//   snprintf(szLine, sizeof(szLine),
+// " Dinheiro=[%d]\n\n",
+//     gstPlayer.iGold
+//   );
+//   vPrintColored(szLine, TERMINAL_COLOR_BYELLOW);
+
+  vPrintLine(" ", INSERT_NEW_LINE);
+
   for (ii = 0; ii < gstPlayer.iDebuffCt; ii++) {
     if (gstPlayer.stDebuff[ii].iType == DEBUFF_TYPE_POISON) {
       snprintf(szLine, sizeof(szLine),
@@ -86,24 +104,27 @@ void vShowPlayer(int bTrace) {
 int iDoPlayerTurn(int *bRunning, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonster, int iMonsterCt){
   int iCh;
   int iIdx;
+  char szLine[1024];
 
   if ( !bRunning ) return 1;
+
+  memset(szLine, 0, sizeof(szLine));
+  sprintf(szLine,
+"\nEscolha carta (1..%d), 'e' encerra turno, 'q' sai:",
+    pstDeck->iHandCount
+  );
   
-  vPrintLine("\nEscolha carta (1..9), 'e' encerra turno, 'q' sai:", INSERT_NEW_LINE);
+  vPrintLine(szLine, INSERT_NEW_LINE);
   iCh = iPortableGetchar();
   if (iCh == 'q') { bRunning = FALSE; return 1; }
   if (iCh == 'e') { return 1; }
   if (iCh >= '0' && iCh <= '9') {
     iIdx = iCh - '0';
     vPlayCard(iIdx, pstDeck, pastMonster, iMonsterCt);
-    vClearTerminal();
+    vClearTerminal();  
     vSortHandByName(pstDeck);
-    vShowPlayer(TRUE);
-    vPrintLine("\t=== Sua mao (ordenada) ===", INSERT_NEW_LINE);
-    vShowDeck(pstDeck);
-    vPrintLine("\t== Monstros ==", INSERT_NEW_LINE);
-    vShowMonsters(pastMonster, iMonsterCt);
-    vLogDeck(pstDeck, TRACE_DECK_ALL);
+    vShowTable(pstDeck, pastMonster, iMonsterCt);
+    vTraceDeck(pstDeck, TRACE_DECK_ALL);
   }
   return 0;
 }

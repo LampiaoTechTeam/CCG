@@ -1,3 +1,29 @@
+## [3.3.1](https://github.com/repiazza/CCG/compare/v3.3.0...v3.3.1) (2025-09-20)
+
+### Bug Fixes
+
+* waning on trace ([50f424e](https://github.com/repiazza/CCG/commit/50f424e97cad7bfe529d46ec73eb59467dc8c030))
+
+## [3.3.0](https://github.com/repiazza/CCG/compare/v3.2.0...v3.3.0) (2025-09-20)
+
+### Features
+
+* adjusted monster selection ([735c528](https://github.com/repiazza/CCG/commit/735c528790711d5ef440ad4bfb405621b73c99dc))
+
+### Bug Fixes
+
+* merge branch 'main' into fix-commits ([4cc8b94](https://github.com/repiazza/CCG/commit/4cc8b94c9a524b0a6839de100437bf0d91be7928))
+
+## [3.0.0](https://github.com/repiazza/CCG/compare/v2.0.0...v3.0.0) (2025-09-19)
+
+### ⚠ BREAKING CHANGES
+
+* Several changes on battle
+
+### Features
+
+* Several changes on battle ([870ef6e](https://github.com/repiazza/CCG/commit/870ef6ef58b6924ca58ca5991f94f9c38d128fa6))
+
 ## [2.0.0](https://github.com/repiazza/CCG/compare/v1.0.1...v2.0.0) (2025-09-14)
 
 ### ⚠ BREAKING CHANGES

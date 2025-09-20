@@ -10,7 +10,6 @@
 int giMaxMonsterHP = MONSTER_INITAL_HP_MAX;
 
 void vTraceMonster(PSTRUCT_MONSTER pstMonster){
-  int jj;
   char szLine[1024];
 
   snprintf(szLine, sizeof(szLine),
@@ -22,16 +21,7 @@ void vTraceMonster(PSTRUCT_MONSTER pstMonster){
   );
   vTraceVarArgsFn("M [%s]", szLine);
 
-  for ( jj = 0; jj < pstMonster->iDebuffCt; jj++ ){
-    snprintf(szLine, sizeof(szLine),
-  "Tipo:%d Dmg:%d Cycles:%d", 
-      pstMonster->astDebuff[jj].iType,
-      pstMonster->astDebuff[jj].iDamage,
-      pstMonster->astDebuff[jj].iRounds
-    );
-    vTraceVarArgsFn("---|>Dbff%d [%s]", jj, szLine);
-  }
-
+  vTraceDebuffList(pstMonster->astDebuff, pstMonster->iDebuffCt);
 }
 
 void vTraceMonsters(PSTRUCT_MONSTER pastMonster, int iMonsterCt){
@@ -61,7 +51,7 @@ void vShowDebuffList(PSTRUCT_DEBUFF pstDebuff, int iDebuffCt){
   int ii;
   PSTRUCT_DEBUFF pstWrkDbf;
 
-  if ( (pstWrkDbf = pstDebuff) == NULL ) return;
+  if ( (pstWrkDbf = pstDebuff) == NULL || iDebuffCt <= 0 ) return;
 
   for ( ii = 0; ii < iDebuffCt; ii++ ){
     if ( pstWrkDbf->iType == DEBUFF_TYPE_POISON && pstWrkDbf->iRounds > 0 ){
@@ -90,9 +80,35 @@ void vShowDebuffList(PSTRUCT_DEBUFF pstDebuff, int iDebuffCt){
 
 }
 
+void vTraceDebuffList(PSTRUCT_DEBUFF pstDebuff, int iDebuffCt){
+  int ii;
+  PSTRUCT_DEBUFF pstWrkDbf;
+
+  if ( (pstWrkDbf = pstDebuff) == NULL || iDebuffCt <= 0 ) return;
+  
+  for ( ii = 0; ii < iDebuffCt; ii++ ){
+    char szLine[1024];
+    snprintf(szLine, sizeof(szLine),
+  "Tipo:%d Dmg:%d Cycles:%d", 
+      pstWrkDbf->iType,
+      pstWrkDbf->iDamage,
+      pstWrkDbf->iRounds
+    );
+    vTraceVarArgsFn("---|>Dbff%d [%s]", ii, szLine);
+    pstWrkDbf++;
+  }
+
+}
+
 void vShowMonsters(PSTRUCT_MONSTER pastMonster, int iCount) {
   int ii;
   char szLine[1024];
+
+  memset(szLine, 0, sizeof(szLine));
+  snprintf(szLine, sizeof(szLine), 
+"  |-----------------------------------|"
+  );
+  vPrintLine(szLine, INSERT_NEW_LINE);
 
   for (ii = 0; ii < iCount; ii++) {
     if (pastMonster[ii].iHP > 0) {
@@ -102,7 +118,7 @@ void vShowMonsters(PSTRUCT_MONSTER pastMonster, int iCount) {
         ii+1,
         pastMonster[ii].szName
       );
-      vPrintColored(szLine, TERMINAL_COLOR_BBLUE);
+      vPrintColored(szLine, TERMINAL_COLOR_BLUE);
       vPrintLine(" (", NO_NEW_LINE);
       snprintf(szLine, sizeof(szLine),
     "HP: %d/%d",
@@ -113,7 +129,7 @@ void vShowMonsters(PSTRUCT_MONSTER pastMonster, int iCount) {
       
       vPrintLine(" | ", NO_NEW_LINE);
       snprintf(szLine, sizeof(szLine),
-    "BLOCK: %d",
+    "ESCUDO: %d",
         pastMonster[ii].iBlock
       );
       vPrintColored(szLine, TERMINAL_COLOR_BCYAN);
@@ -230,6 +246,8 @@ void vDoEnemyActions(PSTRUCT_MONSTER pastMonster, int iMonsterCount) {
     
     vSleepSeconds(2);
   }
+  
+  vTraceMonsters(pastMonster, iMonsterCount);
 }
 
 int iGetFirstAliveMonster(PSTRUCT_MONSTER pastMonster, int iCount){
@@ -302,6 +320,7 @@ void vInitMonstersForLevel(PSTRUCT_MONSTER pastMonster, int iLevel, int *piOutCo
     memset(&pastMonster[ii].astDebuff, 0, sizeof(STRUCT_DEBUFF)*10);
   }
   vTraceVarArgsFn("Nivel %d: iniciados %d monstros.", iLevel, iCount);
+  vTraceMonsters(pastMonster, iCount);
 }
 
 int iClearDebuff(PSTRUCT_DEBUFF pstDebuff, int iDebuffCt){

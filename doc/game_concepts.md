@@ -17,6 +17,12 @@
 ---
 
 ## 🃏 Card System
+- **Tipos(classes)/subtipos**
+  - Ofensivas
+  - Defensivas
+  - Suporte
+  - (De)buffs
+
 - **ATTACK**  
 - **BLOCK**  
   - Funciona como vida extra

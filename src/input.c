@@ -225,7 +225,6 @@ char *cCatchInput() {
   while (TRUE) {
     /** Redesenha linha de input */
     vGotoInputPosition();
-    // vPrintLine("Digite sua palavra: %s", pszBuffer);
     vClearLineFromCursor();
     fflush(stdout);
 
