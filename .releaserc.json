@@ -42,8 +42,8 @@
             "label": "Windows Binary with SDL2 (x64)"
           },
           {
-            "path": "dist/card_game-linux-sdl2-amd64.exe",
-            "name": "card_game-linux-sdl2-amd64.exe",
+            "path": "dist/card_game-linux-sdl2-amd64",
+            "name": "card_game-linux-sdl2-amd64",
             "label": "Linux Binary with SDL2 (x64)"
           }
         ]
