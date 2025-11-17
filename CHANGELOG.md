@@ -1,3 +1,9 @@
+## [8.2.2](https://github.com/LampiaoTechTeam/CCG/compare/v8.2.1...v8.2.2) (2025-11-17)
+
+### Bug Fixes
+
+* fixed references to windows artifacts in .releaserc.json ([2a03271](https://github.com/LampiaoTechTeam/CCG/commit/2a03271becf5423730ba7a32801a17bf393d434c))
+
 ## [8.2.1](https://github.com/LampiaoTechTeam/CCG/compare/v8.2.0...v8.2.1) (2025-11-11)
 
 ### Bug Fixes
