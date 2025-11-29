@@ -1,3 +1,9 @@
+## [9.2.1](https://github.com/LampiaoTechTeam/CCG/compare/v9.2.0...v9.2.1) (2025-11-29)
+
+### Bug Fixes
+
+* Fix error in make doc ([bb117df](https://github.com/LampiaoTechTeam/CCG/commit/bb117dfbc2d28fcc5d62cc678cac309ca904df72))
+
 ## [9.2.0](https://github.com/LampiaoTechTeam/CCG/compare/v9.1.1...v9.2.0) (2025-11-29)
 
 ### Features
