@@ -20,6 +20,20 @@
 #ifdef USE_SDL2
   SDL_Rect gSDL_Player_Rect;
 #endif
+
+void vStartNewTurn(PSTRUCT_DECK pstDeck) {
+  int iCardsToDraw;
+
+  gstPlayer.iEnergy = PLAYER_ENERGY_MAX;
+  gstPlayer.iBlock = 0;
+
+  iCardsToDraw = INIT_HAND_CARDS;
+  vDiscardHand(pstDeck);
+  iDrawMultipleCard(iCardsToDraw, pstDeck);
+  vSortHandByName(pstDeck);
+  
+}
+
 void vTracePlayer(){
   char szDbg[1024];
 
@@ -121,6 +135,7 @@ void vShowPlayer(){
   }
 }
 
+/** TODO: 16/11/2025 - Only used by ConsoleLoop. Extend to SDL */
 int iDoPlayerTurn(int *bRunning, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonster, int iMonsterCt)
 {
   int iCh;

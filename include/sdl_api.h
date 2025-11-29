@@ -1,12 +1,17 @@
 #ifdef USE_SDL2
   #include <card_game.h>
   #include <font.h>
+  #include <dialog.h>
   #ifndef SDL_API_H
     #define SDL_API_H
     
-    #define REDRAW_NONE   0
-    #define REDRAW_IMAGE  1
+    /** Bitwise redraw options */
+    #define REDRAW_NONE    0x00
+    #define REDRAW_DIALOG  0x01
+    #define REDRAW_TABLE   0x02
+    #define REDRAW_ALL     0x03
 
+    /** COLOR MACRO SESSION  */
     #define OPACITY_OPAQUE           255  /* fully solid          */
     #define OPACITY_SEMI_OPAQUE      180  /* slightly translucent */
     #define OPACITY_SEMI_TRANSPARENT 100  /* mostly see-through   */
@@ -31,7 +36,7 @@
     #define SDL_COLOR_MESA         SDL_COLOR_TABLE_GREEN
     #define SDL_COLOR_MESA_BRDR    SDL_COLOR_TABLE_BORDER
     #define SDL_COLOR_MONSTER      SDL_RGB_RED_BLOOD
-
+    
     #define SDL_COLOR_FROM_RGB_OPACITY(RGB, OPACITY) \
       ((unsigned char[4]){ (RGB)[0], (RGB)[1], (RGB)[2], (unsigned char)(OPACITY) })
 
@@ -43,20 +48,27 @@
         (unsigned char)(RGBA)[2], \
         (unsigned char)(RGBA)[3] \
       )
+    /** COLOR MACRO SESSION - END */
+    
     void vSDL_SetupMain(SDL_Renderer **pSDL_Renderer, SDL_Window **pSDL_Window);
     void vSDL_MainInit();
     void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCt);
     void vSDL_MainQuit(void);
-    int bAreCoordsInSDL_Rect( SDL_Rect *pSDL_RECT, int iX, int iY );
+    void vSDL_ToggleFullscreen(void); 
     void vSDL_DrawText(SDL_Renderer *pSDL_Renderer, const char *szTxt, int iX, int iY, SDL_Color stCol);
-    void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer,
-                    PSTRUCT_DECK pstDeck,
-                    PSTRUCT_MONSTER pastMonsters,
-                    int iMonsterCt);
+    void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCt);
     void vSDL_DrawHUD(SDL_Renderer *pSDL_Renderer, PSTRUCT_PLAYER pstPlayer);
-    int iDlgMaybeFollowTail(int iVisibleCount);
     void vSDL_DrawRectShadow(SDL_Renderer *pSDL_Renderer, SDL_Rect *pstRect, int iOffX, int iOffY, Uint8 uAlpha);
+    void vSDL_DialogDraw(SDL_Renderer *pSDL_Renderer, PSTRUCT_SDL_DIALOG_LAYOUT pstLayout);
+    void vSDL_DialogComputeLayout(int iWinW, int iWinH, PSTRUCT_SDL_DIALOG_LAYOUT pstLayout);
+    int iDlgMaybeFollowTail(int iVisibleCount);
+    int iSDL_HandIndexFromPoint(int iX, int iY, PSTRUCT_DECK pstDeck);
+    int iSDL_MonsterIndexFromPoint(int iX, int iY, PSTRUCT_MONSTER pastMonsters, int iMonsterCt);
+    int bAreCoordsInSDL_Rect( SDL_Rect *pSDL_RECT, int iX, int iY );
+    int iSDL_DialogHandleMouse(SDL_Event *pEv, PSTRUCT_SDL_DIALOG_LAYOUT pLayout);
+    extern STRUCT_SDL_DIALOG_LAYOUT gstDialogLayout;
     typedef struct { Uint32 type; const char *name; } SDLEventName;
+    extern int gbSelectingTarget;
     static const SDLEventName gEventNames[] = {
         { SDL_FIRSTEVENT, "SDL_FIRSTEVENT" },
         { SDL_QUIT, "SDL_QUIT" },

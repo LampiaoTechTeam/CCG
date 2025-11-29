@@ -212,13 +212,17 @@ void vInitLogs(void) {
   iDIR_SplitFilename(gszTraceFileDialog, szPath2, szName, szExt);
   sprintf(gszTraceFileDialog, "%s/%s%s",szPath,szName,szExt);
 } /* vInitLogs */
+
 void vTraceMainLoopInit(){
-  vTraceVarArgsFn("=====     ***                   *** =====");
-  vTraceVarArgsFn("=====     ***   Init Main LOOP  *** =====");
-  vTraceVarArgsFn("=====     ***     Mode=%s       *** =====", gbSDL_Mode ? "SDL" : "CONSOLE");
+  vTraceVarArgsFn("===========================================");
+  vTraceVarArgsFn("=====    ***   Init Main LOOP  ***    =====");
+  vTraceVarArgsFn("=====    ***     Mode=%s       ***    =====", gbSDL_Mode ? "SDL" : "CONSOLE");
+  vTraceVarArgsFn("=====                                 =====");
 }
+
 void vTraceMainLoopEnd(){
-  vTraceVarArgsFn("=====     ***                   *** =====");
-  vTraceVarArgsFn("=====     ***   End Main LOOP   *** =====");
-  vTraceVarArgsFn("=====     ***                   *** =====");
+  vTraceVarArgsFn("=====                                 =====");
+  vTraceVarArgsFn("=====    ***   End Main LOOP   ***    =====");
+  vTraceVarArgsFn("=====    ***     Mode=%s       ***    =====", gbSDL_Mode ? "SDL" : "CONSOLE");
+  vTraceVarArgsFn("===========================================");
 }

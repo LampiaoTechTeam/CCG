@@ -22,18 +22,18 @@ void vCNSL_MainLoop(int *pbRunning, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMo
         break;
     }
 
-    /* fim de turno do jogador */
+    /** Players turn end */
     vDiscardHand(pstDeck);
     vDoEnemyActions(pastMonsters, iMonsterCt);
 
-    /* checa derrota */
+    /** Tests for player defeat */
     if (gstPlayer.iHP <= 0) {
       vPrintLine("\n***  Derrota!! Você morreu! ***", INSERT_NEW_LINE);
       vSleepSeconds(3);
       break;
     }
 
-    /* checa vitória do nível */
+    /** Tests for level clear */
     if (!iAnyMonsterAlive(pastMonsters, iMonsterCt)) {
       char szMsg[128];
       snprintf(szMsg, sizeof(szMsg), "\n*** Nivel %d completo! ***", giLevel);
@@ -47,7 +47,7 @@ void vCNSL_MainLoop(int *pbRunning, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMo
       giLevel++;
       vInitMonstersForLevel(pastMonsters, giLevel, &iMonsterCt);
 
-      /* reset de mão/energia para novo nível */
+      /** New level initialization */
       iDrawMultipleCard(INIT_HAND_CARDS, pstDeck);
       vSleepSeconds(3);
       gstPlayer.iEnergy = PLAYER_ENERGY_MAX;
@@ -55,7 +55,7 @@ void vCNSL_MainLoop(int *pbRunning, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMo
       continue;
     }
 
-    /* próximo turno no mesmo nível */
+    /** Next turn actions */
     iDrawMultipleCard(INIT_HAND_CARDS, pstDeck);
     vSleepSeconds(3);
     gstPlayer.iEnergy = PLAYER_ENERGY_MAX;

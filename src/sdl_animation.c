@@ -138,8 +138,7 @@
       return;
     }
 
-    /*-------------------------------------------*/
-    /* Renderização normal (texturas reais) */
+    /** Renderização normal (texturas reais) */
     stDstDraw = pstFlip->stDst;
     dT = pstFlip->dTime;
     dNorm = (pstFlip->dDuration > 0.0) ? dClamp(dT / pstFlip->dDuration, 0.0, 1.0) : 1.0;
@@ -221,11 +220,6 @@
           iAllDone = 0;
       }
 
-      /* Redesenha frame completo */
-      SDL_RenderClear(pstRenderer);
-      vSDL_DrawTable(pstRenderer, pstDeck, pastMonsters, iMonsterCt);
-      vSDL_DrawHUD(pstRenderer, pstPlayer);
-
       /* Cartas com flip – sincroniza posição/size com a mesa a cada frame */
       for (ii = 0; ii < pstDeck->iHandCount && ii < MAX_HAND; ii++) {
         gastCardFlip[ii].stDst = gCardRects[ii];
@@ -254,9 +248,6 @@
           vSDL_DrawText(pstRenderer, szLine2, iTx, iTy + 21, stBlack);
         }
       }
-
-      SDL_RenderPresent(pstRenderer);
-      SDL_Delay(16); /* ~60fps */
     }
   } /* vAnimateFlipHand */
 

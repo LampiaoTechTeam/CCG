@@ -42,5 +42,17 @@ PSTRUCT_DIALOG pstDlgGetAt(int iIndex);
 
 /* Estado global (uma lista de diálogo) */
 extern STRUCT_DIALOG_LIST gstDlgList;
+#ifdef USE_SDL2
+  typedef struct STRUCT_SDL_DIALOG_LAYOUT {
+    int iX;
+    int iY;
+    int iW;
+    int iH;
+    int iVisibleLines;
+    int iLineHeight;
+    SDL_Rect stBtnUp;
+    SDL_Rect stBtnDown;
+} STRUCT_SDL_DIALOG_LAYOUT, *PSTRUCT_SDL_DIALOG_LAYOUT;
+#endif
 
 #endif

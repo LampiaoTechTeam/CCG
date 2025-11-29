@@ -42,4 +42,5 @@
   int  iDoPlayerTurn(int *bRunning, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonster, int iMonsterCt);
   void vInitPlayer(PSTRUCT_DECK pstGameDeck, int bReadName);
   void vShowPlayer();
+  void vStartNewTurn(PSTRUCT_DECK pstDeck);
 #endif

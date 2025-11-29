@@ -229,7 +229,6 @@ int iDrawCard(PSTRUCT_DECK pstDeck)
   STRUCT_CARD stCard;
   char szMsg[_MAX_EXT];
 
-  
   vTraceVarArgsFn("Cartas Hand:%d Compra:%d Descarte:%d", pstDeck->iHandCount, pstDeck->iDrawCount, pstDeck->iDiscardCount);
 
   if (pstDeck->iHandCount >= MAX_HAND) {

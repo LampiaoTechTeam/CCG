@@ -75,8 +75,16 @@ void vParseCmdlineArgs(int argc, char *argv[]){
   }
   
 }
-
-/** ===  Main  === **/
+/**
+ * 
+ *  Main 
+ * 
+ *  CCG_Main is a Macro defined to use SDL_Main when 
+ *  USE_SDL2 is defined.
+ * 
+ *  Otherwise(console mode) uses traditional main()
+ * 
+ */
 int CCG_Main(int argc, char *argv[]){
   STRUCT_DECK stDeck;
   STRUCT_MONSTER astMonsters[MAX_MONSTERS];
@@ -90,6 +98,7 @@ int CCG_Main(int argc, char *argv[]){
 
   vInitGlobals();
 
+  /** Reading cmdline options like using SDL2 or not, debug level ... */
   vParseCmdlineArgs(argc, argv);
 
   vInitLogs();

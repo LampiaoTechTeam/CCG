@@ -9,22 +9,21 @@
 #include <battle.h>
 
 #ifdef USE_SDL2
-/* Recebe índice escolhido pela UI SDL; -1 = não definido */
-  extern int gSDL_SelectedMonster;
+  extern int giSelectedMonster;
 #endif
 
 int bHasAnyPlayableCard(PSTRUCT_DECK pstDeck){
   PSTRUCT_CARD pstCard;
-  int iWrkCardIx;
+  int iTotalHandCards;
   int ii;
-  
-  iWrkCardIx = pstDeck->iHandCount - 1;
+
+  iTotalHandCards = pstDeck->iHandCount - 1;
   #ifdef USE_SDL2
     if ( gbSDL_Mode )
-      iWrkCardIx = pstDeck->iHandCount;
+      iTotalHandCards = pstDeck->iHandCount;
   #endif
 
-  for ( ii = 0 ; ii < iWrkCardIx ; ii++ ){
+  for ( ii = 0 ; ii < iTotalHandCards ; ii++ ){
     pstCard = &pstDeck->astHand[ii];
     if ( pstCard->iCost <= gstPlayer.iEnergy )
       return TRUE;
@@ -43,9 +42,8 @@ int iSelectMonsterFromList(int iMonsterCt){
   char szLine[1024];
 #ifdef USE_SDL2
   if ( gbSDL_Mode ){
-    /* No SDL, o alvo é definido pelo clique */
-    if (gSDL_SelectedMonster >= 0 && gSDL_SelectedMonster < iMonsterCt) {
-      return gSDL_SelectedMonster;
+    if (giSelectedMonster >= 0 && giSelectedMonster < iMonsterCt) {
+      return giSelectedMonster;
     }
     return 0;
   }
@@ -53,11 +51,11 @@ int iSelectMonsterFromList(int iMonsterCt){
   sprintf(szLine, "\nEscolha um monstro (1..%d). 'q' para sair.", iMonsterCt);
   vPrintLine(szLine, INSERT_NEW_LINE);
   iChoice = iPortableGetchar();
-  return (iChoice - 48); // Returns ASCII char
+  return (iChoice - 48); /** ASCII char */
 }
 
 /**
- * Imprime a mesa de jogo (somente no console).
+ * Prints game table (console mode)
  */
 void vShowTable(PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCount){
 #ifndef USE_SDL2
@@ -100,32 +98,34 @@ int iHandlePlayerActionByCard(PSTRUCT_CARD pstCard, PSTRUCT_MONSTER pastMonsters
         iTarget = iGetFirstAliveMonster(pastMonsters, iMonsterCt);
       }
       else if ( pstCard->iTarget != CARD_TARGET_MULTIPLE && iMonsterCt > 1 ){
-        /* Single target e vamos escolher o monstro */
+        /* Single target */
         #ifdef USE_SDL2
-          /* SDL: usa o monstro clicado pelo jogador */
+          /* SDL2: Selected by click */
           if (gbSDL_Mode) {
-            iTarget = gSDL_SelectedMonster;
-            vTraceVarArgsFn("SDL Target [%d] %s", iTarget, pastMonsters[iTarget].szName);
+            iTarget = giSelectedMonster;
+            vTraceVarArgsFn("SDL Target [%d]", iTarget);
           }
           else{
+            /* console mode, asks for user input */
             iTarget = iSelectMonsterFromList(iMonsterCt);    
-            iTarget--; /* console: ajusta para base 0 */
+            iTarget--; /* console: adjusts target base to 0 */
           }
         #else
-          /* modo console: pedir ao jogador */
+          /* console mode, asks for user input */
           iTarget = iSelectMonsterFromList(iMonsterCt);
-          iTarget--; /* console: ajusta para base 0 */
+          iTarget--; /*  console: adjusts target base to 0 */
         #endif  
 
         if ( iTarget < 0 || iTarget >= iMonsterCt )
           return -1;
       }
       else if ( pstCard->iTarget == CARD_TARGET_MULTIPLE ){
+        /** Target all? */
         iTarget = iMonsterCt;
       }
-
       for ( ; ii <= iTarget; ii++ ) {
         char szLine[1024];
+        /* If we're not targeting all monsters it means we're doing a single use */
         if ( iTarget < iMonsterCt ) ii = iTarget;
         if ( pstCard->iTarget == CARD_TARGET_MULTIPLE && ii == iTarget && bUsed ) break;
         if ( pastMonsters[ii].iHP <= 0 ) continue;
@@ -211,10 +211,10 @@ void vPlayCard(int iCardIndex, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonster
   PSTRUCT_CARD pstCard;
   int iWrkCardIx;
   
-  /* No SDL já recebemos índice zero-based, no console era 1-based */
-  
+  /** Console is not zero based we should correct when not SDL2 */
   iWrkCardIx = iCardIndex - 1;
   #ifdef USE_SDL2
+    /** Use the exacly selected index for SDL2 */
     if ( gbSDL_Mode )
       iWrkCardIx = iCardIndex;
   #endif

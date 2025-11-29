@@ -48,7 +48,7 @@
                           int iMonsterCt,
                           STRUCT_PLAYER *pstPlayer);
     /* Velocidade global do flip (segundos) */
-    #define FLIP_DURATION_S 1.00
+    #define FLIP_DURATION_S 0.8
 
     /* Largura mínima do squeeze para evitar aliás/linha de 1px sumindo */
     #define FLIP_MIN_SCALE_X 0.04

@@ -1,84 +1,177 @@
 #ifdef USE_SDL2
-
-/* Hub do projeto primeiro */
 #include <card_game.h>
-
-/* Quarteto core do jogo */
 #include <deck.h>
 #include <debuff.h>
 #include <monster.h>
 #include <player.h>
-
-/* SDL e headers do projeto */
-#include <SDL2/SDL.h>
+#include <battle.h>
+#include <sdl_api.h>
 #include <trace.h>
 #include <event.h>
+#include <SDL2/SDL.h>
 
-/* =========================================================================
-   Módulo de eventos — versão enxuta para CCG (SDL-only)
-   - Apenas dois estados de redraw: REDRAW_NONE / REDRAW_IMAGE
-   - Um único handler: iEVENT_HandlePollEv()
-   - Delega efeitos colaterais (fullscreen, sair, etc.) ao chamador
-   ========================================================================= */
+static int giPendingCard = -1;
 
+/* ---- helpers locais ---- */
+static void vMaybeToggleFullscreen(SDL_Event *pSDL_EVENT_Ev) {
+  int bIsAlt;
+  if (pSDL_EVENT_Ev->type != SDL_KEYDOWN)
+    return;
+  bIsAlt = (pSDL_EVENT_Ev->key.keysym.mod & KMOD_ALT) ? TRUE : FALSE;
+  if (bIsAlt && pSDL_EVENT_Ev->key.keysym.sym == SDLK_RETURN) {
+    vSDL_ToggleFullscreen();
+  }
+}
+
+int iHandleDialogMouse(SDL_Event *pEv, SDL_Renderer *pSDL_Renderer) {
+  int iWinW, iWinH;
+  int iDlgY, iDlgH;
+  int iMarginSuperior = 2;
+  int iMarginInferior = 2;
+
+  SDL_GetRendererOutputSize(pSDL_Renderer, &iWinW, &iWinH);
+
+  iDlgY = 50 + 500 + iMarginSuperior;
+  iDlgH = iWinH - iDlgY - iMarginInferior;
+  if (iDlgH < 0)
+    iDlgH = 0;
+
+  return iSDL_DialogHandleMouse(
+    pEv,
+    &gstDialogLayout
+  );
+}
+
+
+
+/* ---- API pública ---- */
 void vEVENT_Init(void) {
-  if (DEBUG_MSGS) vTraceVarArgsFn("EVENT: init");
+  giPendingCard = -1;
 }
 
 void vEVENT_Quit(void) {
-  if (DEBUG_MSGS) vTraceVarArgsFn("EVENT: quit");
+  giPendingCard = -1;
 }
 
-/* Handler único: processa 1 SDL_Event e retorna REDRAW_* */
-int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev, int iRedrawCurrentAction) {
+/* handler único com contexto completo */
+int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
+                        int iRedrawCurrentAction,
+                        SDL_Renderer *pSDL_Renderer,
+                        PSTRUCT_DECK pstDeck,
+                        PSTRUCT_MONSTER pastMonsters,
+                        int iMonsterCt,
+                        int *pbRunning) {
   int iRedrawReturnStatus;
 
   iRedrawReturnStatus = iRedrawCurrentAction;
 
-  if (pSDL_EVENT_Ev == NULL) {
-    return iRedrawReturnStatus;
-  }
-
   switch (pSDL_EVENT_Ev->type) {
+
     case SDL_QUIT: {
-      /* Caller decide setar *pbRunning = FALSE; aqui não forçamos redraw */
-      break;
-    }
-
-    case SDL_MOUSEBUTTONDOWN: {
-      /* Clique do mouse normalmente altera seleção/estado → pedir redraw */
-      iRedrawReturnStatus = REDRAW_IMAGE;
-      break;
-    }
-
-    case SDL_MOUSEBUTTONUP: {
-      /* Se sua UX exigir, pode manter sem redraw para evitar flicker */
-      break;
-    }
-
-    case SDL_MOUSEMOTION: {
-      /* Ative se tiver hover/tooltip; comentei para evitar redraw excessivo */
-      /* iRedrawReturnStatus = REDRAW_IMAGE; */
+      *pbRunning = FALSE;
       break;
     }
 
     case SDL_KEYDOWN: {
-      /* Alt+Enter (fullscreen) e outras teclas que afetam UI → redraw */
-      if ((pSDL_EVENT_Ev->key.keysym.mod & KMOD_ALT) != 0 &&
-           pSDL_EVENT_Ev->key.keysym.sym == SDLK_RETURN) {
-        iRedrawReturnStatus = REDRAW_IMAGE;
-      } else if (pSDL_EVENT_Ev->key.keysym.sym == SDLK_ESCAPE) {
-        /* Caller decide encerrar; sem redraw obrigatório aqui */
-      } else {
-        /* Outras teclas que mudem UI também podem pedir redraw */
-        /* iRedrawReturnStatus = REDRAW_IMAGE; */
+      if (pSDL_EVENT_Ev->key.keysym.sym == SDLK_ESCAPE) {
+        *pbRunning = FALSE;
+        break;
+      }
+      vMaybeToggleFullscreen(pSDL_EVENT_Ev);
+      iRedrawReturnStatus |= REDRAW_ALL; /* troca de fullscreen pede full redraw */
+      break;
+    }
+
+    case SDL_MOUSEBUTTONDOWN: {
+      if (pSDL_EVENT_Ev->button.button == SDL_BUTTON_LEFT) {
+        int iX;
+        int iY;
+        int iHandIdx;
+        int iMonIdx;
+        PSTRUCT_CARD pstCard;
+        int iAlive;
+        int iLastM;
+        int iMM;
+
+        iX = pSDL_EVENT_Ev->button.x;
+        iY = pSDL_EVENT_Ev->button.y;
+
+        /* 1) diálogo (setas ↑/↓) */
+        iRedrawReturnStatus |= iHandleDialogMouse(pSDL_EVENT_Ev, pSDL_Renderer);
+        if ( iRedrawReturnStatus != REDRAW_NONE ) break;
+
+        /* 2) clique nas cartas / seleção de alvo */
+        iHandIdx = iSDL_HandIndexFromPoint(iX, iY, pstDeck);
+        if (iHandIdx >= 0) {
+          if (!bHasAnyPlayableCard(pstDeck)) {
+            giPendingCard = -1;
+            iRedrawReturnStatus |= REDRAW_TABLE;
+            break;
+          }
+
+          giPendingCard = iHandIdx;
+          pstCard = &pstDeck->astHand[giPendingCard];
+
+          /* alvo: self → joga direto */
+          if (pstCard->iTarget == CARD_TARGET_SELF) {
+            vTraceVarArgsFn("EVENT: target self [%s]", pstCard->szName);
+            vPlayCard(giPendingCard, pstDeck, pastMonsters, iMonsterCt);
+            giPendingCard = -1;
+            iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
+            break;
+          }
+
+          /* alvo: múltiplos → joga direto */
+          if (pstCard->iTarget == CARD_TARGET_MULTIPLE) {
+            vTraceVarArgsFn("EVENT: target multiple [%s]", pstCard->szName);
+            vPlayCard(giPendingCard, pstDeck, pastMonsters, iMonsterCt);
+            giPendingCard = -1;
+            iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
+            break;
+          }
+
+          /* alvo: único → se só 1 vivo, autodestino; senão aguarda clique no monstro */
+          iAlive = 0;
+          iLastM = -1;
+          for (iMM = 0; iMM < iMonsterCt; iMM++) {
+            if (pastMonsters[iMM].iHP > 0) {
+              iAlive++;
+              iLastM = iMM;
+            }
+          }
+
+          if (iAlive == 1 && iLastM >= 0) {
+            vTraceVarArgsFn("EVENT: auto target [%s] -> monstro %d", pstCard->szName, iLastM);
+            vPlayCard(giPendingCard, pstDeck, pastMonsters, iMonsterCt);
+            giPendingCard = -1;
+            iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
+          }
+          /* se iAlive > 1, apenas mantém giPendingCard e aguarda clique no monstro */
+          break;
+        }
+
+        /* caso não clique na mão: se há carta pendente, tenta monstros */
+        if (giPendingCard >= 0) {
+          iMonIdx = iSDL_MonsterIndexFromPoint(iX, iY, pastMonsters, iMonsterCt);
+          if (iMonIdx >= 0 && pastMonsters[iMonIdx].iHP > 0) {
+            vPlayCard(giPendingCard, pstDeck, pastMonsters, iMonsterCt);
+            giPendingCard = -1;
+            iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
+          }
+        }
       }
       break;
     }
 
-    case SDL_TEXTINPUT: {
-      /* Se houver console/chat, geralmente precisa redesenhar */
-      /* iRedrawReturnStatus = REDRAW_IMAGE; */
+    case SDL_MOUSEWHEEL: {
+      /* se quiser, pode marcar só o diálogo (scroll de lista, etc.) */
+      iRedrawReturnStatus |= REDRAW_DIALOG;
+      break;
+    }
+
+    case SDL_WINDOWEVENT: {
+      /* resize, expose, etc. — força re-render completo */
+      // iRedrawReturnStatus |= REDRAW_ALL;
       break;
     }
 

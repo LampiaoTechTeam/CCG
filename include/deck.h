@@ -75,11 +75,12 @@
   }STRUCT_DECK, *PSTRUCT_DECK;
 
   extern char *pszDebuffTypeDesc[];
-  extern char   *pszCardTypeDesc[];
+  extern char *pszCardTypeDesc[];
 
   int iDrawMultipleCard(int iCardCt, PSTRUCT_DECK pstDeck);
   int iDrawCard(PSTRUCT_DECK pstDeck);
   int  iUpgradeFirstCardByName(PSTRUCT_DECK pstDeck, const char *kpszName, int iDeltaValue, int iDeltaCost);
+  int iGetMinimumEnergy(PSTRUCT_DECK pstDeck);
   void vSwapCards(PSTRUCT_CARD pstA, PSTRUCT_CARD pstB);
   void vShuffle(PSTRUCT_CARD paCards, int iCount);
   void vInitBasicDeck(PSTRUCT_DECK pstDeck);
@@ -91,6 +92,6 @@
   void vAddCardToDiscard(PSTRUCT_DECK pstDeck, STRUCT_CARD stCard);
   void vAddDiscardPile2Deck(PSTRUCT_DECK pstDeck);
   void vTraceDeck(PSTRUCT_DECK pstDeck, int iTraceLevel);
+  
   STRUCT_CARD stMakeCard(int iType, const char *pszName, int iCost, int iValue, int iTarget);
-  int iGetMinimumEnergy(PSTRUCT_DECK pstDeck);
 #endif
