@@ -212,7 +212,6 @@ void vDoEnemyActions(PSTRUCT_MONSTER pastMonster, int iMonsterCount) {
     vFixDebuffs(&pastMonster[ii]);
 
     if (bIsParalized || pastMonster[ii].iHP <= 0){
-      vSleepSeconds(1);
       continue;
     }
 
@@ -254,8 +253,6 @@ void vDoEnemyActions(PSTRUCT_MONSTER pastMonster, int iMonsterCount) {
       );
       vPrintLine(szLine, INSERT_NEW_LINE);
     }
-    
-    vSleepSeconds(1);
   }
   
   vTraceMonsters(pastMonster, iMonsterCount);

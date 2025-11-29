@@ -753,7 +753,7 @@ void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_M
       char szLine1[64];
       char szLine2[64];
       int iTx;
-      int iTy;
+      int iTy;  
 
       stRectCard.w = 80;
       stRectCard.h = 112;
@@ -764,12 +764,20 @@ void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_M
         gCardRects[ii] = stRectCard;
       
       if ( ii < MAX_HAND ) {
+        int iR = 200;
+        int iG = 200; 
+        int iB = 200;
+     
         int iPadLen = (8 - strlen(pstDeck->astHand[ii].szName)) / 2;
         if ( iPadLen < 0 ) iPadLen = 0;
         snprintf(szLine1, sizeof(szLine1), "%*.*s%s%*.*s", iPadLen, iPadLen, " ", pstDeck->astHand[ii].szName, iPadLen, iPadLen, " ");
         snprintf(szLine2, sizeof(szLine2), "E:%d V:%d", pstDeck->astHand[ii].iCost, pstDeck->astHand[ii].iValue);
         iTx = stRectCard.x;
         iTy = stRectCard.y + 30;
+        SDL_SetRenderDrawColor(pSDL_Renderer, iR, iG, iB, 255);
+        SDL_RenderFillRect(pSDL_Renderer, &stRectCard);
+        SDL_SetRenderDrawColor(pSDL_Renderer, 30, 30, 30, 255);
+        SDL_RenderDrawRect(pSDL_Renderer, &stRectCard);
         vSDL_DrawText(pSDL_Renderer, szLine1, iTx, iTy, stSDLColor);
         iTy += 21;
         vSDL_DrawText(pSDL_Renderer, szLine2, iTx, iTy, stSDLColor);
@@ -985,19 +993,19 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       vTraceVarArgsFn("Player Energy=[%d] | Got any playable card?=%d", gstPlayer.iEnergy, bHasPlayableCards);
       
       /** Refresh enemy statuses */
-      iRedrawAction |= REDRAW_ALL;
-      vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
+      vRedraw(pSDL_Renderer, REDRAW_ALL, pstDeck, pastMonsters, iMonsterCt);
 
       vDoEnemyActions(pastMonsters, iMonsterCt);
-
-      vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
+      vPrintLine("Iniciando novo turno, aguarde...", INSERT_NEW_LINE);
+      vRedraw(pSDL_Renderer, REDRAW_DIALOG, pstDeck, pastMonsters, iMonsterCt);
+      vSleepSeconds(1);
+      vRedraw(pSDL_Renderer, REDRAW_ALL, pstDeck, pastMonsters, iMonsterCt);
       iRedrawAction = REDRAW_NONE;
 
       /** Is player dead? */
       if (gstPlayer.iHP <= 0) {
         vPrintLine("Voce morreu!", INSERT_NEW_LINE);
-        iRedrawAction |= REDRAW_ALL;
-        vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
+        vRedraw(pSDL_Renderer, REDRAW_ALL, pstDeck, pastMonsters, iMonsterCt);
         iRedrawAction = REDRAW_NONE;
         SDL_Delay(2500);
         *pbRunning = FALSE;
@@ -1009,7 +1017,7 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       vTraceDeck(pstDeck, TRACE_DECK_ALL);
       gbAnimateHandDraw = TRUE;
 
-      iRedrawAction |= REDRAW_ALL;
+      iRedrawAction = REDRAW_ALL;
     }
 
     /** Should we rewdraw? */
