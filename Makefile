@@ -146,7 +146,7 @@ OBJS = \
 	$(OBJ_DIR)/game.o
 
 doc:
-	mkdir doc/doxygen && doxygen Doxyfile
+	mkdir -p doc/doxygen && doxygen Doxyfile
 
 all: clean directories $(BIN_DIR)/$(CARD_GAME_EXEC)
 
