@@ -1,3 +1,13 @@
+## [9.2.0](https://github.com/LampiaoTechTeam/CCG/compare/v9.1.1...v9.2.0) (2025-11-29)
+
+### Features
+
+* Created GAME.dat and ccg.conf file and parser ([3ee6996](https://github.com/LampiaoTechTeam/CCG/commit/3ee6996dd122310dedef54d234cbc42f4c67d4eb))
+
+### Bug Fixes
+
+* Changed incorrect variable name in ccg.conf ([bb0d46d](https://github.com/LampiaoTechTeam/CCG/commit/bb0d46daaf6e9cdfcb30646aaecbb03bec638273))
+
 ## [9.1.1](https://github.com/LampiaoTechTeam/CCG/compare/v9.1.0...v9.1.1) (2025-11-29)
 
 ### Bug Fixes
