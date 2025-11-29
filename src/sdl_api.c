@@ -644,6 +644,13 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
         break;
       }
 
+      /* Espaco Pausa o jogo */
+      if ( pSDL_Event->type == SDL_KEYDOWN &&
+        pSDL_Event->key.keysym.sym == SDLK_ESCAPE ) {
+        gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_RUN : STATUS_PAUSE);
+      }
+      if ( gstGame.iStatus == STATUS_PAUSE ) continue;
+
       /* Alt+Enter → fullscreen */
       if (pSDL_Event->type == SDL_KEYDOWN &&
           (pSDL_Event->key.keysym.mod & KMOD_ALT) &&
