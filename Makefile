@@ -143,6 +143,9 @@ OBJS = \
 	$(OBJ_DIR)/console_api.o \
 	$(OBJ_DIR)/trace.o
 
+doc:
+	mkdir doc/doxygen && doxygen Doxyfile
+
 all: clean directories $(BIN_DIR)/$(CARD_GAME_EXEC)
 
 clean:
@@ -196,4 +199,4 @@ docker-run-interactive:
 
 docker-test: docker-build docker-run
 
-.PHONY: docker-build docker-run docker-run-interactive docker-test
+.PHONY: docker-build docker-run docker-run-interactive docker-test doc

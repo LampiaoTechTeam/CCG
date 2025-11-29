@@ -4,6 +4,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define COPYRIGTH "Renato Fermi (C) 2025"
+#define CCG_VERSION "1.0"
+
+#define LAYOUT_YOU_WIN   0
+#define LAYOUT_GAME_OVER 1
+
 #ifndef SDL_MAIN_HANDLED
   #define SDL_MAIN_HANDLED
 #endif
@@ -33,5 +39,19 @@
   #define COL_RATIO 0.04
   #define VSYNC_TIME 16.666666666 
   
+  #define STATUS_RUN   0
+  #define STATUS_PAUSE 1
+
+  #define STATE_YOU_WIN  0
+  #define STATE_YOU_LOSE 1
+
+  typedef struct STRUCT_GAME {
+    int iStatus;
+    int iState;
+    int iLevel;
+  } STRUCT_GAME;
+
+  extern STRUCT_GAME gstGame;
+
 #endif
 

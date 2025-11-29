@@ -21,6 +21,12 @@ STRUCT_PLAYER gstPlayer;
 #ifdef USE_SDL2
   STRUCT_HUD_LIST gstHudList;
 #endif
+
+int bShowVersion = FALSE;
+int bShowHelp = FALSE;
+
+STRUCT_GAME gstGame;
+
 /** === Procedures === */
 void vFreeProgramName(){
   if (gkpszProgramName != NULL)
@@ -44,23 +50,100 @@ void vInitGlobals(){
   giDebugLevel = DEBUG_LVL_DETAILS;
   gbSDL_Mode = FALSE;
   gkpszProgramName = NULL;
+  gstGame.iLevel = giLevel;
+  gstGame.iStatus = STATUS_RUN;
+  gstGame.iState = 0;
+}
+
+static void vShowVersion(void) {
+  printf(
+    "%s %s %s [%s %s]\n",
+    gkpszProgramName,
+    CCG_VERSION,
+    COPYRIGTH,
+    __DATE__,
+    __TIME__
+  );
+#ifdef BUILD_OS_NAME
+  printf(
+    "%s %s %s %s\n"
+    "build with %s %s\n",
+    BUILD_OS_NAME,
+    BUILD_OS_VERSION,
+    BUILD_OS_ARCH,
+    BUILD_HOSTNAME,
+    BUILD_COMPILER,
+    BUILD_COMPILER_VERSION
+  );
+#endif
+}
+
+static void vShowHelp(void) {
+  printf(
+    "Usage: %s --argument=<parameter>\n"
+    "  -h, --help\n"
+    "    Show the version and exit.\n"
+    "  -v, --version\n"
+    "    Show the version and exit.\n"
+    "  --debug=<number>\n"
+    "    Set the debug level\n"
+    "  --sdl\n"
+    "    Start program in GUI mode\n",
+    gkpszProgramName
+  );
 }
 
 void vParseCmdlineArgs(int argc, char *argv[]){
-  char *pTok;
+  char *pTok = NULL;
+  int bLongArgument = FALSE;
+  int bShortArgument = FALSE;
 
   vSetProgramName(argv);
   
   if (argc <= 1)
     return ;
 
-  if (bStrIsEmpty(argv[1]) || strstr(argv[1], "--") == NULL)
-    return ;
+  if (bStrIsEmpty(argv[1]) ) {
+    return;
+  }
 
-  pTok = strtok(argv[1], "--");
+  if ( strstr(argv[1], "-") && strstr(argv[1], "--") == NULL ) {
+    bShortArgument = TRUE;
+    pTok = strtok(argv[1], "-");
+  }
+  else {
+    if ( strstr(argv[1], "--") ) {
+      bLongArgument = TRUE;
+      pTok = strtok(argv[1], "--");
+    }
+  }
 
-  if (!memcmp(pTok, "sdl", 3))
-    gbSDL_Mode = TRUE;
+  if ( bShortArgument ) {
+    if ( !memcmp(pTok, "h", 1) ) {
+      bShowHelp = TRUE;
+      return;
+    }
+
+    if ( !memcmp(pTok, "v", 1) ) {
+      bShowVersion = TRUE;
+      return;
+    }
+  }
+
+  if ( bLongArgument ) {
+    if ( !memcmp(pTok, "help", 4) ) {
+      bShowHelp = TRUE;
+      return;
+    }
+
+    if ( !memcmp(pTok, "version", 7) ) {
+      bShowVersion = TRUE;
+      return;
+    }
+
+    if (!memcmp(pTok, "sdl", 3))
+      gbSDL_Mode = TRUE;
+  }
 
   if (bStrIsEmpty(argv[2]) || strstr(argv[2], "--") == NULL)
     return ;
@@ -73,7 +156,6 @@ void vParseCmdlineArgs(int argc, char *argv[]){
     if ( bStrIsNumeric(pTok) )
       giDebugLevel = atoi(pTok);
   }
-  
 }
 /**
  * 
@@ -100,6 +182,16 @@ int CCG_Main(int argc, char *argv[]){
 
   /** Reading cmdline options like using SDL2 or not, debug level ... */
   vParseCmdlineArgs(argc, argv);
+
+  if ( bShowHelp ) {
+    vShowHelp();
+    return 0;
+  }
+
+  if ( bShowVersion ) {
+    vShowVersion();
+    return 0;
+  }
 
   vInitLogs();
      
