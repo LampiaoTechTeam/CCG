@@ -1,3 +1,16 @@
+## [9.1.0](https://github.com/LampiaoTechTeam/CCG/compare/v9.0.2...v9.1.0) (2025-11-29)
+
+### Features
+
+* Added Doxyfile ([d25ddf0](https://github.com/LampiaoTechTeam/CCG/commit/d25ddf092607b0ad61124ed2e789cf84475cc2bb))
+* Added mkdoc.sh ([88e4910](https://github.com/LampiaoTechTeam/CCG/commit/88e491023f52b2c282cb74189ebfd642b60fd7f6))
+* Created basic state machine ([fdb0fc3](https://github.com/LampiaoTechTeam/CCG/commit/fdb0fc3fb9a77769f74b3116a7321f110639e748))
+* fix pause status ([5af9111](https://github.com/LampiaoTechTeam/CCG/commit/5af9111be63ad8ccc30e65529b74355199377564))
+
+### Bug Fixes
+
+* Merge branch 'gsb' ([b959b87](https://github.com/LampiaoTechTeam/CCG/commit/b959b87cc79811c33eda3f1c9b6414796649d463))
+
 ## [9.0.2](https://github.com/LampiaoTechTeam/CCG/compare/v9.0.1...v9.0.2) (2025-11-29)
 
 ### Bug Fixes
