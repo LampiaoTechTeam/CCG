@@ -11,6 +11,7 @@
   #include <sdl_api.h>
 #endif
 #include <card_game.h>
+#include <game.h>
 
 /** === Globals === */
 char *gkpszProgramName;
@@ -26,6 +27,16 @@ int bShowVersion = FALSE;
 int bShowHelp = FALSE;
 
 STRUCT_GAME gstGame;
+
+STRUCT_GLOBAL_PRM gstGlobalPrm;
+
+STRUCT_CONF_FILE astConfFile[] = {
+  { "trace"      , gstGlobalPrm.szTrace     , sizeof(gstGlobalPrm.szTrace)     , DATATYPE_STRING, "log/card_game.log" },
+  { "debug-level", gstGlobalPrm.szDebugLevel, sizeof(gstGlobalPrm.szDebugLevel), DATATYPE_STRING, "9"                 },
+  { "wrk-dir"    , gstGlobalPrm.szWrkDir    , sizeof(gstGlobalPrm.szWrkDir)    , DATATYPE_STRING, "./"                },
+  { "fonts-dir"  , gstGlobalPrm.szFontsDir  , sizeof(gstGlobalPrm.szFontsDir)  , DATATYPE_STRING, "./fonts"           },
+  { NULL         , NULL                     , 0                                , 0              , NULL                }
+};
 
 /** === Procedures === */
 void vFreeProgramName(){
@@ -45,14 +56,37 @@ void vSetProgramName(char *argv[]){
     strcpy(gkpszProgramName, szName);
   }
 }
-void vInitGlobals(){
+
+int bInitGlobals(void) {
+  char szConfFile[512] = "";
+  char szGameDatPath[512] = "";
+
+  memset(szConfFile   , 0x00, sizeof(szConfFile));
+  memset(szGameDatPath, 0x00, sizeof(szGameDatPath));
+
+  snprintf(szConfFile   , sizeof(szConfFile), "./ccg.conf");
+  snprintf(szGameDatPath, sizeof(szGameDatPath), "%s%cGAME.dat", gstGlobalPrm.szWrkDir, DIR_SEPARATOR);
+
   giLevel = 1;
   giDebugLevel = DEBUG_LVL_DETAILS;
   gbSDL_Mode = FALSE;
   gkpszProgramName = NULL;
-  gstGame.iLevel = giLevel;
-  gstGame.iStatus = STATUS_RUN;
-  gstGame.iState = 0;
+
+  if ( !bReadConfFile(szConfFile, astConfFile) ) {
+    fprintf(stderr, "Falha ao carregar parametros globais!\n");
+    return 0;
+  }
+
+  if ( iDIR_IsDir(szGameDatPath) == -1 ) {
+    gstGame.iLevel = giLevel;
+    gstGame.iStatus = STATUS_RUN;
+    gstGame.iState = 0;
+  }
+  else {
+    iGameLoad();
+  }
+
+  return 1;
 }
 
 static void vShowVersion(void) {
@@ -157,6 +191,7 @@ void vParseCmdlineArgs(int argc, char *argv[]){
       giDebugLevel = atoi(pTok);
   }
 }
+
 /**
  * 
  *  Main 
@@ -178,7 +213,12 @@ int CCG_Main(int argc, char *argv[]){
   SDL_Event SDL_Ev;
 #endif
 
-  vInitGlobals();
+  memset(&gstGlobalPrm, 0x00, sizeof(gstGlobalPrm));
+  memset(&gstGame     , 0x00, sizeof(gstGame));
+
+  if ( !bInitGlobals() ) {
+    return -1;
+  }
 
   /** Reading cmdline options like using SDL2 or not, debug level ... */
   vParseCmdlineArgs(argc, argv);

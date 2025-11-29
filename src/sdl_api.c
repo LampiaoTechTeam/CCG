@@ -19,6 +19,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <sdl_animation.h>
+#include <game.h>
 
 /* ---------------------------------------------  */
 /*                   Locals                       */
@@ -976,17 +977,21 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       continue;
     
     if (!iAnyMonsterAlive(pastMonsters, iMonsterCt)) {
-        char szMsg[128];
-        snprintf(szMsg, sizeof(szMsg), "*** Nivel %d completo! ***", giLevel);
-        vPrintLine(szMsg, NO_NEW_LINE);
-        iRedrawAction = REDRAW_DIALOG;
-        vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
-        vSleepSeconds(3);
-        iRedrawAction |= REDRAW_ALL;
-        vAddPlayerReward(&gstPlayer);
-        iSDL_OpenShop(pSDL_Renderer, &gstPlayer, pstDeck);   
-        giLevel++;
-        vInitMonstersForLevel(pastMonsters, giLevel, &iMonsterCt);
+      char szMsg[128] = "";
+      memset(szMsg, 0x00, sizeof(szMsg));
+      snprintf(szMsg, sizeof(szMsg), "*** Nivel %d completo! ***", giLevel);
+      vPrintLine(szMsg, NO_NEW_LINE);
+      iRedrawAction = REDRAW_DIALOG;
+      vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
+      vSleepSeconds(3);
+      iRedrawAction |= REDRAW_ALL;
+      vAddPlayerReward(&gstPlayer);
+      iSDL_OpenShop(pSDL_Renderer, &gstPlayer, pstDeck);
+      giLevel++;
+      vInitMonstersForLevel(pastMonsters, giLevel, &iMonsterCt);
+      vStartNewTurn(pstDeck);
+      vTraceDeck(pstDeck, TRACE_DECK_ALL);
+      gbAnimateHandDraw = TRUE;
     }
     /** Checks for enemy turn */
     else if (gstPlayer.iEnergy <= 0 || !(bHasPlayableCards = bHasAnyPlayableCard(pstDeck))) {
@@ -997,7 +1002,7 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
 
       vDoEnemyActions(pastMonsters, iMonsterCt);
       vPrintLine("Iniciando novo turno, aguarde...", INSERT_NEW_LINE);
-      vRedraw(pSDL_Renderer, REDRAW_DIALOG, pstDeck, pastMonsters, iMonsterCt);
+      vRedraw(pSDL_Renderer, REDRAW_ALL, pstDeck, pastMonsters, iMonsterCt);
       vSleepSeconds(1);
       vRedraw(pSDL_Renderer, REDRAW_ALL, pstDeck, pastMonsters, iMonsterCt);
       iRedrawAction = REDRAW_NONE;

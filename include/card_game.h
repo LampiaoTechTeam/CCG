@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <conf.h>
 
 #define COPYRIGTH "Renato Fermi (C) 2025"
 #define CCG_VERSION "1.0"
@@ -33,6 +34,12 @@
   extern int giLevel;
   extern int gbSDL_Mode;
 
+#ifdef _WIN32
+  #define DIR_SEPARATOR '\\'
+#else
+  #define DIR_SEPARATOR '/'
+#endif
+
   #define INT_WINDOW_WIDTH  800
   #define INT_WINDOW_HEIGHT 600
   #define WINDOW_RATIO  INT_WINDOW_WIDTH/INT_WINDOW_HEIGHT
@@ -45,13 +52,14 @@
   #define STATE_YOU_WIN  0
   #define STATE_YOU_LOSE 1
 
-  typedef struct STRUCT_GAME {
-    int iStatus;
-    int iState;
-    int iLevel;
-  } STRUCT_GAME;
+  typedef struct STRUCT_GLOBAL_PRM {
+    char szWrkDir[_MAX_PATH];
+    char szTrace[256];
+    char szDebugLevel[32];
+    char szFontsDir[_MAX_PATH];
+  } STRUCT_GLOBAL_PRM, *PSTRUCT_GLOBAL_PRM;
 
-  extern STRUCT_GAME gstGame;
+  extern STRUCT_GLOBAL_PRM gstGlobalPrm;
 
 #endif
 

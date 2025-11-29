@@ -16,7 +16,7 @@
 
   #define PLAYER_GET_NAME_NONE 0
   #define PLAYER_GET_NAME      1
-  
+
 
   #define PLAYER_HP_MAX       100
   #define PLAYER_NAME_SIZE    64
@@ -34,7 +34,7 @@
     STRUCT_DEBUFF stDebuff[PLAYER_MAX_DEBUFFS];
     PSTRUCT_DECK  pstPlayerCards;
   }STRUCT_PLAYER, *PSTRUCT_PLAYER;
-  
+
   extern STRUCT_PLAYER gstPlayer;
 #ifdef USE_SDL2
   extern SDL_Rect gSDL_Player_Rect;

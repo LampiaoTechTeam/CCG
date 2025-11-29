@@ -141,7 +141,9 @@ OBJS = \
 	$(OBJ_DIR)/shop.o \
 	$(OBJ_DIR)/dialog.o \
 	$(OBJ_DIR)/console_api.o \
-	$(OBJ_DIR)/trace.o
+	$(OBJ_DIR)/trace.o \
+	$(OBJ_DIR)/conf.o \
+	$(OBJ_DIR)/game.o
 
 doc:
 	mkdir doc/doxygen && doxygen Doxyfile

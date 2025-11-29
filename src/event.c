@@ -10,6 +10,7 @@
 #include <event.h>
 #include <SDL2/SDL.h>
 #include <terminal_utils.h>
+#include <game.h>
 
 int giPendingCard = -1;
 
@@ -65,6 +66,12 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
   int iRedrawReturnStatus;
 
   iRedrawReturnStatus = iRedrawCurrentAction;
+
+  if ( gstGame.iStatus == STATUS_PAUSE ) {
+    if ( pSDL_EVENT_Ev->type != SDL_KEYDOWN && pSDL_EVENT_Ev->key.keysym.sym != SDLK_SPACE ) {
+      return REDRAW_NONE;
+    }
+  }
 
   switch (pSDL_EVENT_Ev->type) {
 
