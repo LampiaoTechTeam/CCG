@@ -5,7 +5,7 @@
 
     /* Hub do projeto sempre primeiro */
     #include <card_game.h>
-
+    extern int giPendingCard;
     /* API pública do módulo de eventos */
     void vEVENT_Init(void);
     void vEVENT_Quit(void);

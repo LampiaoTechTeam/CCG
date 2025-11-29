@@ -236,7 +236,7 @@ void vDoEnemyActions(PSTRUCT_MONSTER pastMonster, int iMonsterCount) {
     } else if (iChoice == 1) {
       pastMonster[ii].iBlock += 3;
       snprintf(szLine, sizeof(szLine),
-    "%s se defende e ganha 3 de bloqueio (total=%d).",
+    "%s se defende +3 de escudo (total=%d).",
         pastMonster[ii].szName,
         pastMonster[ii].iBlock
       );

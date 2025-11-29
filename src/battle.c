@@ -7,10 +7,10 @@
 #include <input.h>
 #include <dialog.h>
 #include <battle.h>
-
 #ifdef USE_SDL2
-  extern int giSelectedMonster;
+#include <sdl_api.h>
 #endif
+
 
 int bHasAnyPlayableCard(PSTRUCT_DECK pstDeck){
   PSTRUCT_CARD pstCard;
@@ -116,13 +116,16 @@ int iHandlePlayerActionByCard(PSTRUCT_CARD pstCard, PSTRUCT_MONSTER pastMonsters
           iTarget--; /*  console: adjusts target base to 0 */
         #endif  
 
-        if ( iTarget < 0 || iTarget >= iMonsterCt )
-          return -1;
+        if ( iTarget < 0 )
+          iTarget = 0;
+        if ( iTarget >= iMonsterCt )
+          return CARD_NONE;
       }
       else if ( pstCard->iTarget == CARD_TARGET_MULTIPLE ){
         /** Target all? */
         iTarget = iMonsterCt;
       }
+      
       for ( ; ii <= iTarget; ii++ ) {
         char szLine[1024];
         /* If we're not targeting all monsters it means we're doing a single use */
@@ -228,12 +231,15 @@ void vPlayCard(int *iCardIndex, PSTRUCT_DECK pstDeck){
     char szMsg[128];
     sprintf(szMsg, "Energia insuficiente [%d/%d]", pstCard->iCost, gstPlayer.iEnergy);
     vPrintHighlitedLine(szMsg, INSERT_NEW_LINE);
+    *iCardIndex = -2;
     return;
   }
 
-  vPrintHighlitedLine("Carta Escolhida: ", NO_NEW_LINE);
-  vPrintHighlitedLine(pstCard->szName, INSERT_NEW_LINE);
-
+  if ( !bStrIsEmpty(pstCard->szName) ){
+    char szMsg[128];
+    sprintf(szMsg, "Carta Escolhida: %s", pstCard->szName);
+    vPrintHighlitedLine(szMsg, INSERT_NEW_LINE);
+  }
   *iCardIndex = iWrkCardIx;
 
 }

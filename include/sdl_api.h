@@ -5,6 +5,7 @@
   #ifndef SDL_API_H
     #define SDL_API_H
     
+    extern int giSelectedMonster;
     /** Bitwise redraw options */
     #define REDRAW_NONE    0x00
     #define REDRAW_DIALOG  0x01

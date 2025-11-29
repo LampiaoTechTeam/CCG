@@ -31,7 +31,7 @@ void vStartNewTurn(PSTRUCT_DECK pstDeck) {
   vDiscardHand(pstDeck);
   iDrawMultipleCard(iCardsToDraw, pstDeck);
   vSortHandByName(pstDeck);
-  
+  vTraceDeck(pstDeck, (TRACE_DISCARD_PILE|TRACE_DRAW_PILE));  
 }
 
 void vTracePlayer(){
@@ -169,6 +169,8 @@ int iDoPlayerTurn(int *bRunning, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonst
     PSTRUCT_CARD pstCard;
     iIdx = iCh - '0';
     vPlayCard(&iIdx, pstDeck);
+    if ( iIdx == -1 )
+      return -1;
     pstCard = &pstDeck->astHand[iIdx];
     if ( iHandlePlayerActionByCard(pstCard, pastMonster, iMonsterCt) == CARD_NONE ) 
       return -1;

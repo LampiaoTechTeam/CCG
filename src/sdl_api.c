@@ -901,8 +901,6 @@ void vRedraw(SDL_Renderer *pSDL_Renderer,
     SDL_RenderClear(pSDL_Renderer);
     vSDL_DrawTable(pSDL_Renderer, pstDeck, pastMonsters, iMonsterCt);
     vSDL_DrawHUD(pSDL_Renderer, &gstPlayer);
-    if ( gbAnimateHandDraw )
-      vAnimateFlipHand(pSDL_Renderer, pstDeck);
   }
 
   if (bRedrawDialog) {
@@ -912,13 +910,17 @@ void vRedraw(SDL_Renderer *pSDL_Renderer,
     vSDL_DialogComputeLayout(iWinW, iWinH, &gstDialogLayout);
     vSDL_DialogDraw(pSDL_Renderer, &gstDialogLayout);
   }
-  
-  SDL_RenderPresent(pSDL_Renderer);
 
+  if ( gbAnimateHandDraw )
+    vAnimateFlipHand(pSDL_Renderer, pstDeck);
+  
+    
+  SDL_RenderPresent(pSDL_Renderer);
   if ( gbAnimateHandDraw ){
     SDL_Delay(16);
     gbAnimateHandDraw = FALSE;
   }
+
   
 }
 
@@ -950,13 +952,30 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
                           pbRunning
                         );
     }
+    
 
     /** Are we leaving ? */
     if ( !(*pbRunning) )
       break;
+      
+    if ( iRedrawAction == -2 )
+      continue;
 
+    if (!iAnyMonsterAlive(pastMonsters, iMonsterCt)) {
+        char szMsg[128];
+        snprintf(szMsg, sizeof(szMsg), "*** Nivel %d completo! ***", giLevel);
+        vPrintLine(szMsg, NO_NEW_LINE);
+        iRedrawAction = REDRAW_DIALOG;
+        vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
+        vSleepSeconds(3);
+        iRedrawAction |= REDRAW_ALL;
+        vAddPlayerReward(&gstPlayer);
+        iSDL_OpenShop(pSDL_Renderer, &gstPlayer, pstDeck);   
+        giLevel++;
+        vInitMonstersForLevel(pastMonsters, giLevel, &iMonsterCt);
+    }
     /** Checks for enemy turn */
-    if (gstPlayer.iEnergy <= 0 || !(bHasPlayableCards = bHasAnyPlayableCard(pstDeck))) {
+    else if (gstPlayer.iEnergy <= 0 || !(bHasPlayableCards = bHasAnyPlayableCard(pstDeck))) {
       vTraceVarArgsFn("Player Energy=[%d] | Got any playable card?=%d", gstPlayer.iEnergy, bHasPlayableCards);
       
       /** Refresh enemy statuses */
@@ -981,6 +1000,7 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
 
       /** Player still alive, initialize next turn */
       vStartNewTurn(pstDeck);
+    vTraceDeck(pstDeck, TRACE_DECK_ALL);
       gbAnimateHandDraw = TRUE;
 
       iRedrawAction |= REDRAW_ALL;

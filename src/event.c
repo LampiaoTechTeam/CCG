@@ -10,7 +10,7 @@
 #include <event.h>
 #include <SDL2/SDL.h>
 
-static int giPendingCard = -1;
+int giPendingCard = -1;
 
 /* ---- helpers locais ---- */
 static void vMaybeToggleFullscreen(SDL_Event *pSDL_EVENT_Ev) {
@@ -116,6 +116,15 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
           if (pstCard->iTarget == CARD_TARGET_SELF) {
             vTraceVarArgsFn("EVENT: target self [%s]", pstCard->szName);
             vPlayCard(&giPendingCard, pstDeck);
+            if ( giPendingCard == -1 )
+              return -1;
+              
+            pstCard = &pstDeck->astHand[giPendingCard];
+            if ( iHandlePlayerActionByCard(pstCard, pastMonsters, iMonsterCt) == CARD_NONE ) 
+              return -1;
+              
+            gstPlayer.iEnergy -= pstCard->iCost;
+            vDiscardCard(pstDeck, giPendingCard);
             giPendingCard = -1;
             iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
             break;
@@ -125,6 +134,16 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
           if (pstCard->iTarget == CARD_TARGET_MULTIPLE) {
             vTraceVarArgsFn("EVENT: target multiple [%s]", pstCard->szName);
             vPlayCard(&giPendingCard, pstDeck);
+            if ( giPendingCard == -1 )
+              return -1;
+
+            pstCard = &pstDeck->astHand[giPendingCard];
+            if ( iHandlePlayerActionByCard(pstCard, pastMonsters, iMonsterCt) == CARD_NONE ) 
+              return -1;
+              
+            gstPlayer.iEnergy -= pstCard->iCost;
+            vDiscardCard(pstDeck, giPendingCard);
+            
             giPendingCard = -1;
             iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
             break;
@@ -143,6 +162,14 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
           if (iAlive == 1 && iLastM >= 0) {
             vTraceVarArgsFn("EVENT: auto target [%s] -> monstro %d", pstCard->szName, iLastM);
             vPlayCard(&giPendingCard, pstDeck);
+            if ( giPendingCard == -1 )
+              return -1;
+            pstCard = &pstDeck->astHand[giPendingCard];
+            if ( iHandlePlayerActionByCard(pstCard, pastMonsters, iMonsterCt) == CARD_NONE ) 
+              return -1;
+              
+            gstPlayer.iEnergy -= pstCard->iCost;
+            vDiscardCard(pstDeck, giPendingCard);
             giPendingCard = -1;
             iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
           }
@@ -154,7 +181,17 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
         if (giPendingCard >= 0) {
           iMonIdx = iSDL_MonsterIndexFromPoint(iX, iY, pastMonsters, iMonsterCt);
           if (iMonIdx >= 0 && pastMonsters[iMonIdx].iHP > 0) {
+            giSelectedMonster = iMonIdx;
             vPlayCard(&giPendingCard, pstDeck);
+            if ( giPendingCard == -1 )
+              return -1;
+
+            pstCard = &pstDeck->astHand[giPendingCard];
+            if ( iHandlePlayerActionByCard(pstCard, pastMonsters, iMonsterCt) == CARD_NONE ) 
+              return -1;
+              
+            gstPlayer.iEnergy -= pstCard->iCost;
+            vDiscardCard(pstDeck, giPendingCard);
             giPendingCard = -1;
             iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
           }
