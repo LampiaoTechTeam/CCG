@@ -1,3 +1,13 @@
+## [9.0.0](https://github.com/LampiaoTechTeam/CCG/compare/v8.2.2...v9.0.0) (2025-11-29)
+
+### ⚠ BREAKING CHANGES
+
+* Huge Modularization
+
+### Features
+
+* Huge Modularization ([f807869](https://github.com/LampiaoTechTeam/CCG/commit/f807869844c1f33296ea27a0f558aaab2af3aff7))
+
 ## [8.2.2](https://github.com/LampiaoTechTeam/CCG/compare/v8.2.1...v8.2.2) (2025-11-17)
 
 ### Bug Fixes
