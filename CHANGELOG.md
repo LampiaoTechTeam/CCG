@@ -1,3 +1,9 @@
+## [9.0.1](https://github.com/LampiaoTechTeam/CCG/compare/v9.0.0...v9.0.1) (2025-11-29)
+
+### Bug Fixes
+
+* few adjustments ([181d5f6](https://github.com/LampiaoTechTeam/CCG/commit/181d5f6ddc0250049633972f607eb7ad9e42a363))
+
 ## [9.0.0](https://github.com/LampiaoTechTeam/CCG/compare/v8.2.2...v9.0.0) (2025-11-29)
 
 ### ⚠ BREAKING CHANGES
