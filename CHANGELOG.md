@@ -1,3 +1,9 @@
+## [9.0.2](https://github.com/LampiaoTechTeam/CCG/compare/v9.0.1...v9.0.2) (2025-11-29)
+
+### Bug Fixes
+
+* Fix strike card ([a940855](https://github.com/LampiaoTechTeam/CCG/commit/a940855567214f02bad227a171c25f1cfd3c478a))
+
 ## [9.0.1](https://github.com/LampiaoTechTeam/CCG/compare/v9.0.0...v9.0.1) (2025-11-29)
 
 ### Bug Fixes
