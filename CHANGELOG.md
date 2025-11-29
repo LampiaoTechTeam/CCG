@@ -1,3 +1,9 @@
+## [9.2.2](https://github.com/LampiaoTechTeam/CCG/compare/v9.2.1...v9.2.2) (2025-11-29)
+
+### Bug Fixes
+
+* ignored doxygen doc folder recursively ([35b23d5](https://github.com/LampiaoTechTeam/CCG/commit/35b23d50055447e8fef495485a0ce4924bf64a9e))
+
 ## [9.2.1](https://github.com/LampiaoTechTeam/CCG/compare/v9.2.0...v9.2.1) (2025-11-29)
 
 ### Bug Fixes
