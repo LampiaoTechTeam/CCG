@@ -2,6 +2,7 @@
 /obj
 /log
 /.vscode
+/doc/doxygen
 *.exe
 *.log
 *.o
