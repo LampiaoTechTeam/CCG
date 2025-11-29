@@ -1,3 +1,9 @@
+## [9.1.1](https://github.com/LampiaoTechTeam/CCG/compare/v9.1.0...v9.1.1) (2025-11-29)
+
+### Bug Fixes
+
+* adjusted sdl redraw actions on table ([0d06c4f](https://github.com/LampiaoTechTeam/CCG/commit/0d06c4f9246096f3e866ce5d13430b226cff7fe1))
+
 ## [9.1.0](https://github.com/LampiaoTechTeam/CCG/compare/v9.0.2...v9.1.0) (2025-11-29)
 
 ### Features
