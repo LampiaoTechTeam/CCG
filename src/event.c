@@ -9,6 +9,7 @@
 #include <trace.h>
 #include <event.h>
 #include <SDL2/SDL.h>
+#include <terminal_utils.h>
 
 int giPendingCard = -1;
 
@@ -73,6 +74,26 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
     }
 
     case SDL_KEYDOWN: {
+      /* Espaco Pausa o jogo */
+      if ( pSDL_EVENT_Ev->key.keysym.sym == SDLK_SPACE ) {
+        char szMsg[32] = "";
+        memset(szMsg, 0x00, sizeof(szMsg));
+        switch ( gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_RUN : STATUS_PAUSE) ) {
+          case STATUS_PAUSE: {
+            snprintf(szMsg, sizeof(szMsg), "Jogo pausado");
+            break;
+          }
+          case STATUS_RUN:
+          default: {
+            snprintf(szMsg, sizeof(szMsg), "Jogo despausado");
+            break;
+          }
+        }
+        vPrintLine(szMsg, NO_NEW_LINE);
+        iRedrawReturnStatus = REDRAW_ALL;
+        break;
+      }
+
       if (pSDL_EVENT_Ev->key.keysym.sym == SDLK_ESCAPE) {
         *pbRunning = FALSE;
         break;

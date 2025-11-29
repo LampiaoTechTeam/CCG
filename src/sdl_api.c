@@ -957,10 +957,16 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
     /** Are we leaving ? */
     if ( !(*pbRunning) )
       break;
-      
+
+    if ( gstGame.iStatus == STATUS_PAUSE ) {
+      vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
+      iRedrawAction = REDRAW_NONE;
+      continue;
+    }
+    
     if ( iRedrawAction == -2 )
       continue;
-
+    
     if (!iAnyMonsterAlive(pastMonsters, iMonsterCt)) {
         char szMsg[128];
         snprintf(szMsg, sizeof(szMsg), "*** Nivel %d completo! ***", giLevel);
@@ -1000,7 +1006,7 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
 
       /** Player still alive, initialize next turn */
       vStartNewTurn(pstDeck);
-    vTraceDeck(pstDeck, TRACE_DECK_ALL);
+      vTraceDeck(pstDeck, TRACE_DECK_ALL);
       gbAnimateHandDraw = TRUE;
 
       iRedrawAction |= REDRAW_ALL;
