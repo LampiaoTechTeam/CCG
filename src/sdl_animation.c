@@ -187,10 +187,8 @@
   /* Anima o flip das cartas recém-compradas (mão do jogador)     */
   /* Bloqueia a interação até a animação terminar                 */
   void vAnimateFlipHand(SDL_Renderer *pstRenderer,
-                        STRUCT_DECK *pstDeck,
-                        STRUCT_MONSTER *pastMonsters,
-                        int iMonsterCt,
-                        STRUCT_PLAYER *pstPlayer) {
+                        STRUCT_DECK *pstDeck
+                     ) {
     int ii;
     int iAllDone;
     int iDeltaMs;

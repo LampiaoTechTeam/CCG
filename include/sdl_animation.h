@@ -43,10 +43,7 @@
     /* -------------------------------------------------------------- */
     /* Função composta para flip da mão do jogador */
     void vAnimateFlipHand(SDL_Renderer *pstRenderer,
-                          STRUCT_DECK *pstDeck,
-                          STRUCT_MONSTER *pastMonsters,
-                          int iMonsterCt,
-                          STRUCT_PLAYER *pstPlayer);
+                          STRUCT_DECK *pstDeck);
     /* Velocidade global do flip (segundos) */
     #define FLIP_DURATION_S 0.8
 

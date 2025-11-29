@@ -207,16 +207,16 @@ int iHandlePlayerActionByCard(PSTRUCT_CARD pstCard, PSTRUCT_MONSTER pastMonsters
   return pstCard->iType;
 }
 
-void vPlayCard(int iCardIndex, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCount){
+void vPlayCard(int *iCardIndex, PSTRUCT_DECK pstDeck){
   PSTRUCT_CARD pstCard;
   int iWrkCardIx;
   
   /** Console is not zero based we should correct when not SDL2 */
-  iWrkCardIx = iCardIndex - 1;
+  iWrkCardIx = (*iCardIndex) - 1;
   #ifdef USE_SDL2
     /** Use the exacly selected index for SDL2 */
     if ( gbSDL_Mode )
-      iWrkCardIx = iCardIndex;
+      iWrkCardIx = (*iCardIndex);
   #endif
  
   if (iWrkCardIx < 0 || iWrkCardIx >= pstDeck->iHandCount)
@@ -234,11 +234,6 @@ void vPlayCard(int iCardIndex, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonster
   vPrintHighlitedLine("Carta Escolhida: ", NO_NEW_LINE);
   vPrintHighlitedLine(pstCard->szName, INSERT_NEW_LINE);
 
-  if ( iHandlePlayerActionByCard(pstCard, pastMonsters, iMonsterCount) == CARD_NONE ) 
-    return;
+  *iCardIndex = iWrkCardIx;
 
-  gstPlayer.iEnergy -= pstCard->iCost;
-  vDiscardCard(pstDeck, iWrkCardIx);
-
-  vTraceVarArgsFn("Energia restante=%d", gstPlayer.iEnergy);
 }

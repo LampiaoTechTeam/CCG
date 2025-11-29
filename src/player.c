@@ -166,14 +166,23 @@ int iDoPlayerTurn(int *bRunning, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonst
   }
   if (iCh >= '0' && iCh <= '9')
   {
+    PSTRUCT_CARD pstCard;
     iIdx = iCh - '0';
-    vPlayCard(iIdx, pstDeck, pastMonster, iMonsterCt);
+    vPlayCard(&iIdx, pstDeck);
+    pstCard = &pstDeck->astHand[iIdx];
+    if ( iHandlePlayerActionByCard(pstCard, pastMonster, iMonsterCt) == CARD_NONE ) 
+      return -1;
+      
+    gstPlayer.iEnergy -= pstCard->iCost;
+    vDiscardCard(pstDeck, iIdx);
     #ifdef USE_SDL2
-      if ( !gbSDL_Mode )
+      if ( !gbSDL_Mode ){
         vSleepSeconds(3);
+      }
     #else
       vSleepSeconds(3);
     #endif
+    
     vClearTerminal();
     vSortHandByName(pstDeck);
     vShowTable(pstDeck, pastMonster, iMonsterCt);

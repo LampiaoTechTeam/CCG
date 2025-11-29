@@ -115,7 +115,7 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
           /* alvo: self → joga direto */
           if (pstCard->iTarget == CARD_TARGET_SELF) {
             vTraceVarArgsFn("EVENT: target self [%s]", pstCard->szName);
-            vPlayCard(giPendingCard, pstDeck, pastMonsters, iMonsterCt);
+            vPlayCard(&giPendingCard, pstDeck);
             giPendingCard = -1;
             iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
             break;
@@ -124,7 +124,7 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
           /* alvo: múltiplos → joga direto */
           if (pstCard->iTarget == CARD_TARGET_MULTIPLE) {
             vTraceVarArgsFn("EVENT: target multiple [%s]", pstCard->szName);
-            vPlayCard(giPendingCard, pstDeck, pastMonsters, iMonsterCt);
+            vPlayCard(&giPendingCard, pstDeck);
             giPendingCard = -1;
             iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
             break;
@@ -142,7 +142,7 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
 
           if (iAlive == 1 && iLastM >= 0) {
             vTraceVarArgsFn("EVENT: auto target [%s] -> monstro %d", pstCard->szName, iLastM);
-            vPlayCard(giPendingCard, pstDeck, pastMonsters, iMonsterCt);
+            vPlayCard(&giPendingCard, pstDeck);
             giPendingCard = -1;
             iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
           }
@@ -154,7 +154,7 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
         if (giPendingCard >= 0) {
           iMonIdx = iSDL_MonsterIndexFromPoint(iX, iY, pastMonsters, iMonsterCt);
           if (iMonIdx >= 0 && pastMonsters[iMonIdx].iHP > 0) {
-            vPlayCard(giPendingCard, pstDeck, pastMonsters, iMonsterCt);
+            vPlayCard(&giPendingCard, pstDeck);
             giPendingCard = -1;
             iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
           }

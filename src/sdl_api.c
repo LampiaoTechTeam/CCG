@@ -902,7 +902,7 @@ void vRedraw(SDL_Renderer *pSDL_Renderer,
     vSDL_DrawTable(pSDL_Renderer, pstDeck, pastMonsters, iMonsterCt);
     vSDL_DrawHUD(pSDL_Renderer, &gstPlayer);
     if ( gbAnimateHandDraw )
-      vAnimateFlipHand(pSDL_Renderer, pstDeck, pastMonsters, iMonsterCt, &gstPlayer);
+      vAnimateFlipHand(pSDL_Renderer, pstDeck);
   }
 
   if (bRedrawDialog) {
@@ -960,17 +960,20 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       vTraceVarArgsFn("Player Energy=[%d] | Got any playable card?=%d", gstPlayer.iEnergy, bHasPlayableCards);
       
       /** Refresh enemy statuses */
-      iRedrawAction |= REDRAW_TABLE;
+      iRedrawAction |= REDRAW_ALL;
       vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
-      iRedrawAction = REDRAW_NONE;
 
       vDoEnemyActions(pastMonsters, iMonsterCt);
+
+      vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
+      iRedrawAction = REDRAW_NONE;
 
       /** Is player dead? */
       if (gstPlayer.iHP <= 0) {
         vPrintLine("Voce morreu!", INSERT_NEW_LINE);
         iRedrawAction |= REDRAW_ALL;
         vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
+        iRedrawAction = REDRAW_NONE;
         SDL_Delay(2500);
         *pbRunning = FALSE;
         break;

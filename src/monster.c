@@ -172,8 +172,6 @@ void vDoEnemyActions(PSTRUCT_MONSTER pastMonster, int iMonsterCount) {
     if (pastMonster[ii].iHP <= 0) continue;
 
     iChoice = rand() % 3; /* 0 = attack, 1 = defend, 2 = heal */
-
-    vPrintLine("", INSERT_NEW_LINE);
     
     for ( jj = 0; jj < pastMonster[ii].iDebuffCt; jj++ ){
       pstDebuff = &pastMonster[ii].astDebuff[jj];
