@@ -1,3 +1,9 @@
+## [9.2.4](https://github.com/LampiaoTechTeam/CCG/compare/v9.2.3...v9.2.4) (2025-12-07)
+
+### Bug Fixes
+
+* error on render ([e44c2c9](https://github.com/LampiaoTechTeam/CCG/commit/e44c2c90288f839d19c734f1cd80e3b810cbc4cf))
+
 ## [9.2.3](https://github.com/LampiaoTechTeam/CCG/compare/v9.2.2...v9.2.3) (2025-12-07)
 
 ### Bug Fixes
