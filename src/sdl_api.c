@@ -920,7 +920,7 @@ void vRedraw(SDL_Renderer *pSDL_Renderer,
     vSDL_DialogDraw(pSDL_Renderer, &gstDialogLayout);
   }
 
-  if ( gbAnimateHandDraw )
+  // if ( gbAnimateHandDraw )
     // vAnimateFlipHand(pSDL_Renderer, pstDeck);
   
     
