@@ -1,3 +1,9 @@
+## [9.2.5](https://github.com/LampiaoTechTeam/CCG/compare/v9.2.4...v9.2.5) (2025-12-07)
+
+### Bug Fixes
+
+* groselha ;) ([cef9a6b](https://github.com/LampiaoTechTeam/CCG/commit/cef9a6ba4d93c7e5e930d5caebd12dcd2fc72587))
+
 ## [9.2.4](https://github.com/LampiaoTechTeam/CCG/compare/v9.2.3...v9.2.4) (2025-12-07)
 
 ### Bug Fixes

@@ -45,18 +45,42 @@
   #define WINDOW_RATIO  INT_WINDOW_WIDTH/INT_WINDOW_HEIGHT
   #define COL_RATIO 0.04
   #define VSYNC_TIME 16.666666666 
-  
-  #define STATUS_RUN   0
-  #define STATUS_PAUSE 1
 
-  #define STATE_YOU_WIN  0
-  #define STATE_YOU_LOSE 1
+  /**
+   * @enum ENUM_GAME_STATUS
+   * @brief Estados do jogo
+   */
+  typedef enum ENUM_GAME_STATUS {
+    STATUS_RUN,
+    STATUS_PAUSE,
+    STATUS_IN_GAME,
+    STATUS_START_MENU
+  } ENUM_GAME_STATUS, *PENUM_GAME_STATUS;
 
+  /**
+   * @enum ENUM_GAME_STATES
+   * @brief Subestados do jogo
+   */
+  typedef enum ENUM_GAME_STATES {
+    STATE_YOU_WIN,
+    STATE_YOU_LOSE,
+    STATE_IN_GAME_TABLE,
+    STATE_IN_GAME_ENEMY_TURN,
+    STATE_IN_GAME_PLAYER_TURN,
+    STATE_IN_GAME_LEVEL_COMPLETE,
+    STATE_IN_GAME_SHOP,
+    STATE_IN_GAME_LEVEL_DONE
+  } ENUM_GAME_STATES, *PENUM_GAME_STATES;
+
+  /**
+   * @struct STRUCT_GLOBAL_PRM
+   * @brief Parametros globais
+   */
   typedef struct STRUCT_GLOBAL_PRM {
-    char szWrkDir[_MAX_PATH];
-    char szTrace[256];
-    char szDebugLevel[32];
-    char szFontsDir[_MAX_PATH];
+    char szWrkDir[_MAX_PATH];   /**< Diretorio de arquivos temporarios e recuperacao de estados */
+    char szTrace[256];          /**< Caminho do arquivo de log                                  */
+    char szDebugLevel[32];      /**< Nivel de puracao                                           */
+    char szFontsDir[_MAX_PATH]; /**< Caminho para o diretorio das fontes                        */
   } STRUCT_GLOBAL_PRM, *PSTRUCT_GLOBAL_PRM;
 
   extern STRUCT_GLOBAL_PRM gstGlobalPrm;

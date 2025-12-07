@@ -7,6 +7,7 @@
 #include <input.h>
 #include <shop.h>
 
+int gbShopOpen = FALSE;
 
 #ifdef USE_SDL2
   void vSDL_ShopInit(PSTRUCT_SHOP pstShop){
@@ -136,17 +137,21 @@
   }
   int iSDL_OpenShop(SDL_Renderer *pSDL_Renderer, PSTRUCT_PLAYER pstPlayer, PSTRUCT_DECK pstDeck){
     SDL_Event stEvent;
-    int bRunning;
-    int iDoBuy;
-    int iDoExit;
-
+    int bRunning = FALSE;
+    int iDoBuy = 0;
+    int iDoExit = 0;
     STRUCT_SHOP stShop;
     STRUCT_CARD stNewCard;
+
+    memset(&stEvent  , 0x00, sizeof(stEvent  ));
+    memset(&stShop   , 0x00, sizeof(stShop   ));
+    memset(&stNewCard, 0x00, sizeof(stNewCard));
 
     if (pSDL_Renderer == NULL || pstPlayer == NULL || pstDeck == NULL)
       return -1;
 
     vSDL_ShopInit(&stShop);
+    gbShopOpen = TRUE;
     bRunning = TRUE;
 
     while (bRunning) {
@@ -218,9 +223,11 @@
           vSleepSeconds(1);
         }
       }
-      if (iDoExit || !bHasAnyGoldToBuy(pstPlayer->iGold, &stShop) )
+      if (iDoExit || !bHasAnyGoldToBuy(pstPlayer->iGold, &stShop) ) {
         bRunning = FALSE;
+      }
     }
+    gbShopOpen = FALSE;
     return 0;
   }
 #endif
