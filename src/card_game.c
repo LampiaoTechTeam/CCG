@@ -68,7 +68,7 @@ int bInitGlobals(void) {
   snprintf(szGameDatPath, sizeof(szGameDatPath), "%s%cGAME.dat", gstGlobalPrm.szWrkDir, DIR_SEPARATOR);
 
   giLevel = 1;
-  giDebugLevel = DEBUG_LVL_DETAILS;
+  snprintf(gszDebugLevel, sizeof(gszDebugLevel), "%c", DEBUG_LVL_DETAILS);
   gbSDL_Mode = FALSE;
   gkpszProgramName = NULL;
 
@@ -188,7 +188,7 @@ void vParseCmdlineArgs(int argc, char *argv[]){
     pTok += 6;
     pTok = strtok(argv[2]," \n\r\t");
     if ( bStrIsNumeric(pTok) )
-      giDebugLevel = atoi(pTok);
+      snprintf(gszDebugLevel, sizeof(gszDebugLevel), "%s", pTok);
   }
 }
 

@@ -21,7 +21,7 @@
 char szRootPathFromBin[_MAX_PATH];
 char gszTraceFile[2048];
 char gszTraceFileDialog[2048];
-int  giDebugLevel;
+char gszDebugLevel[32];
 char gszConfFile[_MAX_PATH];
 int  giNoNL = FALSE;
 

@@ -50,6 +50,8 @@
     int iFontTitle;
     int iFontUi;
   } STRUCT_SHOP, *PSTRUCT_SHOP;
+
+  extern int gbShopOpen;
  
   #ifdef USE_SDL2
     void vSDL_ShopInit(PSTRUCT_SHOP pstShop);

@@ -37,23 +37,26 @@
  *                                                                            *
  ******************************************************************************/
 
-  typedef enum ENUM_DEBUG{
-    DEBUG_LVL_NONE        = 0,
-    DEBUG_LVL_FNCALL         ,
-    DEBUG_LVL_SYSCALL     = 4,
-    DEBUG_LVL_DETAILS     = 7,
-    DEBUG_LVL_MORE_DETAILS   ,
-    DEBUG_LVL_ALL
-  }ENUM_DEBUG;
+  #define DEBUG_LVL_NONE         '0'
+  #define DEBUG_LVL_FNCALL       '1'
+  #define DEBUG_LVL_SYSCALL      '4'
+  #define DEBUG_LVL_DETAILS      '7'
+  #define DEBUG_LVL_MORE_DETAILS '8'
+  #define DEBUG_LVL_ALL          '9'
 
   #define TOKEN_MISMATCH -1
   #define ROOT_PATH_FROM_BIN ".."
   #define UNUSED(X) (void) X
 
-  #define DEBUG_MSGS      giDebugLevel >=  DEBUG_LVL_FNCALL
-  #define DEBUG_MORE_MSGS giDebugLevel >=  DEBUG_LVL_DETAILS
-  #define DEBUG_DIALOG    giDebugLevel >=  DEBUG_LVL_MORE_DETAILS
-  #define DEBUG_ALL       giDebugLevel >=  DEBUG_LVL_ALL
+  #define DEBUG_MSGS      gszDebugLevel[0] >=  DEBUG_LVL_FNCALL
+  #define DEBUG_MORE_MSGS gszDebugLevel[0] >=  DEBUG_LVL_DETAILS
+  #define DEBUG_DIALOG    gszDebugLevel[0] >=  DEBUG_LVL_MORE_DETAILS
+  #define DEBUG_ALL       gszDebugLevel[0] >=  DEBUG_LVL_ALL
+
+  #define DEBUG_SDL_MSGS      giDebugLevel[1] >=  DEBUG_LVL_FNCALL
+  #define DEBUG_SDL_MORE_MSGS giDebugLevel[1] >=  DEBUG_LVL_DETAILS
+  #define DEBUG_SDL_DIALOG    giDebugLevel[1] >=  DEBUG_LVL_MORE_DETAILS
+  #define DEBUG_SDL_ALL       giDebugLevel[1] >=  DEBUG_LVL_ALL
 
   #define vTraceVarArgsFn(FORMAT, ...) _vTraceVarArgsFn(__FILE__, __LINE__, __func__, FORMAT, ##__VA_ARGS__)
   #define vTraceMsgDialog(FORMAT, ...) _vTraceMsgDialog(FORMAT, ##__VA_ARGS__)
@@ -66,7 +69,7 @@
  *                                                                            *
  ******************************************************************************/
 
-  extern int  giDebugLevel;
+  extern char  gszDebugLevel[32];
   extern char gszTraceFile[2048];
   extern char gszConfFile[_MAX_PATH];
   extern char *szTokenName[];
