@@ -180,13 +180,12 @@ void vTraceDialog(int bLogDT) {
       sprintf(pszMsg, "[%03d] %s\n", iIdx, pstCur->pszMsg);
 
     #ifdef USE_SDL2
-      if (gbSDL_Mode)
-        printf("%s", pszMsg);
-      else
+      if (!gbSDL_Mode)
         vTraceMsgDialog(pszMsg);
     #else
       vTraceMsgDialog(pszMsg);
     #endif
+    free(pszMsg);
     pstCur = pstCur->pstNext;
     iIdx++;
   }

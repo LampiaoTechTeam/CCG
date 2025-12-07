@@ -45,9 +45,9 @@
     void vAnimateFlipHand(SDL_Renderer *pstRenderer,
                           STRUCT_DECK *pstDeck);
     /* Velocidade global do flip (segundos) */
-    #define FLIP_DURATION_S 0.8
+    #define FLIP_DURATION_S 0.9
 
     /* Largura mínima do squeeze para evitar aliás/linha de 1px sumindo */
-    #define FLIP_MIN_SCALE_X 0.04
+    #define FLIP_MIN_SCALE_X 0.08
   #endif /* _SDL_ANIMATION_H_ */
 #endif /* USE_SDL2 */

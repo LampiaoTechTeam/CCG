@@ -921,16 +921,14 @@ void vRedraw(SDL_Renderer *pSDL_Renderer,
   }
 
   if ( gbAnimateHandDraw )
-    vAnimateFlipHand(pSDL_Renderer, pstDeck);
+    // vAnimateFlipHand(pSDL_Renderer, pstDeck);
   
     
   SDL_RenderPresent(pSDL_Renderer);
   if ( gbAnimateHandDraw ){
-    SDL_Delay(16);
     gbAnimateHandDraw = FALSE;
   }
 
-  
 }
 
 void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCt) {
@@ -981,10 +979,9 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       memset(szMsg, 0x00, sizeof(szMsg));
       snprintf(szMsg, sizeof(szMsg), "*** Nivel %d completo! ***", giLevel);
       vPrintLine(szMsg, NO_NEW_LINE);
-      iRedrawAction = REDRAW_DIALOG;
-      vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
-      vSleepSeconds(3);
-      iRedrawAction |= REDRAW_ALL;
+      vRedraw(pSDL_Renderer, REDRAW_DIALOG, pstDeck, pastMonsters, iMonsterCt);
+      // SDL_Delay(16);
+      iRedrawAction = REDRAW_ALL;
       vAddPlayerReward(&gstPlayer);
       iSDL_OpenShop(pSDL_Renderer, &gstPlayer, pstDeck);
       giLevel++;
@@ -1002,8 +999,8 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
 
       vDoEnemyActions(pastMonsters, iMonsterCt);
       vPrintLine("Iniciando novo turno, aguarde...", INSERT_NEW_LINE);
-      vRedraw(pSDL_Renderer, REDRAW_ALL, pstDeck, pastMonsters, iMonsterCt);
-      vSleepSeconds(1);
+      // vRedraw(pSDL_Renderer, REDRAW_ALL, pstDeck, pastMonsters, iMonsterCt);
+      // SDL_Delay(8);
       vRedraw(pSDL_Renderer, REDRAW_ALL, pstDeck, pastMonsters, iMonsterCt);
       iRedrawAction = REDRAW_NONE;
 

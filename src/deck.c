@@ -21,9 +21,9 @@ char *pszDebuffTypeDesc[] ={
 };
 char *pszTargetableDesc[] ={
   " ",
-  "Unico",
-  "Multiplo",
-  "Player",
+  "Single-Targt",
+  "Area (AOE)",
+  "Self-Targt",
   NULL
 };
 
@@ -41,22 +41,29 @@ int iGetMinimumEnergy(PSTRUCT_DECK pstDeck){
 
   return iMinCost;
 }
+void vTraceCard(PSTRUCT_CARD pstCard){
+  if ( pstCard == NULL ){
+    vTraceVarArgsFn("pstCard == NULL");
+    return;
+  }
+  vTraceVarArgsFn(
+  "\t| Name=[%10.10s] Ty=%-6.6s Cost=%02d Val=%02d Targ=%-10.10s",
+      pstCard->szName,
+      pszCardTypeDesc[pstCard->iType],
+      pstCard->iCost,
+      pstCard->iValue,
+      pszTargetableDesc[pstCard->iTarget]
+    );
+}
 void vTraceCardList(STRUCT_CARD astCardList[], int iListCt){
   int ii;
 
   if ( iListCt <= 0 )
     return ;
 
-  for (ii = 0; ii < iListCt; ii++){
-    vTraceVarArgsFn(
-  "\t|-> Card=%-6.6s EnergyCost=%d Value=%d Targetable=%s",
-      pszCardTypeDesc[astCardList[ii].iType],
-      astCardList[ii].iCost,
-      astCardList[ii].iValue,
-      pszTargetableDesc[astCardList[ii].iTarget]
-    );
-  }
-
+  for (ii = 0; ii < iListCt; ii++)
+    vTraceCard(&astCardList[ii]);
+  
 }
 
 void vTraceDeck(PSTRUCT_DECK pstDeck, int iTraceOption){
@@ -108,9 +115,8 @@ void vDiscardCard(PSTRUCT_DECK pstDeck, int iIndex)
 
   if (iIndex < 0 || iIndex >= pstDeck->iHandCount) return;
 
-  
   memcpy(&pstDeck->astDiscard[pstDeck->iDiscardCount++], &pstDeck->astHand[iIndex], sizeof(STRUCT_CARD));
-  vTraceVarArgsFn("Removed %s from hand -> added to discard pile.", pstDeck->astHand[iIndex].szName);
+  vTraceVarArgsFn("Moved [%s] from hand -> to discard pile.", pstDeck->astHand[iIndex].szName);
   vTraceVarArgsFn("Discard pile %d cards", pstDeck->iDiscardCount);
   memset(&pstDeck->astHand[iIndex], 0, sizeof(STRUCT_CARD));
   for (ii = iIndex; ii < pstDeck->iHandCount - 1; ii++)

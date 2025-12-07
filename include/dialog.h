@@ -18,7 +18,7 @@ typedef struct STRUCT_DIALOG_LIST {
   PSTRUCT_DIALOG pstTail;
   int iCount;                 /* total de linhas */
   int iTopIndex;              /* primeira linha visível (rolagem) */
-  int iPinned;      /* 0 = follow automático; 1 = posição “pinada” por scroll manual */
+  int iPinned;                /* 0 = follow automático; 1 = posição “pinada” por scroll manual */
 } STRUCT_DIALOG_LIST, *PSTRUCT_DIALOG_LIST;
 
 /* --- API básica (compatível com sua ideia original) --- */
@@ -33,6 +33,7 @@ void vDlgPageUp(int iVisibleCount);
 void vDlgPageDown(int iVisibleCount);
 void vDlgScrollToBottom(int iVisibleCount);
 void vScrollToBottomInternal(int iVisibleCount);
+
 /* --- Utilidade --- */
 int iDlgGetTopIndex(void);
 int iDlgGetCount(void);

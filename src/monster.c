@@ -12,13 +12,13 @@ void vTraceMonster(PSTRUCT_MONSTER pstMonster){
   char szLine[1024];
 
   snprintf(szLine, sizeof(szLine),
-"%s - HP:%d/Blk:%d/Atk:%d", 
+"%s - HP:%d Blk:%d Atk:%d", 
     pstMonster->szName,
     pstMonster->iHP,
     pstMonster->iBlock,
     pstMonster->iAttack
   );
-  vTraceVarArgsFn("M [%s]", szLine);
+  vTraceVarArgsFn("[%s]", szLine);
 
   vTraceDebuffList(pstMonster->astDebuff, pstMonster->iDebuffCt);
 }
@@ -58,7 +58,7 @@ void vShowDebuffList(PSTRUCT_DEBUFF pstDebuff, int iDebuffCt){
       memset(szLine, 0, sizeof(szLine));
       vPrintLine(" | ", NO_NEW_LINE);
       snprintf(szLine, sizeof(szLine),
-    "Veneno/Turnos=%d/%d",
+    "Veneno Turnos=%d/%d",
         pstWrkDbf->iDamage,
         pstWrkDbf->iRounds
       );
@@ -69,7 +69,7 @@ void vShowDebuffList(PSTRUCT_DEBUFF pstDebuff, int iDebuffCt){
       memset(szLine, 0, sizeof(szLine));
       vPrintLine(" | ", NO_NEW_LINE);
       snprintf(szLine, sizeof(szLine),
-        "Paralizia/Turnos=%d",
+        "Paralizia Turnos=%d",
         pstWrkDbf->iRounds
       );
       vPrintColored(szLine, TERMINAL_COLOR_BMAGENTA);
@@ -94,7 +94,7 @@ void vTraceDebuffList(PSTRUCT_DEBUFF pstDebuff, int iDebuffCt){
       pstWrkDbf->iDamage,
       pstWrkDbf->iRounds
     );
-    vTraceVarArgsFn("---|>Dbff%d - %s - [%s]", ii, pszDebuffTypeDesc[pstWrkDbf->iType], szLine);
+    vTraceVarArgsFn("|-->%s - [%s]", ii, pszDebuffTypeDesc[pstWrkDbf->iType], szLine);
     pstWrkDbf++;
   }
 
