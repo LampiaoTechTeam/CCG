@@ -1,3 +1,9 @@
+## [9.2.3](https://github.com/LampiaoTechTeam/CCG/compare/v9.2.2...v9.2.3) (2025-12-07)
+
+### Bug Fixes
+
+* changes to memory otimization ([b63624c](https://github.com/LampiaoTechTeam/CCG/commit/b63624c480e1efd9356a82e8f2d5f04678538070))
+
 ## [9.2.2](https://github.com/LampiaoTechTeam/CCG/compare/v9.2.1...v9.2.2) (2025-11-29)
 
 ### Bug Fixes
