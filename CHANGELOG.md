@@ -1,3 +1,9 @@
+## [9.2.6](https://github.com/LampiaoTechTeam/CCG/compare/v9.2.5...v9.2.6) (2025-12-14)
+
+### Bug Fixes
+
+* memory leaks in dialog and SDL cleanup ([3ec6d50](https://github.com/LampiaoTechTeam/CCG/commit/3ec6d508358febe3e269e1e18d3e3ff5def2f1b9))
+
 ## [9.2.5](https://github.com/LampiaoTechTeam/CCG/compare/v9.2.4...v9.2.5) (2025-12-07)
 
 ### Bug Fixes
