@@ -93,10 +93,8 @@ static void vDlgNodeDestroy(PSTRUCT_DIALOG pstNode) {
 /* ---------- API pública ---------- */
 
 void vInitDialog(void) {
-  gstDlgList.pstHead = NULL;
-  gstDlgList.pstTail = NULL;
-  gstDlgList.iCount = 0;
-  gstDlgList.iTopIndex = 0;
+  vFreeDialog();
+  gstDlgList.iPinned = 0;
 }
 
 int iAddMsgToDialog(char *pszMsg, int iMsgLen) {

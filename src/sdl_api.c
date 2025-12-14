@@ -38,6 +38,8 @@ int giSelectedMonster = -1;
 int gbSelectingTarget = 0;
 SDL_Rect gCardRects[64];
 SDL_Rect gMonsterRects[64];
+static SDL_Renderer *gpSDL_Renderer = NULL;
+static SDL_Window   *gpSDL_Window   = NULL;
 
 /* ---------------------------------------------  */
 /*                   Functions                    */
@@ -67,6 +69,10 @@ void vSDL_SetupMain(SDL_Renderer **pSDL_Renderer, SDL_Window **pSDL_Window){
   );
   *pSDL_Renderer = SDL_CreateRenderer(*pSDL_Window, -1, SDL_RENDERER_ACCELERATED );
   SDL_SetRenderDrawBlendMode(*pSDL_Renderer, SDL_BLENDMODE_BLEND);
+
+  /* Store pointers for cleanup in vSDL_MainQuit */
+  gpSDL_Renderer = *pSDL_Renderer;
+  gpSDL_Window   = *pSDL_Window;
 }
 
 int iDlgMaybeFollowTail(int iVisibleCount) {
@@ -1048,6 +1054,16 @@ void vSDL_MainQuit(void) {
   if (gFont) {
     TTF_CloseFont(gFont);
     gFont = NULL;
+  }
+
+  if (gpSDL_Renderer) {
+    SDL_DestroyRenderer(gpSDL_Renderer);
+    gpSDL_Renderer = NULL;
+  }
+
+  if (gpSDL_Window) {
+    SDL_DestroyWindow(gpSDL_Window);
+    gpSDL_Window = NULL;
   }
 
   TTF_Quit();
