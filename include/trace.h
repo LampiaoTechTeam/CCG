@@ -69,10 +69,11 @@
  *                                                                            *
  ******************************************************************************/
 
-  extern char  gszDebugLevel[32];
+  extern char gszDebugLevel[32];
   extern char gszTraceFile[2048];
   extern char gszConfFile[_MAX_PATH];
   extern char *szTokenName[];
+  extern char gszRootPathFromBin[_MAX_PATH];
 
 /******************************************************************************
  *                                                                            *

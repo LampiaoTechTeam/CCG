@@ -15,10 +15,9 @@
 #include <event.h>
 #include <sdl_animation.h>
 #include <sdl_api.h>
-
+#include <image.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include <sdl_animation.h>
 #include <game.h>
 
 /* ---------------------------------------------  */
@@ -68,6 +67,10 @@ void vSDL_SetupMain(SDL_Renderer **pSDL_Renderer, SDL_Window **pSDL_Window){
     SDL_WINDOW_SHOWN
   );
   *pSDL_Renderer = SDL_CreateRenderer(*pSDL_Window, -1, SDL_RENDERER_ACCELERATED );
+
+  if ( iAtlas_InitFromImgList(*pSDL_Renderer) == FALSE )
+    vTraceVarArgsFn("Atlas não inicializado");
+
   SDL_SetRenderDrawBlendMode(*pSDL_Renderer, SDL_BLENDMODE_BLEND);
 
   /* Store pointers for cleanup in vSDL_MainQuit */
@@ -224,152 +227,6 @@ int bAreCoordsInSDL_Rect(SDL_Rect *pSDL_RECT, int iX, int iY) {
   }
   return FALSE;
 }
-
-
-// /* -------------------------------------------------------------- */
-// /* HUD / Dialog / Mesa */
-// void vSDL_DrawDialog(SDL_Renderer *pSDL_Renderer, int iX, int iY, int iW, int iH) {
-//   int iLineH;
-//   int iBaseY;
-//   int ii;
-//   int iMaxLines;
-//   int iTotal;
-//   int iStart;
-//   int iIdx;
-//   char szGlyphUp[4];
-//   char szGlyphDown[4];
-//   SDL_Rect stRectDialog;
-//   SDL_Rect stRectShadow;
-//   SDL_Color stColorWhite;
-//   SDL_Rect stUp;
-//   SDL_Rect stDown;
-//   SDL_Color stBtnBG;
-//   SDL_Color stBtnFG;
-//   SDL_Color stShadowTxt;
-//   SDL_Color stShadowGlyph;
-//   PSTRUCT_DIALOG pstWrk;
-
-//   iLineH = 18;
-//   iBaseY = iY + 8;
-//   ii = 0;
-
-//   stRectDialog.x = iX;
-//   stRectDialog.y = iY;
-//   stRectDialog.w = iW;
-//   stRectDialog.h = iH;
-
-//   stColorWhite.r = 255; stColorWhite.g = 255; stColorWhite.b = 255; stColorWhite.a = 255;
-
-//   stBtnBG.r = 60;  stBtnBG.g = 60;  stBtnBG.b = 60;  stBtnBG.a = 220;
-//   stBtnFG.r = 255; stBtnFG.g = 255; stBtnFG.b = 255; stBtnFG.a = 255;
-
-//   stShadowTxt.r   = 0; stShadowTxt.g   = 0; stShadowTxt.b   = 0; stShadowTxt.a   = 180;
-//   stShadowGlyph.r = 0; stShadowGlyph.g = 0; stShadowGlyph.b = 0; stShadowGlyph.a = 180;
-
-//   /* --- painel com sombra (drop) --- */
-//   stRectShadow = stRectDialog;
-//   vSDL_DrawRectShadow(pSDL_Renderer, &stRectShadow, 3, 3, OPACITY_SEMI_TRANSPARENT);
-
-//   SDL_SetRenderDrawColor(pSDL_Renderer, 40, 40, 40, 220);
-//   SDL_RenderFillRect(pSDL_Renderer, &stRectDialog);
-//   SDL_SetRenderDrawColor(pSDL_Renderer, 200, 200, 200, 255);
-//   SDL_RenderDrawRect(pSDL_Renderer, &stRectDialog);
-
-//   /* capacidade de linhas visíveis */
-//   iMaxLines = iH / iLineH - 1;
-//   if (iMaxLines < 1)
-//     iMaxLines = 1;
-
-//   /* contagem total */
-//   iTotal = 0;
-//   pstWrk = gstDlgList.pstHead;
-//   while (pstWrk != NULL) {
-//     iTotal++;
-//     pstWrk = pstWrk->pstNext;
-//   }
-
-//   /* início baseado no índice global de rolagem */
-//   if (giDlgTopIndex < 0)
-//     giDlgTopIndex = 0;
-//   if (giDlgTopIndex > (iTotal - iMaxLines))
-//     giDlgTopIndex = (iTotal - iMaxLines) < 0 ? 0 : (iTotal - iMaxLines);
-//   iStart = giDlgTopIndex;
-
-//   /* pula até a primeira linha visível */
-//   iIdx = 0;
-//   pstWrk = gstDlgList.pstHead;
-//   while (pstWrk != NULL && iIdx < iStart) {
-//     pstWrk = pstWrk->pstNext;
-//     iIdx++;
-//   }
-
-//   /* desenha linhas com sombra sutil */
-//   while (pstWrk != NULL && ii < iMaxLines) {
-//     char szLine[1024];
-//     int iTx;
-//     int iTy;
-
-//     if (bStrIsEmpty(pstWrk->pszMsg) == 0) {
-//       snprintf(szLine, sizeof(szLine), "%s - %s", pstWrk->szDT, pstWrk->pszMsg);
-//       iTx = iX + 8;
-//       iTy = iBaseY + ii * iLineH;
-//       vSDL_DrawTextShadow(pSDL_Renderer, szLine, iTx, iTy, stColorWhite, stShadowTxt, 1, 1);
-//       ii++;
-//     }
-
-//     pstWrk = pstWrk->pstNext;
-//   }
-
-//   /* --- setas de rolagem --- */
-//   stUp.x = iX + iW - 8 - 24;
-//   stUp.y = iY + 6;
-//   stUp.w = 24;
-//   stUp.h = 24;
-
-//   stDown.x = stUp.x;
-//   stDown.y = iY + iH - 6 - 24;
-//   stDown.w = 24;
-//   stDown.h = 24;
-
-//   /* sombra dos botões (leve) */
-//   vSDL_DrawRectShadow(pSDL_Renderer, &stUp,   2, 2, 100);
-//   vSDL_DrawRectShadow(pSDL_Renderer, &stDown, 2, 2, 100);
-
-//   SDL_SetRenderDrawColor(pSDL_Renderer, stBtnBG.r, stBtnBG.g, stBtnBG.b, stBtnBG.a);
-//   SDL_RenderFillRect(pSDL_Renderer, &stUp);
-//   SDL_RenderFillRect(pSDL_Renderer, &stDown);
-
-//   SDL_SetRenderDrawColor(pSDL_Renderer, 180, 180, 180, 255);
-//   SDL_RenderDrawRect(pSDL_Renderer, &stUp);
-//   SDL_RenderDrawRect(pSDL_Renderer, &stDown);
-
-//   /* glifos ▲ ▼ com sombra; fallback '^'/'v' se necessário */
-//   szGlyphUp[0] = '\0';
-//   szGlyphDown[0] = '\0';
-//   strcpy(szGlyphUp,   "▲");
-//   strcpy(szGlyphDown, "▼");
-
-//   vSDL_DrawTextShadow(pSDL_Renderer, szGlyphUp,   stUp.x + 6,   stUp.y + 2,   stBtnFG, stShadowGlyph, 1, 1);
-//   vSDL_DrawTextShadow(pSDL_Renderer, szGlyphDown, stDown.x + 6, stDown.y + 2, stBtnFG, stShadowGlyph, 1, 1);
-
-//   /* desabilita setas quando no topo/fundo (efeito visual) */
-//   if (giDlgTopIndex <= 0) {
-//     SDL_SetRenderDrawColor(pSDL_Renderer, 0, 0, 0, 140);
-//     SDL_RenderFillRect(pSDL_Renderer, &stUp);
-//     SDL_SetRenderDrawColor(pSDL_Renderer, 180, 180, 180, 255);
-//     SDL_RenderDrawRect(pSDL_Renderer, &stUp);
-//     vSDL_DrawTextShadow(pSDL_Renderer, szGlyphUp, stUp.x + 6, stUp.y + 2,
-//                         (SDL_Color){160,160,160,255}, (SDL_Color){0,0,0,120}, 1, 1);
-//   }
-//   if (giDlgTopIndex >= (iTotal - iMaxLines)) {
-//     SDL_SetRenderDrawColor(pSDL_Renderer, 0, 0, 0, 140);
-//     SDL_RenderFillRect(pSDL_Renderer, &stDown);
-//     SDL_SetRenderDrawColor(pSDL_Renderer, 180, 180, 180, 255);
-//     SDL_RenderDrawRect(pSDL_Renderer, &stDown);
-//     vSDL_DrawTextShadow(pSDL_Renderer, szGlyphDown, stDown.x + 6, stDown.y + 2,
-//                         (SDL_Color){160,160,160,255}, (SDL_Color){0,0,0,120}, 1, 1);
-//   }
-// }
 
 void vSDL_DialogDraw(SDL_Renderer *pSDL_Renderer,
                      PSTRUCT_SDL_DIALOG_LAYOUT pstLayout) {
@@ -582,6 +439,8 @@ void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_M
 
   vTraceVarArgsFn("iMonsterCt=%d iHandCt=%d", iMonsterCt, pstDeck->iHandCount);
 
+  // iRECT_SetDimensions(&stRectMesa, (STRUCT_RECT_DIMENSIONS *){50, 50, 700, 500});
+
   stRectMesa.x = 50;
   stRectMesa.y = 50;
   stRectMesa.w = 700;
@@ -593,7 +452,9 @@ void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_M
   SET_RENDER_DRAW_COLOR(pSDL_Renderer, SDL_COLOR_FROM_RGB_OPACITY(SDL_RGB_TABLE_BORDER, OPACITY_OPAQUE));
   SDL_RenderDrawRect(pSDL_Renderer, &stRectMesa);
 
-  /* --- Monstros --- */
+  /* TODO: Porcentagem relativa para cards e inimigos
+   *       Monstros + Padding
+   */
   {
     int iPad;
     int iUsableW;
@@ -675,9 +536,27 @@ void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_M
       stRectMonster.h = iSlotH;
 
       /* --- Desenho base do monstro --- */
+      // vSDL_DrawRectShadow(pSDL_Renderer, &stRectMonster, 2, 2, OPACITY_SEMI_OPAQUE);
+      // SET_RENDER_DRAW_COLOR(pSDL_Renderer, SDL_COLOR_FROM_RGB_OPACITY(SDL_RGB_RED_BLOOD, OPACITY_OPAQUE));
+      // SDL_RenderFillRect(pSDL_Renderer, &stRectMonster);
+      // SET_RENDER_DRAW_COLOR(pSDL_Renderer, SDL_COLOR_FROM_RGB_OPACITY(SDL_RGB_BLACK, OPACITY_OPAQUE));
+      // SDL_RenderDrawRect(pSDL_Renderer, &stRectMonster);
+      /* --- Desenho base do monstro (com imagem do atlas) --- */
       vSDL_DrawRectShadow(pSDL_Renderer, &stRectMonster, 2, 2, OPACITY_SEMI_OPAQUE);
-      SET_RENDER_DRAW_COLOR(pSDL_Renderer, SDL_COLOR_FROM_RGB_OPACITY(SDL_RGB_RED_BLOOD, OPACITY_OPAQUE));
-      SDL_RenderFillRect(pSDL_Renderer, &stRectMonster);
+
+      if ( gstAtlasCards.pSDL_Txtr != NULL ) {
+        int iTileIndex;
+        double dScaleMonstro;
+        iTileIndex = ii % 4; /* primeiros 4 tiles = monstros */
+        dScaleMonstro = 1.2; /* monstros um pouco maiores, mas proporcionais */
+        vAtlas_RenderScaled(pSDL_Renderer, &gstAtlasCards, iTileIndex, &stRectMonster, dScaleMonstro, TRUE);
+      } else {
+        /* fallback: retângulo colorido */
+        SET_RENDER_DRAW_COLOR(pSDL_Renderer, SDL_COLOR_FROM_RGB_OPACITY(SDL_RGB_RED_BLOOD, OPACITY_OPAQUE));
+        SDL_RenderFillRect(pSDL_Renderer, &stRectMonster);
+      }
+
+      /* borda preta sempre por cima */
       SET_RENDER_DRAW_COLOR(pSDL_Renderer, SDL_COLOR_FROM_RGB_OPACITY(SDL_RGB_BLACK, OPACITY_OPAQUE));
       SDL_RenderDrawRect(pSDL_Renderer, &stRectMonster);
 
@@ -781,13 +660,24 @@ void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_M
         snprintf(szLine2, sizeof(szLine2), "E:%d V:%d", pstDeck->astHand[ii].iCost, pstDeck->astHand[ii].iValue);
         iTx = stRectCard.x;
         iTy = stRectCard.y + 30;
-        SDL_SetRenderDrawColor(pSDL_Renderer, iR, iG, iB, 255);
-        SDL_RenderFillRect(pSDL_Renderer, &stRectCard);
+        // SDL_SetRenderDrawColor(pSDL_Renderer, iR, iG, iB, 255);
+        // SDL_RenderFillRect(pSDL_Renderer, &stRectCard);
+        // SDL_SetRenderDrawColor(pSDL_Renderer, 30, 30, 30, 255);
+        // SDL_RenderDrawRect(pSDL_Renderer, &stRectCard);
+        // vSDL_DrawText(pSDL_Renderer, szLine1, iTx, iTy, stSDLColor);
+        // iTy += 21;
+        // vSDL_DrawText(pSDL_Renderer, szLine2, iTx, iTy, stSDLColor);
+        if ( gstAtlasCards.pSDL_Txtr != NULL ) {
+          int iTileIndex;
+          iTileIndex = 4 + (ii % 5); /* 5 tiles seguintes = cartas */
+          vAtlas_RenderScaled(pSDL_Renderer, &gstAtlasCards, iTileIndex, &stRectCard, 1.0, TRUE);
+        }
+        else {
+          SDL_SetRenderDrawColor(pSDL_Renderer, iR, iG, iB, 255);
+          SDL_RenderFillRect(pSDL_Renderer, &stRectCard);
+        }
         SDL_SetRenderDrawColor(pSDL_Renderer, 30, 30, 30, 255);
         SDL_RenderDrawRect(pSDL_Renderer, &stRectCard);
-        vSDL_DrawText(pSDL_Renderer, szLine1, iTx, iTy, stSDLColor);
-        iTy += 21;
-        vSDL_DrawText(pSDL_Renderer, szLine2, iTx, iTy, stSDLColor);
       }
       giCardCount++;
     }
@@ -798,12 +688,22 @@ void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_M
 /* Inicialização e loop principal */
 
 void vSDL_MainInit(void) {
+  int iImgFlags;
+  int iImgInitted;
+  vTraceVarArgsFn(" -- Begin");
+
   SDL_SetMainReady();
 
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     if (DEBUG_MSGS)
       vTraceVarArgsFn("Couldn't initialize SDL: %s", SDL_GetError());
     return;
+  }
+
+  iImgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
+  iImgInitted = IMG_Init(iImgFlags);
+  if ((iImgInitted & iImgFlags) != iImgFlags) {
+    vTraceVarArgsFn("Erro IMG_Init: %s", IMG_GetError());
   }
 
   /* Inicializa TTF (se ainda não) */
@@ -816,6 +716,11 @@ void vSDL_MainInit(void) {
   if (!gFont)
     vTraceVarArgsFn("Erro ao carregar fonte: %s", TTF_GetError());
 
+  vInitImgConf();
+  if ( bLoadImgListFromFile() == FALSE )
+    vTraceVarArgsFn("Erro ao carregar image list");
+
+  vTraceVarArgsFn(" -- End");
 }
 
 int iHitTestMonster(int iX, int iY) {
@@ -927,13 +832,13 @@ void vRedraw(SDL_Renderer *pSDL_Renderer,
   }
 
   // if ( gbAnimateHandDraw )
-    // vAnimateFlipHand(pSDL_Renderer, pstDeck);
+  // vAnimateFlipHand(pSDL_Renderer, pstDeck);
   
-    
   SDL_RenderPresent(pSDL_Renderer);
-  if ( gbAnimateHandDraw ){
-    gbAnimateHandDraw = FALSE;
-  }
+
+  // if ( gbAnimateHandDraw ){
+  //   gbAnimateHandDraw = FALSE;
+  // }
 
 }
 
@@ -980,13 +885,12 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
     if ( iRedrawAction == -2 )
       continue;
     
-    if (!iAnyMonsterAlive(pastMonsters, iMonsterCt)) {
+    if ( !iAnyMonsterAlive(pastMonsters, iMonsterCt) ) {
       char szMsg[128] = "";
       memset(szMsg, 0x00, sizeof(szMsg));
       snprintf(szMsg, sizeof(szMsg), "*** Nivel %d completo! ***", giLevel);
       vPrintLine(szMsg, NO_NEW_LINE);
       vRedraw(pSDL_Renderer, REDRAW_DIALOG, pstDeck, pastMonsters, iMonsterCt);
-      // SDL_Delay(16);
       iRedrawAction = REDRAW_ALL;
       vAddPlayerReward(&gstPlayer);
       iSDL_OpenShop(pSDL_Renderer, &gstPlayer, pstDeck);
@@ -1005,8 +909,6 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
 
       vDoEnemyActions(pastMonsters, iMonsterCt);
       vPrintLine("Iniciando novo turno, aguarde...", INSERT_NEW_LINE);
-      // vRedraw(pSDL_Renderer, REDRAW_ALL, pstDeck, pastMonsters, iMonsterCt);
-      // SDL_Delay(8);
       vRedraw(pSDL_Renderer, REDRAW_ALL, pstDeck, pastMonsters, iMonsterCt);
       iRedrawAction = REDRAW_NONE;
 
@@ -1066,6 +968,9 @@ void vSDL_MainQuit(void) {
     gpSDL_Window = NULL;
   }
 
+  vFreeImgList();
+
+  IMG_Quit();
   TTF_Quit();
   SDL_Quit();
 

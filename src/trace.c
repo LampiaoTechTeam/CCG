@@ -18,7 +18,7 @@
   #include <process.h>
 #endif
 
-char szRootPathFromBin[_MAX_PATH];
+char gszRootPathFromBin[_MAX_PATH];
 char gszTraceFile[2048];
 char gszTraceFileDialog[2048];
 char gszDebugLevel[32];
@@ -119,11 +119,11 @@ void vTracePid(char *szMsg, int iMsgLen) {
 void vSetRootPathFromCwd(){
   char szTestPath[_MAX_PATH + _MAX_PATH];
   memset(szTestPath, 0, sizeof(szTestPath));
-  memset(szRootPathFromBin, 0, sizeof(szRootPathFromBin));
-  sprintf(szRootPathFromBin, "%s", ROOT_PATH_FROM_BIN);
-  sprintf(szTestPath,"%s/bin", szRootPathFromBin);
+  memset(gszRootPathFromBin, 0, sizeof(gszRootPathFromBin));
+  sprintf(gszRootPathFromBin, "%s", ROOT_PATH_FROM_BIN);
+  sprintf(szTestPath,"%s/bin", gszRootPathFromBin);
   if ( !iDIR_IsDir(szTestPath) )
-    sprintf(szRootPathFromBin, "%s", ".");
+    sprintf(gszRootPathFromBin, "%s", ".");
     
 }
 
@@ -198,7 +198,7 @@ void vInitLogs(void) {
   vSetRootPathFromCwd();
 
   iDIR_SplitFilename(gszTraceFile, szPath, szName, szExt);
-  snprintf(szPath, sizeof(szPath), "%s/log", szRootPathFromBin);
+  snprintf(szPath, sizeof(szPath), "%s/log", gszRootPathFromBin);
   if (!iDIR_IsDir(szPath)) {
     if (!iDIR_MkDir(szPath)) {
       fprintf(stderr, "E: Impossible create dir %s!\n"

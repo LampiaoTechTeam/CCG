@@ -7,65 +7,59 @@
  * TODO: rework this logic.
  */
 
-#ifndef _IMAGE_H_
-  #define _IMAGE_H_
-  #ifdef USE_SDL2
-    #include <SDL2/SDL.h>
-  #endif
-  
-  #define ASSERT_IMG_PATH(ndx, ppConfigPath, ppDefaultPath) \
-            bFileExist(ppConfigPath[ndx])\
-              ? ppConfigPath[ndx]\
-              : ppDefaultPath[ndx]
-  
-  #ifdef LINUX
-    char *ppszInstalledImagePath[] = {
-      "/usr/share/cattie/img/cat2.png",
-      "/usr/share/cattie/img/forward.png",
-      "/usr/share/cattie/img/laser.png",
-      "/usr/share/cattie/img/rotate2.png",
-      "/usr/share/cattie/img/gear.png",
-      "/usr/share/cattie/img/confirm.png"
-    };
-  #else
-    char *ppszInstalledImagePath[] = {
-      "D:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\cat2.png",
-      "D:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\forward.png",
-      "D:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\laser.png",
-      "D:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\rotate2.png",
-      "D:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\gear.png"
-      "D:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\confirm.png"
-    };
-  #endif
+#ifdef USE_SDL2
+  #ifndef _IMAGE_H_
+    #define _IMAGE_H_
 
-  char *ppszImagePath[] = {
-    "img/cat2.png",
-    "img/forward.png",
-    "img/laser.png",
-    "img/rotate2.png",
-    "img/gear.png"
-  };
+    #include <card_game.h>  
+    #include <SDL2/SDL_image.h>
 
-  #ifdef USE_SDL2
-    SDL_Surface *pSDL_SRFC_LoadImage( char *pszImgPath ) {
-      // Load the image
-      SDL_Surface *SDL_SRFC_Img = IMG_Load(pszImgPath);
-      
-      if ( DEBUG_MSGS ) vTraceBegin();
-    
-      if ( SDL_SRFC_Img == NULL ) {
-        printf("Error loading image: %s\n", IMG_GetError());
-    
-        if ( DEBUG_MORE_MSGS ) vTraceVarArgsFn("%s - end return NULL", __func__);
-    
-        return NULL;
-      }
-    
-      vTraceEnd();
-    
-      return SDL_SRFC_Img;
-    } /* pSDL_SRFC_LoadImage */
-  #endif
+    #define IMAGE_TYPE_NONE        0 
+    #define IMAGE_TYPE_PLAYER_CARD 1
+    #define IMAGE_TYPE_MONSTER     2
+    #define IMAGE_TYPE_TILELIST    3
 
-#endif /* _IMAGE_H */
-  
+    #define CONF_DIR       "conf"
+    #define IMG_PATH_TITLE "images.dat"
+
+    typedef struct STRUCT_IMAGE_CONF{
+      int iType;
+      char *pszPath;
+      struct STRUCT_IMAGE_CONF *pstNext;
+    }STRUCT_IMAGE_CONF, *PSTRUCT_IMAGE_CONF;
+
+    extern STRUCT_IMAGE_CONF gstImgConf;
+    int bLoadImgListFromFile();
+    void vFreeImgList();
+    void vInitImgConf();
+    void vTraceImgList();
+    SDL_Surface *pSDL_SRFC_LoadImage(char *pszImgPath);
+  #endif /* _IMAGE_H */
+  #ifndef _IMAGE_ATLAS_H_
+    #define _IMAGE_ATLAS_H_
+
+    typedef struct STRUCT_IMG_ATLAS {
+      SDL_Texture *pSDL_Txtr;
+      int iTileW;
+      int iTileH;
+      int iCols;
+      int iRows;
+      int iCount;
+    } STRUCT_IMG_ATLAS, *PSTRUCT_IMG_ATLAS;
+
+    extern STRUCT_IMG_ATLAS gstAtlasCards;
+
+    int iAtlas_InitFromImgList(SDL_Renderer *pSDL_Renderer);
+    int bAtlas_SrcRectFromIndex(PSTRUCT_IMG_ATLAS pstAtlas, int iIndex, SDL_Rect *pstSrc);
+    void vAtlas_Render(SDL_Renderer *pSDL_Renderer,
+                       PSTRUCT_IMG_ATLAS pstAtlas,
+                       int iIndex,
+                       SDL_Rect *pstDst);
+    void vAtlas_RenderScaled(SDL_Renderer *pSDL_Renderer,
+                          PSTRUCT_IMG_ATLAS pstAtlas,
+                          int iIndex,
+                          SDL_Rect *pstDst,
+                          double dScale,
+                          int bKeepAspect);
+  #endif /* _IMAGE_ATLAS_H_ */
+#endif

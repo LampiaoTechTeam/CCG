@@ -48,4 +48,17 @@
   int bCloseFile(FILE **fppFile);
   int bFileExist(const char *kpszFileName);
 
+/******************************************************************************
+ *                                                                            *
+ *                          defines + macros                            *
+ *                                                                            *
+ ******************************************************************************/
+ 
+ #define ASSETS_BASE_DIR  "./assets"
+ #define BIN_BASE_DIR     "./bin"
+ #define CONF_BASE_DIR    "./conf"
+ #define FONTS_BASE_DIR   "./fonts"
+ #define SCRIPTS_BASE_DIR "./scripts"
+
+
 #endif /* SYSINTERFACE_H */

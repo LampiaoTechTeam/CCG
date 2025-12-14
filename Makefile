@@ -87,7 +87,7 @@ ifdef USE_SDL2
 			INC_DIR += -I/mingw64/include
 		endif
 	endif
-	SDL_ADD_LIBS += -lSDL2main -lSDL2 -lSDL2_ttf
+	SDL_ADD_LIBS += -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_image
 endif
 
 
@@ -123,6 +123,7 @@ SDL_OBJ =
 ifdef USE_SDL2
 	SDL_OBJ = $(OBJ_DIR)/sdl_api.o \
 		      $(OBJ_DIR)/sdl_animation.o \
+		      $(OBJ_DIR)/image.o \
 			  $(OBJ_DIR)/event.o
 endif
 
