@@ -4,7 +4,7 @@
 # =============================================================================
 # Stage 1: Build environment
 # =============================================================================
-FROM ubuntu:22.04 AS builder
+FROM ubuntu:24.04 AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -39,7 +39,7 @@ RUN make LINUX=1 USE_SDL2=1 all
 # =============================================================================
 # Stage 4: Dev runtime image
 # =============================================================================
-FROM ubuntu:22.04 AS dev
+FROM ubuntu:24.04 AS dev
 
 LABEL org.opencontainers.image.source="https://github.com/OWNER/CCG"
 LABEL org.opencontainers.image.description="CCG Card Game - Development Build"
@@ -66,7 +66,7 @@ ENTRYPOINT ["/app/card_game"]
 # =============================================================================
 # Stage 5: Quality runtime image (production)
 # =============================================================================
-FROM ubuntu:22.04 AS quality
+FROM ubuntu:24.04 AS quality
 
 LABEL org.opencontainers.image.source="https://github.com/OWNER/CCG"
 LABEL org.opencontainers.image.description="CCG Card Game - Quality Build"
