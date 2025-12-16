@@ -14,7 +14,7 @@
 #include <game.h>
 
 
-/** === Globals === */
+/* === Globals === */
 char *gkpszProgramName;
 int gbLogLevel = 1;
 int giLevel;
