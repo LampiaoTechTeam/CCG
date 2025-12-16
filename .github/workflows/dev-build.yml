@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
+      - main
       - dev
     paths-ignore:
       - 'docker/**'
@@ -56,7 +57,7 @@ jobs:
     name: Test (Quality Environment)
     runs-on: ubuntu-latest
     needs: test-dev
-    if: github.base_ref == 'main' || (github.event_name == 'push' && github.ref == 'refs/heads/dev')
+    if: github.base_ref == 'main' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'))
     container:
       image: ghcr.io/lampiaotechteam/ccg:quality-latest
       credentials:
@@ -90,7 +91,7 @@ jobs:
     needs: [test-dev, test-quality]
     if: |
       success() &&
-      (github.base_ref == 'main' || (github.event_name == 'push' && github.ref == 'refs/heads/dev'))
+      (github.base_ref == 'main' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')))
     outputs:
       new-release-published: ${{ steps.semantic.outputs.new-release-published }}
       new-release-version: ${{ steps.semantic.outputs.new-release-version }}
