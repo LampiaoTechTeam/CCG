@@ -38,7 +38,10 @@ int iGameLoad(void) {
   if ( (fpGameDat = fopen(szGameDatPath, "rb")) == NULL ) {
     return 0;
   }
-  fread(&gstGame, sizeof(gstGame), 1, fpGameDat);
+  if (fread(&gstGame, sizeof(gstGame), 1, fpGameDat) != 1) {
+    fclose(fpGameDat);
+    return 0;
+  }
   fclose(fpGameDat);
   fpGameDat = NULL;
   return 1;
