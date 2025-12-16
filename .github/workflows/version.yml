@@ -1,16 +1,21 @@
-name: CI/CD Pipeline (DISABLED)
-
-# DISABLED: Now using dev-build.yml pipeline
-# To re-enable, uncomment the triggers below and remove workflow_dispatch
+name: CI/CD Pipeline
 
 on:
-  workflow_dispatch:  # Manual trigger only
-  # push:
-  #   branches:
-  #     - main
-  # pull_request:
-  #   branches:
-  #     - main
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docker/**'
+      - 'Dockerfile'
+      - '*.md'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'docker/**'
+      - 'Dockerfile'
+      - '*.md'
 
 permissions:
   contents: write
@@ -188,4 +193,4 @@ jobs:
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release
+        run: semantic-release --extends ./.github/confs/releaserc.json
