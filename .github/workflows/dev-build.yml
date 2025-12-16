@@ -87,8 +87,10 @@ jobs:
   semantic-release:
     name: Semantic Release
     runs-on: ubuntu-latest
-    needs: test-quality
-    if: github.base_ref == 'main' || (github.event_name == 'push' && github.ref == 'refs/heads/dev')
+    needs: [test-dev, test-quality]
+    if: |
+      success() &&
+      (github.base_ref == 'main' || (github.event_name == 'push' && github.ref == 'refs/heads/dev'))
     outputs:
       new-release-published: ${{ steps.semantic.outputs.new-release-published }}
       new-release-version: ${{ steps.semantic.outputs.new-release-version }}
