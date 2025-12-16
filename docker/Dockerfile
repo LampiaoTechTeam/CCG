@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gdb \
     valgrind \
     strace \
+    file \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
