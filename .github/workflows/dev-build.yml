@@ -5,10 +5,18 @@ on:
   push:
     branches:
       - dev
+    paths-ignore:
+      - 'docker/**'
+      - 'Dockerfile'
+      - '*.md'
   pull_request:
     branches:
       - main
       - dev
+    paths-ignore:
+      - 'docker/**'
+      - 'Dockerfile'
+      - '*.md'
 
 env:
   REGISTRY: ghcr.io
