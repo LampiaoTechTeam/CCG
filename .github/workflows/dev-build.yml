@@ -1,6 +1,7 @@
 name: Dev Build & Test Pipeline
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - dev
