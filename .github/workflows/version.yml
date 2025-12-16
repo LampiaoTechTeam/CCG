@@ -1,12 +1,16 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline (DISABLED)
+
+# DISABLED: Now using dev-build.yml pipeline
+# To re-enable, uncomment the triggers below and remove workflow_dispatch
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:  # Manual trigger only
+  # push:
+  #   branches:
+  #     - main
+  # pull_request:
+  #   branches:
+  #     - main
 
 permissions:
   contents: write
