@@ -108,4 +108,4 @@ jobs:
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release
+        run: semantic-release --extends ./.github/confs/releaserc.json
