@@ -11,7 +11,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: lampiaotechteam/ccg
 
 permissions:
   contents: write
@@ -22,7 +22,7 @@ jobs:
     name: Test (Dev Environment)
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/${{ github.repository }}:dev-latest
+      image: ghcr.io/lampiaotechteam/ccg:dev-latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -49,7 +49,7 @@ jobs:
     needs: test-dev
     if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
     container:
-      image: ghcr.io/${{ github.repository }}:quality-latest
+      image: ghcr.io/lampiaotechteam/ccg:quality-latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
