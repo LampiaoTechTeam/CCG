@@ -13,6 +13,7 @@
 #include <card_game.h>
 #include <game.h>
 
+
 /** === Globals === */
 char *gkpszProgramName;
 int gbLogLevel = 1;
