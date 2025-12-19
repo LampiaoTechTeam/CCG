@@ -3,9 +3,11 @@
   #include <image.h>
   #include <sys_interface.h>
   #include <string.h>
+  #include <stdlib.h>
 
   STRUCT_IMAGE_CONF gstImgConf;
-  STRUCT_IMG_ATLAS gstAtlasCards;
+  STRUCT_IMAGE gstImages[MAX_IMAGES];
+  int giImageCount = 0;
 
   void vInitImgConf(){
     
@@ -35,14 +37,24 @@
 
   int bAddImg2Mem(int iImgType, char *pszPath, int iLen){
     PSTRUCT_IMAGE_CONF pstImgConf;
-    
-    if ( (pstImgConf = pstCreateImgNode()) == NULL ){
+    int iBaseLen;
+    int iFullLen;
+
+    if ( (pstImgConf = pstCreateImgNode()) == NULL )
       return FALSE;
-    }
+
+    if ( bStrIsEmpty(pszPath) )
+      return FALSE;
+
+    iBaseLen = (int)strlen(ASSETS_BASE_DIR);
+    iFullLen = iBaseLen + 1 + iLen + 1; /* base + '/' + nome + '\0' */
 
     pstImgConf->iType = iImgType;
-    pstImgConf->pszPath = (char *)malloc(iLen+2);
-    memset(pstImgConf->pszPath, 0, iLen+2);
+    pstImgConf->pszPath = (char *)malloc(iFullLen);
+    if ( pstImgConf->pszPath == NULL )
+      return FALSE;
+
+    memset(pstImgConf->pszPath, 0, iFullLen);
     sprintf(pstImgConf->pszPath, "%s/%s", ASSETS_BASE_DIR, pszPath);
 
     return TRUE;
@@ -65,7 +77,7 @@
     return SDL_SRFC_Img;
   } /* pSDL_SRFC_LoadImage */
 
-  int bLoadImgListFromFile(){
+  int bLoadImgListFromFile() {
     char szPath[MAX_PATH+MAX_PATH];
     char szLine[1024];
     char *pTok;
@@ -88,7 +100,7 @@
 
       iType = atoi(pTok);
       pTok++;
-      if ( (pTok = strtok(NULL, "|\n")) == NULL ) continue;
+      if ( (pTok = strtok(NULL, "|\n")) == NULL )   continue;
 
       if ( bAddImg2Mem(iType, pTok, strlen(pTok)) == FALSE ) continue;
       
@@ -104,7 +116,7 @@
     return bLoaded;
   }
 
-  void vTraceImgList(){
+  void vTraceImgList() {
     PSTRUCT_IMAGE_CONF pstWrkImg;
 
     vTraceVarArgsFn("--- Images ---");
@@ -115,6 +127,7 @@
     vTraceVarArgsFn("--------------");
 
   }
+
   void vFreeImgList(){
     PSTRUCT_IMAGE_CONF pstImgConf = &gstImgConf;
     PSTRUCT_IMAGE_CONF pstLast;
@@ -132,7 +145,7 @@
     vInitImgConf();
   }
 
-  static SDL_Texture *pSDL_LoadTextureFromPath(SDL_Renderer *pSDL_Renderer, char *pszPath) {
+  SDL_Texture *pSDL_LoadTextureFromPath(SDL_Renderer *pSDL_Renderer, char *pszPath){
     SDL_Surface *pSDL_Srfc;
     SDL_Texture *pSDL_Txtr;
 
@@ -159,140 +172,82 @@
     return pSDL_Txtr;
   }
 
+  int iIMG_LoadAll(SDL_Renderer *pSDL_Renderer){
+    PSTRUCT_IMAGE_CONF pstImageCnf;
+    STRUCT_IMAGE *pstImg;
+    int bAnyLoaded;
 
-  int iAtlas_InitFromImgList(SDL_Renderer *pSDL_Renderer) {
-    PSTRUCT_IMAGE_CONF pstWrk;
-    int iOk;
-    int iTileW;
-    int iTileH;
+    bAnyLoaded = FALSE;
+    giImageCount = 0;
 
-    memset(&gstAtlasCards, 0, sizeof(STRUCT_IMG_ATLAS));
+    pstImageCnf = &gstImgConf;
+    while ( pstImageCnf != NULL ) {
 
-    iOk = FALSE;
-    iTileW = 300; /* cada carta 300x300 na imagem fornecida */
-    iTileH = 300;
+      if ( !bStrIsEmpty(pstImageCnf->pszPath) ) {
 
-    for ( pstWrk = &gstImgConf; pstWrk != NULL; pstWrk = pstWrk->pstNext ) {
-      if ( bStrIsEmpty(pstWrk->pszPath) )
-        continue;
-      if ( pstWrk->iType == IMAGE_TYPE_TILELIST ) {
-        SDL_Texture *pSDL_Txtr;
-        int iW;
-        int iH;
+        if ( giImageCount >= MAX_IMAGES )
+          break;
 
-        pSDL_Txtr = pSDL_LoadTextureFromPath(pSDL_Renderer, pstWrk->pszPath);
-        if ( pSDL_Txtr == NULL ) {
-          vTraceVarArgsFn("Falhou carregar atlas [%s]", pstWrk->pszPath);
-          continue;
+        pstImg = &gstImages[giImageCount];
+        memset(pstImg, 0, sizeof(*pstImg));
+
+        pstImg->iType = pstImageCnf->iType;
+        strncpy(pstImg->szPath, pstImageCnf->pszPath, sizeof(pstImg->szPath)-1);
+
+        pstImg->pSDL_Txtr = pSDL_LoadTextureFromPath(pSDL_Renderer, pstImageCnf->pszPath);
+        if ( pstImg->pSDL_Txtr != NULL ) {
+
+          pstImg->pSDL_IMGRect.x = 0;
+          pstImg->pSDL_IMGRect.y = 0;
+          pstImg->pSDL_IMGRect.w = 280;
+          pstImg->pSDL_IMGRect.h = 300;
+
+          giImageCount++;
+          bAnyLoaded = TRUE;
         }
-
-        SDL_QueryTexture(pSDL_Txtr, NULL, NULL, &iW, &iH);
-
-        gstAtlasCards.pSDL_Txtr = pSDL_Txtr;
-        gstAtlasCards.iTileW = iTileW;
-        gstAtlasCards.iTileH = iTileH;
-        gstAtlasCards.iCols  = (iTileW > 0) ? (iW / iTileW) : 0;
-        gstAtlasCards.iRows  = (iTileH > 0) ? (iH / iTileH) : 0;
-        gstAtlasCards.iCount = gstAtlasCards.iCols * gstAtlasCards.iRows;
-
-        vTraceVarArgsFn("Atlas cards: %dx%d tiles=%dx%d count=%d",
-                        iW, iH, iTileW, iTileH, gstAtlasCards.iCount);
-        iOk = TRUE;
-        break;
       }
-    }
-    return iOk;
-  }
 
-  int bAtlas_SrcRectFromIndex(PSTRUCT_IMG_ATLAS pstAtlas, int iIndex, SDL_Rect *pstSrc) {
-    int iCol;
-    int iRow;
-
-    if ( pstAtlas == NULL || pstAtlas->pSDL_Txtr == NULL )
-      return FALSE;
-
-    if ( iIndex < 0 || iIndex >= pstAtlas->iCount )
-      return FALSE;
-
-    iCol = iIndex % pstAtlas->iCols;
-    iRow = iIndex / pstAtlas->iCols;
-
-    pstSrc->x = iCol * pstAtlas->iTileW;
-    pstSrc->y = iRow * pstAtlas->iTileH;
-    pstSrc->w = pstAtlas->iTileW;
-    pstSrc->h = pstAtlas->iTileH;
-
-    return TRUE;
-  }
-
-  void vAtlas_Render(SDL_Renderer *pSDL_Renderer,
-                      PSTRUCT_IMG_ATLAS pstAtlas,
-                      int iIndex,
-                      SDL_Rect *pstDst) {
-    SDL_Rect stSrc;
-    int bOk;
-    if ( pSDL_Renderer == NULL || pstAtlas == NULL || pstDst == NULL )
-      return;
-    if ( pstAtlas->pSDL_Txtr == NULL )
-      return;
-
-    bOk = bAtlas_SrcRectFromIndex(pstAtlas, iIndex, &stSrc);
-    if ( bOk == FALSE )
-      return;
-
-    SDL_RenderCopy(pSDL_Renderer, pstAtlas->pSDL_Txtr, &stSrc, pstDst);
-  }
-  void vAtlas_RenderScaled(SDL_Renderer *pSDL_Renderer,
-                          PSTRUCT_IMG_ATLAS pstAtlas,
-                          int iIndex,
-                          SDL_Rect *pstDst,
-                          double dScale,
-                          int bKeepAspect) {
-    SDL_Rect stSrc;
-    SDL_Rect stDstScaled;
-    int bOk;
-    double dFinalScale;
-    int iNewW;
-    int iNewH;
-    int iOffsetX;
-    int iOffsetY;
-
-    if ( pSDL_Renderer == NULL || pstAtlas == NULL || pstAtlas->pSDL_Txtr == NULL )
-      return;
-
-    bOk = bAtlas_SrcRectFromIndex(pstAtlas, iIndex, &stSrc);
-    if ( bOk == FALSE )
-      return;
-
-    /* calcula escala final */
-    if ( dScale <= 0.0 )
-      dFinalScale = 1.0;
-    else
-      dFinalScale = dScale;
-
-    iNewW = (int)((double)stSrc.w * dFinalScale);
-    iNewH = (int)((double)stSrc.h * dFinalScale);
-
-    /* ajusta para caber dentro de pstDst mantendo proporção */
-    if ( bKeepAspect ) {
-      double dScaleW;
-      double dScaleH;
-      dScaleW = (double)pstDst->w / (double)stSrc.w;
-      dScaleH = (double)pstDst->h / (double)stSrc.h;
-      dFinalScale = (dScaleW < dScaleH) ? dScaleW : dScaleH;
-      iNewW = (int)((double)stSrc.w * dFinalScale);
-      iNewH = (int)((double)stSrc.h * dFinalScale);
+      pstImageCnf = pstImageCnf->pstNext;
     }
 
-    iOffsetX = pstDst->x + ((pstDst->w - iNewW) / 2);
-    iOffsetY = pstDst->y + ((pstDst->h - iNewH) / 2);
-
-    stDstScaled.x = iOffsetX;
-    stDstScaled.y = iOffsetY;
-    stDstScaled.w = iNewW;
-    stDstScaled.h = iNewH;
-
-    SDL_RenderCopy(pSDL_Renderer, pstAtlas->pSDL_Txtr, &stSrc, &stDstScaled);
+    vTraceVarArgsFn("iIMG_LoadAll: giImageCount=%d", giImageCount);
+    return bAnyLoaded;
   }
+
+  STRUCT_IMAGE *pIMG_GetNextByType(int iType, int iIndex){
+    int i;
+    int iCount;
+
+    i = 0;
+    iCount = 0;
+
+    while ( i < giImageCount ) {
+      if ( gstImages[i].iType == iType ) {
+        if ( iCount == iIndex )
+          return &gstImages[i];
+        iCount++;
+      }
+      i++;
+    }
+
+    return NULL;
+  }
+  void vIMG_UnloadAll(void){
+    int i;
+
+    i = 0;
+    while ( i < giImageCount ) {
+      if ( gstImages[i].pSDL_Txtr != NULL ) {
+        SDL_DestroyTexture(gstImages[i].pSDL_Txtr);
+        gstImages[i].pSDL_Txtr = NULL;
+      }
+      i++;
+    }
+
+    giImageCount = 0;
+    memset(gstImages, 0, sizeof(gstImages));
+  }
+
+  
 
 #endif

@@ -152,6 +152,7 @@ int iUpgradeFirstCardByName(PSTRUCT_DECK pstDeck, const char *kpszName, int iDel
       pstDeck->astDraw[ii].iCost += iDeltaCost;
       if (pstDeck->astDraw[ii].iCost < 0) pstDeck->astDraw[ii].iCost = 0;
       if (strchr(pstDeck->astDraw[ii].szName, '+') == NULL) strcat(pstDeck->astDraw[ii].szName, "+");
+      
       return 1;
     }
   }
@@ -162,6 +163,7 @@ int iUpgradeFirstCardByName(PSTRUCT_DECK pstDeck, const char *kpszName, int iDel
       pstDeck->astDiscard[ii].iCost += iDeltaCost;
       if (pstDeck->astDiscard[ii].iCost < 0) pstDeck->astDiscard[ii].iCost = 0;
       if (strchr(pstDeck->astDiscard[ii].szName, '+') == NULL) strcat(pstDeck->astDiscard[ii].szName, "+");
+
       return 1;
     }
   }
