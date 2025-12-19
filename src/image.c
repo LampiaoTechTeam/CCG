@@ -78,7 +78,7 @@
   } /* pSDL_SRFC_LoadImage */
 
   int bLoadImgListFromFile() {
-    char szPath[MAX_PATH+MAX_PATH];
+    char szPath[_MAX_PATH+_MAX_PATH];
     char szLine[1024];
     char *pTok;
     int bLoaded = FALSE;
