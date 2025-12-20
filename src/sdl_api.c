@@ -694,8 +694,8 @@
 
       for (ii = 0; ii < pstDeck->iHandCount; ii++) {
         SDL_Rect stRectCard;
-        char szLine1[64];
-        char szLine2[64];
+        // char szLine1[64];
+        // char szLine2[64];
         int iCardMaxW;
         int iCardMinW;
         int iSlotInnerW;
@@ -728,26 +728,10 @@
           int iG = 200; 
           int iB = 200;
       
-          int iPadLen = (8 - strlen(pstDeck->astHand[ii].szName)) / 2;
-          if ( iPadLen < 0 ) iPadLen = 0;
-          snprintf(szLine1, sizeof(szLine1), "%*.*s%s%*.*s", iPadLen, iPadLen, " ", pstDeck->astHand[ii].szName, iPadLen, iPadLen, " ");
-          snprintf(szLine2, sizeof(szLine2), "E:%d V:%d", pstDeck->astHand[ii].iCost, pstDeck->astHand[ii].iValue);
-          // iTx = stRectCard.x;
-          // iTy = stRectCard.y + 30;
-          // SDL_SetRenderDrawColor(pSDL_Renderer, iR, iG, iB, 255);
-          // SDL_RenderFillRect(pSDL_Renderer, &stRectCard);
-          // SDL_SetRenderDrawColor(pSDL_Renderer, 30, 30, 30, 255);
-          // SDL_RenderDrawRect(pSDL_Renderer, &stRectCard);
-          // vSDL_DrawText(pSDL_Renderer, szLine1, iTx, iTy, stSDLColor);
-          // iTy += 21;
-          // vSDL_DrawText(pSDL_Renderer, szLine2, iTx, iTy, stSDLColor);
           {
             STRUCT_IMAGE *pstImg;
-            int iImgIndex;
-
-            iImgIndex = ii % 5; /* images.dat: 5 cartas */
-            pstImg = pIMG_GetNextByType(IMAGE_TYPE_PLAYER_CARD, iImgIndex);
-
+            pstImg = pIMG_FindFirstById(pstDeck->astHand[ii].iType);
+            
             if ( pstImg != NULL && pstImg->pSDL_Txtr != NULL ) {
               vIMG_RenderScaled(pSDL_Renderer, pstImg, &stRectCard, 1.0, TRUE);
             } else {

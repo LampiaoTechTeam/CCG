@@ -1,5 +1,6 @@
 #ifdef USE_SDL2
   #include <trace.h>
+  #include <deck.h>
   #include <image.h>
   #include <sys_interface.h>
   #include <string.h>
@@ -35,7 +36,7 @@
     return pstImgConf;
   }
 
-  int bAddImg2Mem(int iImgType, char *pszPath, int iLen){
+  int bAddImg2Mem(int iImgType, char *pszPath, int iLen, int iCardId){
     PSTRUCT_IMAGE_CONF pstImgConf;
     int iBaseLen;
     int iFullLen;
@@ -54,6 +55,7 @@
     if ( pstImgConf->pszPath == NULL )
       return FALSE;
 
+    pstImgConf->iCardId = iCardId;
     memset(pstImgConf->pszPath, 0, iFullLen);
     sprintf(pstImgConf->pszPath, "%s/%s", ASSETS_BASE_DIR, pszPath);
 
@@ -95,15 +97,25 @@
 
     while ( fgets(szLine, sizeof(szLine), pfImg) ){
       int iType;
+      int iCardId = 0;
+      char szPath[_MAX_PATH];
 
+      memset(szPath, 0x00, sizeof(szPath));
       if ( (pTok = strtok(szLine, "|\n")) == NULL ) continue;
 
       iType = atoi(pTok);
       pTok++;
       if ( (pTok = strtok(NULL, "|\n")) == NULL )   continue;
 
-      if ( bAddImg2Mem(iType, pTok, strlen(pTok)) == FALSE ) continue;
+      sprintf(szPath, "%s", pTok);
+      pTok++;
+      if ( iType == IMAGE_TYPE_PLAYER_CARD ){
+        if ( (pTok = strtok(NULL, "|\n")) == NULL )   continue;
+
+        iCardId = atoi(pTok);
+      }
       
+      if ( bAddImg2Mem(iType, szPath, strlen(szPath), iCardId) == FALSE ) continue;
       bLoaded = TRUE;
     }
 
@@ -192,6 +204,7 @@
         memset(pstImg, 0, sizeof(*pstImg));
 
         pstImg->iType = pstImageCnf->iType;
+        pstImg->iCardId = pstImageCnf->iCardId;
         strncpy(pstImg->szPath, pstImageCnf->pszPath, sizeof(pstImg->szPath)-1);
 
         pstImg->pSDL_Txtr = pSDL_LoadTextureFromPath(pSDL_Renderer, pstImageCnf->pszPath);
@@ -211,7 +224,39 @@
     }
 
     vTraceVarArgsFn("iIMG_LoadAll: giImageCount=%d", giImageCount);
+    vIMG_TraceList();
     return bAnyLoaded;
+  }
+
+  void vIMG_TraceIdx(int iIdx){
+    vTraceVarArgsFn("========= IMG LIST =========");
+    vTraceVarArgsFn(" Type=[%d]", gstImages[iIdx].iType);
+    vTraceVarArgsFn(" Id  =[%d]", gstImages[iIdx].iCardId);
+    vTraceVarArgsFn(" Path=[%s]", gstImages[iIdx].szPath);
+    vTraceVarArgsFn("============================");
+  }
+  void vIMG_TraceList(){
+    int ii = 0;
+    while ( ii < giImageCount ) {
+      vIMG_TraceIdx(ii);
+      ii++;
+    }
+  }
+
+  STRUCT_IMAGE *pIMG_FindFirstById(int iCardId){
+    int ii = 0;
+
+    if ( iCardId == CARD_NONE )
+      return NULL;
+
+    while ( ii < giImageCount ) {
+      if ( gstImages[ii].iCardId == iCardId )
+          return &gstImages[ii];
+      
+      ii++;
+    }
+
+    return NULL;
   }
 
   STRUCT_IMAGE *pIMG_GetNextByType(int iType, int iIndex){
