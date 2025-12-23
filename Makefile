@@ -124,6 +124,7 @@ ifdef USE_SDL2
 	SDL_OBJ = $(OBJ_DIR)/sdl_api.o \
 		      $(OBJ_DIR)/sdl_animation.o \
 		      $(OBJ_DIR)/image.o \
+			  $(OBJ_DIR)/event_render.o \
 			  $(OBJ_DIR)/event.o
 endif
 

@@ -34,41 +34,6 @@
 
     extern STRUCT_BUTTON_LIST gstButtonList;
     
-    // SDL_Rect *pBUTTON_GetRectByImg( int iImgIx ) {
-    //   STRUCT_BUTTON_LIST *pstWrkButton = NULL;
-
-    //   for ( pstWrkButton = &gstButtonList; pstWrkButton != NULL; pstWrkButton = pstWrkButton->pstNext ) {
-    //     switch ( iImgIx ) {
-    //       case PLAYER_IMG_PATH_IDX: {
-    //           return gstPlayer.pSDL_RECT_Player;
-    //         break;
-    //       }
-    //       case FORWARD_IMG_PATH_IDX: {
-    //         if ( pstWrkButton->iAction == FORWARD )
-    //           return pstWrkButton->pSDL_RECT_Button;
-    //         break;
-    //       }
-    //       case LASER_IMG_PATH_IDX: {
-    //         if ( pstWrkButton->iAction == FIRE_LASER )
-    //           return pstWrkButton->pSDL_RECT_Button;
-    //         break;
-    //       }
-    //       case GEAR_IMG_PATH_IDX: {
-    //         if ( pstWrkButton->iAction == CONFIGURE )
-    //           return pstWrkButton->pSDL_RECT_Button;
-    //         break;
-    //       }
-    //       case ROTATE_IMG_PATH_IDX: {
-    //         if ( pstWrkButton->iAction == TURN )
-    //           return pstWrkButton->pSDL_RECT_Button;
-    //         break;
-    //       }
-    //       default: break;
-    //     } /* switch */
-    //   } /* for */
-    //   return NULL;
-    // } /* pBUTTON_GetRectByImg */
-
     int iBUTTON_CheckInteraction( int iXCursor, int iYCursor ) {
       STRUCT_BUTTON_LIST *pstWrkButtonList = NULL;
 
@@ -85,69 +50,6 @@
       return 0;
       // return REDRAW_NONE;
     } /* iBUTTON_CheckInteraction */
-
-    // int iGetButtonTypebyAction( int iAction ) {
-    //   int iType = BUTTON_UNKNOWN;
-
-    //   switch ( iAction ) {
-    //     case FORWARD:
-    //     case TURN:
-    //     case FIRE_LASER: {
-    //       iType = BUTTON_DIRECTION;
-    //       break;
-    //     }
-    //     case ERASE: {
-    //       iType = BUTTON_ERASE;
-    //       break;
-    //     }
-    //     case CONFIRM: {
-    //       iType = BUTTON_CONFIRM;
-    //       break;
-    //     }
-    //     case CONFIGURE: {
-    //       iType = BUTTON_CONFIGURE;
-    //       break;
-    //     }
-    //     default: break;
-    //   } /* switch */
-    //   return iType;
-    // } /* iGetButtonTypebyAction */
-
-    // int iBUTTON_AddToList( SDL_Rect *pSDL_RECT_Btm, int iAction ) {
-    //   STRUCT_BUTTON_LIST *pstWrkButton = NULL;
-
-    //   eBtnAction eBtnAct = (eBtnAction)iAction;
-
-    //   for ( pstWrkButton = &gstButtonList; pstWrkButton->pstNext != NULL; pstWrkButton = pstWrkButton->pstNext );
-      
-    //   if ( pstWrkButton->iAction == 0 && pstWrkButton == &gstButtonList){
-    //     pstWrkButton->pSDL_RECT_Button = (SDL_Rect *) malloc(sizeof(SDL_Rect));
-    //     if ( pstWrkButton->pSDL_RECT_Button == NULL )
-    //       return -1;
-
-    //     memset(pstWrkButton->pSDL_RECT_Button, 0, sizeof(SDL_Rect));
-    //     memcpy(pstWrkButton->pSDL_RECT_Button, pSDL_RECT_Btm, sizeof(SDL_Rect));
-    //     pstWrkButton->iAction = eBtnAct;
-    //     pstWrkButton->iButtonType = iGetButtonTypebyAction(pstWrkButton->iAction);
-    //     pstWrkButton->pstNext = NULL;
-    //     return 0;
-    //   }
-
-    //   if ( (pstWrkButton->pstNext = (PSTRUCT_BUTTON_LIST) malloc(sizeof(STRUCT_BUTTON_LIST))) == NULL )
-    //     return -1;
-      
-    //   pstWrkButton = pstWrkButton->pstNext;
-    //   pstWrkButton->pSDL_RECT_Button = (SDL_Rect *) malloc(sizeof(SDL_Rect));
-    //   if ( pstWrkButton->pSDL_RECT_Button == NULL )
-    //     return -1;
-    //   memset(pstWrkButton->pSDL_RECT_Button, 0, sizeof(SDL_Rect));
-    //   memcpy(pstWrkButton->pSDL_RECT_Button, pSDL_RECT_Btm, sizeof(SDL_Rect));
-    //   pstWrkButton->iAction = eBtnAct;
-    //   pstWrkButton->iButtonType = iGetButtonTypebyAction(pstWrkButton->iAction); 
-    //   pstWrkButton->pstNext = NULL;
-
-    //   return 0;
-    // } /* iBUTTON_AddToList */
 
     void vBUTTON_InitList( void ) {
       memset( &gstButtonList, 0x00, sizeof(STRUCT_BUTTON_LIST ) );
@@ -170,29 +72,6 @@
 
       if ( DEBUG_MSGS ) vTraceEnd();
     } /* vBUTTON_FreeList */
-
-    // void vBUTTON_Draw( SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Button, int iButtonType ) {
-    //   if ( DEBUG_MSGS ) vTraceBegin();
-
-    //   if ( iButtonType == BUTTON_DIRECTION || iButtonType == BUTTON_CONFIGURE ) {
-    
-    //     SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
-    //   }
-    //   else if ( iButtonType == BUTTON_CONFIRM ) {
-  
-    //     SDL_SetRenderDrawColor(renderer, 0, 200, 50, 255);
-    //   }
-    //   else if ( iButtonType == BUTTON_ERASE ) {
-   
-    //     SDL_SetRenderDrawColor( renderer, 255, 255, 200, 255 );
-    //   }
-
-    //   SDL_RenderFillRect( renderer, pSDL_RECT_Button );
-    //   SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
-    //   SDL_RenderDrawRect( renderer, pSDL_RECT_Button );
-
-    //   if( DEBUG_MSGS ) vTraceEnd();
-    // } /* vBUTTON_Draw */
 
     void vBUTTON_DrawList( SDL_Renderer *renderer ) {
       STRUCT_BUTTON_LIST *pstWrkButton = NULL;

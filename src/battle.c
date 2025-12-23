@@ -8,8 +8,10 @@
 #include <dialog.h>
 #include <battle.h>
 #ifdef USE_SDL2
-#include <sdl_api.h>
+  #include <sdl_api.h>
+  #include <event_render.h>
 #endif
+
 
 
 int bHasAnyPlayableCard(PSTRUCT_DECK pstDeck){
@@ -175,6 +177,11 @@ int iHandlePlayerActionByCard(PSTRUCT_CARD pstCard, PSTRUCT_MONSTER pastMonsters
           }
           sprintf(szLine, " Causou %d dano a %s", pstCard->iValue, pastMonsters[ii].szName);
           vPrintLine(szLine, INSERT_NEW_LINE);
+          #ifdef USE_SDL2
+            if (gbSDL_Mode) {
+              vEVR_PushMonsterDamage(ii, pstCard->iValue);
+            }
+          #endif
           bUsed = TRUE;
           if ( iTarget < iMonsterCt ) ii++;
         }
@@ -187,6 +194,11 @@ int iHandlePlayerActionByCard(PSTRUCT_CARD pstCard, PSTRUCT_MONSTER pastMonsters
       gstPlayer.iBlock += pstCard->iValue;
       sprintf(szLine, "Voce se defendeu. +%d = %d Escudo", pstCard->iValue, gstPlayer.iBlock);
       vPrintLine(szLine, INSERT_NEW_LINE);
+      #ifdef USE_SDL2
+        if (gbSDL_Mode) {
+          vEVR_PushPlayerShield(pstCard->iValue);
+        }
+      #endif
       bUsed = TRUE;
       break;
     }
@@ -199,6 +211,11 @@ int iHandlePlayerActionByCard(PSTRUCT_CARD pstCard, PSTRUCT_MONSTER pastMonsters
         
       sprintf(szLine, "Voce se curou. +%d = %d HP", pstCard->iValue, gstPlayer.iHP);
       vPrintLine(szLine, INSERT_NEW_LINE);
+      #ifdef USE_SDL2
+        if (gbSDL_Mode) {
+          vEVR_PushPlayerHeal(pstCard->iValue);
+        }
+      #endif
       bUsed = TRUE;
       break;
     }

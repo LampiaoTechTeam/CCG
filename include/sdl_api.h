@@ -50,7 +50,12 @@
         (unsigned char)(RGBA)[3] \
       )
     /** COLOR MACRO SESSION - END */
-    
+    void vSDL_DrawTextShadow(SDL_Renderer *pSDL_Renderer,
+                         const char *pszTxt,
+                         int iX, int iY,
+                         SDL_Color stFG,
+                         SDL_Color stShadow,
+                         int iOffX, int iOffY);
     void vSDL_SetupMain(SDL_Renderer **pSDL_Renderer, SDL_Window **pSDL_Window);
     void vSDL_MainInit();
     void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCt);

@@ -8,11 +8,15 @@
 #include <sdl_api.h>
 #include <trace.h>
 #include <event.h>
+#include <event_render.h>
 #include <SDL2/SDL.h>
 #include <terminal_utils.h>
 #include <game.h>
 
 int giPendingCard = -1;
+int giHoverCard = -1;
+int giHoverMonster = -1;
+
 
 /* ---- helpers locais ---- */
 static void vMaybeToggleFullscreen(SDL_Event *pSDL_EVENT_Ev) {
@@ -49,11 +53,18 @@ int iHandleDialogMouse(SDL_Event *pEv, SDL_Renderer *pSDL_Renderer) {
 /* ---- API pública ---- */
 void vEVENT_Init(void) {
   giPendingCard = -1;
+  giHoverCard = -1;
+  giHoverMonster = -1;
+  vEVR_Init();
 }
 
 void vEVENT_Quit(void) {
   giPendingCard = -1;
+  giHoverCard = -1;
+  giHoverMonster = -1;
+  vEVR_Quit();
 }
+
 
 /* handler único com contexto completo */
 int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
@@ -109,7 +120,25 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
       iRedrawReturnStatus |= REDRAW_ALL; /* troca de fullscreen pede full redraw */
       break;
     }
+    case SDL_MOUSEMOTION: {
+      int iX;
+      int iY;
+      int iNewHoverCard;
+      int iNewHoverMonster;
 
+      iX = pSDL_EVENT_Ev->motion.x;
+      iY = pSDL_EVENT_Ev->motion.y;
+
+      iNewHoverCard = iSDL_HandIndexFromPoint(iX, iY, pstDeck);
+      iNewHoverMonster = iSDL_MonsterIndexFromPoint(iX, iY, pastMonsters, iMonsterCt);
+
+      if (iNewHoverCard != giHoverCard || iNewHoverMonster != giHoverMonster) {
+        giHoverCard = iNewHoverCard;
+        giHoverMonster = iNewHoverMonster;
+        iRedrawReturnStatus |= REDRAW_TABLE;
+      }
+      break;
+    }
     case SDL_MOUSEBUTTONDOWN: {
       if (pSDL_EVENT_Ev->button.button == SDL_BUTTON_LEFT) {
         int iX;
@@ -131,6 +160,14 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
         /* 2) clique nas cartas / seleção de alvo */
         iHandIdx = iSDL_HandIndexFromPoint(iX, iY, pstDeck);
         if (iHandIdx >= 0) {
+
+          if (giPendingCard == iHandIdx) {
+            giPendingCard = -1;
+            giSelectedMonster = -1;
+            iRedrawReturnStatus |= REDRAW_TABLE;
+            break;
+          }
+
           if (!bHasAnyPlayableCard(pstDeck)) {
             giPendingCard = -1;
             iRedrawReturnStatus |= REDRAW_TABLE;
@@ -223,6 +260,11 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
             vDiscardCard(pstDeck, giPendingCard);
             giPendingCard = -1;
             iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
+          }
+          if (iMonIdx < 0) {
+            giPendingCard = -1;
+            giSelectedMonster = -1;
+            iRedrawReturnStatus |= REDRAW_TABLE;
           }
         }
       }
