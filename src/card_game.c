@@ -1,6 +1,10 @@
 #include <debuff.h>
 #include <deck.h>
 #include <monster.h>
+#ifdef USE_SDL2
+  #include <SDL2/SDL.h>
+  #include <SDL2/SDL_ttf.h>
+#endif
 #include <player.h>
 #include <hud.h>
 #include <dialog.h>
@@ -12,7 +16,9 @@
 #endif
 #include <card_game.h>
 #include <game.h>
-
+#include <welcome.h>
+#include <consts.h>
+#include <conf.h>
 
 /** === Globals === */
 char *gkpszProgramName;
@@ -20,9 +26,6 @@ int gbLogLevel = 1;
 int giLevel;
 int gbSDL_Mode;
 STRUCT_PLAYER gstPlayer;
-#ifdef USE_SDL2
-  STRUCT_HUD_LIST gstHudList;
-#endif
 
 int bShowVersion = FALSE;
 int bShowHelp = FALSE;
@@ -36,6 +39,7 @@ STRUCT_CONF_FILE astConfFile[] = {
   { "debug-level", gstGlobalPrm.szDebugLevel, sizeof(gstGlobalPrm.szDebugLevel), DATATYPE_STRING, "9"                 },
   { "wrk-dir"    , gstGlobalPrm.szWrkDir    , sizeof(gstGlobalPrm.szWrkDir)    , DATATYPE_STRING, "./"                },
   { "fonts-dir"  , gstGlobalPrm.szFontsDir  , sizeof(gstGlobalPrm.szFontsDir)  , DATATYPE_STRING, "./fonts"           },
+  { "conf-dir"   , gstGlobalPrm.szConfDir   , sizeof(gstGlobalPrm.szConfDir)   , DATATYPE_STRING, "./conf"            },
   { NULL         , NULL                     , 0                                , 0              , NULL                }
 };
 
@@ -65,10 +69,15 @@ int bInitGlobals(void) {
   memset(szConfFile   , 0x00, sizeof(szConfFile));
   memset(szGameDatPath, 0x00, sizeof(szGameDatPath));
 
-  snprintf(szConfFile   , sizeof(szConfFile), "./ccg.conf");
+  snprintf(szConfFile   , sizeof(szConfFile), "./conf/ccg.conf");
   snprintf(szGameDatPath, sizeof(szGameDatPath), "%s%cGAME.dat", gstGlobalPrm.szWrkDir, DIR_SEPARATOR);
 
   giLevel = 1;
+  gstGame.iLevel = giLevel;
+  gstGame.iStatus = STATUS_WELCOME;
+  gstGame.iLastState = STATE_NONE;
+  gstGame.iState = STATE_WELCOME_BEGIN;
+
   snprintf(gszDebugLevel, sizeof(gszDebugLevel), "%c", DEBUG_LVL_DETAILS);
   gbSDL_Mode = FALSE;
   gkpszProgramName = NULL;
@@ -78,12 +87,7 @@ int bInitGlobals(void) {
     return 0;
   }
 
-  if ( iDIR_IsDir(szGameDatPath) == -1 ) {
-    gstGame.iLevel = giLevel;
-    gstGame.iStatus = STATUS_RUN;
-    gstGame.iState = 0;
-  }
-  else {
+  if ( iDIR_IsDir(szGameDatPath) == 0 ) {
     iGameLoad();
   }
 
@@ -215,7 +219,7 @@ int CCG_Main(int argc, char *argv[]){
 #endif
 
   memset(&gstGlobalPrm, 0x00, sizeof(gstGlobalPrm));
-  memset(&gstGame     , 0x00, sizeof(gstGame));
+  memset(&gstGame     , 0x00, sizeof(gstGame     ));
 
   if ( !bInitGlobals() ) {
     return -1;
@@ -234,7 +238,7 @@ int CCG_Main(int argc, char *argv[]){
     return 0;
   }
 
-  vInitLogs();
+  vInitLogs(gstGlobalPrm.szTrace, gstGlobalPrm.szDebugLevel);
      
   #ifdef USE_SDL2
     if ( gbSDL_Mode )      
@@ -244,6 +248,9 @@ int CCG_Main(int argc, char *argv[]){
   #else
     vShowInitDialog();
   #endif
+
+  vSDL_WelcomeInit();
+  if ( iSDL_OpenWelcome(pSDL_Rnd) == WELCOME_EXIT ) return 0;
 
   vInitBasicDeck(&stDeck);
   iDrawMultipleCard(INIT_HAND_CARDS, &stDeck);

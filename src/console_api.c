@@ -1,9 +1,19 @@
+#include <stdio.h>
+#include <card_game.h>
 #include <debuff.h>
 #include <deck.h>
 #include <trace.h>
 #include <terminal_utils.h>
 #include <monster.h>
+#ifdef USE_SDL2
+  #include <SDL2/SDL_rect.h>
+#endif
 #include <player.h>
+#ifdef USE_SDL2
+  #include <SDL2/SDL.h>
+  #include <SDL2/SDL_ttf.h>
+  #include <sdl_api.h>
+#endif
 #include <battle.h>
 #include <input.h>
 #include <shop.h>

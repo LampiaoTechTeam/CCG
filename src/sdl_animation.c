@@ -8,12 +8,15 @@
  */
 
 #ifdef USE_SDL2
+  #include <stdio.h>
   #include <debuff.h>
   #include <deck.h>
   #include <trace.h>
   #include <monster.h>
+  #include <SDL2/SDL.h>
   #include <player.h>
   #include <sdl_animation.h>
+  #include <SDL2/SDL_ttf.h>
   #include <sdl_api.h>
   #include <math.h>
 

@@ -1,6 +1,9 @@
 #include <debuff.h>
 #include <deck.h>
 #include <monster.h>
+#ifdef USE_SDL2
+  #include <SDL2/SDL.h>
+#endif
 #include <dialog.h>
 #include <input.h>
 #include <sys_interface.h>

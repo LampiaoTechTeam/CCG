@@ -3,7 +3,7 @@
 
   #ifdef USE_SDL2
 
-    #include <card_game.h>
+    // #include <card_game.h>
 
     extern int giPendingCard;
     extern int giHoverCard;

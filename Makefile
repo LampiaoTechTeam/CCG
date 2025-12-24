@@ -77,6 +77,14 @@ LOG_DIR       = ${TARGET_PREFIX}log
 INC_DIR       = -I$(INCLUDE_PATH)
 
 SDL_ADD_LIBS =
+
+ifdef LINUX
+	INC_DIR += -I/usr/include/libxml2
+else
+	# TODO
+	INC_DIR +=
+endif
+
 ifdef USE_SDL2
 	ifdef _WIN32
 		ifdef VCPKG_ROOT
@@ -91,8 +99,8 @@ ifdef USE_SDL2
 endif
 
 
-LIBS    =
-CCOPT   = -Wall -Wextra
+LIBS    = -lxml2
+CCOPT   = -Wall -Wextra #-ftime-report -H
 ifdef _WIN32
   CCOPT += -D_WIN32
   LIBS  += $(SDL_ADD_LIBS) -D_WIN32
@@ -145,7 +153,11 @@ OBJS = \
 	$(OBJ_DIR)/console_api.o \
 	$(OBJ_DIR)/trace.o \
 	$(OBJ_DIR)/conf.o \
-	$(OBJ_DIR)/game.o
+	$(OBJ_DIR)/game.o \
+	$(OBJ_DIR)/xml.o \
+	$(OBJ_DIR)/welcome.o \
+	$(OBJ_DIR)/hud.o \
+	$(OBJ_DIR)/rect.o
 
 doc:
 	mkdir -p doc/doxygen && doxygen Doxyfile

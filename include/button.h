@@ -11,7 +11,7 @@
   #ifndef _BUTTON_H_
     #define _BUTTON_H_
     #include <image.h>
-    #include <card_game.h>
+    // #include <card_game.h>
 
     #define BUTTON_SIZE_RATIO 0.06
 

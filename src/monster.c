@@ -1,8 +1,13 @@
+#include <stdio.h>
+#include <card_game.h>
 #include <debuff.h>
 #include <deck.h>
 #include <trace.h>
 #include <terminal_utils.h>
 #include <monster.h>
+#ifdef USE_SDL2
+  #include <SDL2/SDL.h>
+#endif
 #include <player.h>
 #include <input.h>
 
@@ -94,7 +99,7 @@ void vTraceDebuffList(PSTRUCT_DEBUFF pstDebuff, int iDebuffCt){
       pstWrkDbf->iDamage,
       pstWrkDbf->iRounds
     );
-    vTraceVarArgsFn("|-->%s - [%s]", ii, pszDebuffTypeDesc[pstWrkDbf->iType], szLine);
+    vTraceVarArgsFn("|-->%s - [%s]", pszDebuffTypeDesc[pstWrkDbf->iType], szLine);
     pstWrkDbf++;
   }
 

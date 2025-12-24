@@ -1,6 +1,6 @@
 #ifndef MONSTER_H
   #define MONSTER_H
-  #include <card_game.h>
+  // #include <card_game.h>
 
   #define MAX_MONSTERS             20
   #define MONSTER_INITAL_HP_MAX    50

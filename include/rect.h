@@ -7,10 +7,10 @@
  *
  */
 
-#ifdef USE_SDL2
-  #ifndef _RECT_H_
-    #define _RECT_H_
-    #include <card_game.h>
+#ifndef _RECT_H_
+  #define _RECT_H_
+  #ifdef USE_SDL2
+    // #include <card_game.h>
 
     // Definições de proporções como percentuais da tela
     #define HUD_X_FACTOR      0.06  // Porcentagem da largura da tela
@@ -40,46 +40,10 @@
     /**
      * Set
      */
-    int iRECT_SetDimensions(SDL_Rect *pSDL_Rect, STRUCT_RECT_DIMENSIONS *pst_RECT_Dimensions)
-    {
-      if (pSDL_Rect == NULL)
-        return FALSE;
-
-      pSDL_Rect->x = pst_RECT_Dimensions->stX.dFactor + pst_RECT_Dimensions->stX.dAddAmount;
-      pSDL_Rect->y = pst_RECT_Dimensions->stY.dFactor + pst_RECT_Dimensions->stY.dAddAmount;
-      pSDL_Rect->w = pst_RECT_Dimensions->stW.dFactor + pst_RECT_Dimensions->stW.dAddAmount;
-      pSDL_Rect->h = pst_RECT_Dimensions->stH.dFactor + pst_RECT_Dimensions->stH.dAddAmount;
-      return TRUE;
-    }
-
-
-    void vRECT_InitGlobalDimensions(void)
-    {
-      (&gstPlayerHUD_Dimensions)->stX.dFactor = 0;
-      (&gstPlayerHUD_Dimensions)->stX.dAddAmount = 0;
-      (&gstPlayerHUD_Dimensions)->stY.dFactor = 0;
-      (&gstPlayerHUD_Dimensions)->stY.dAddAmount = 0;
-      (&gstPlayerHUD_Dimensions)->stW.dFactor = INT_WINDOW_WIDTH;
-      (&gstPlayerHUD_Dimensions)->stW.dAddAmount = 0;
-      (&gstPlayerHUD_Dimensions)->stH.dFactor = INT_WINDOW_HEIGHT;
-      (&gstPlayerHUD_Dimensions)->stH.dAddAmount = 0;
-    }
-
-    void vRECT_InitPlayerHud()
-    {
-      vRECT_InitGlobalDimensions();
-      iRECT_SetDimensions(&gSDL_Player_Rect, &gstPlayerHUD_Dimensions);
-    }
-    void vCalculateHUDRect(SDL_Rect *pSDL_Rect, double xFactor, double yFactor, double widthFactor, double heightFactor)
-    {
-      if (pSDL_Rect == NULL)
-        return;
-
-      pSDL_Rect->x = (int)(xFactor * INT_WINDOW_WIDTH);
-      pSDL_Rect->y = (int)(yFactor * INT_WINDOW_HEIGHT);
-      pSDL_Rect->w = (int)(widthFactor * INT_WINDOW_WIDTH);
-      pSDL_Rect->h = (int)(heightFactor * INT_WINDOW_HEIGHT);
-    }
+    int iRECT_SetDimensions(SDL_Rect *pSDL_Rect, STRUCT_RECT_DIMENSIONS *pst_RECT_Dimensions);
+    void vRECT_InitGlobalDimensions(void);
+    void vRECT_InitPlayerHud();
+    void vCalculateHUDRect(SDL_Rect *pSDL_Rect, double xFactor, double yFactor, double widthFactor, double heightFactor);
 
   #endif
 #endif

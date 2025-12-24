@@ -6,11 +6,11 @@
  * SDL2 TTF Handling 
  * 
  */
-#ifdef USE_SDL2
-  #ifndef _FONT_H_
-    #define _FONT_H_
-    #include <card_game.h>
-    #include <SDL2/SDL_ttf.h>
+#ifndef _FONT_H_
+#define _FONT_H_
+  #ifdef USE_SDL2
+    // #include <card_game.h>
+    // #include <SDL2/SDL_ttf.h>
 
     #define PATH_TO_TTF "fonts"  
     #define TTF_FONT_TITLE "FiraCode.ttf"
@@ -24,5 +24,5 @@
     return TTF_OpenFont(szFontPath, 16);
   }
 
-  #endif /* _FONT_H_ */
-#endif
+  #endif
+#endif /* _FONT_H_ */

@@ -1,6 +1,6 @@
 #ifndef TERMINAL_UTILS_H
   #define TERMINAL_UTILS_H
-  #include <card_game.h>
+  // #include <card_game.h>
   #define NO_NEW_LINE 0
   #define INSERT_NEW_LINE 1
 

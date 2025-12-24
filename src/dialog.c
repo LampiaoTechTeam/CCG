@@ -1,3 +1,6 @@
+#ifdef USE_SDL2
+  #include <SDL2/SDL.h>
+#endif
 #include <dialog.h>
 #include <debuff.h>
 #include <deck.h>
@@ -8,6 +11,7 @@
 #include <time.h>
 
 #ifdef USE_SDL2
+  #include <SDL2/SDL_ttf.h>
   #include <sdl_api.h>
 #endif
 

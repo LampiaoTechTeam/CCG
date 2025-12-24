@@ -1,23 +1,32 @@
 #ifdef USE_SDL2
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #include <card_game.h>
 #include <deck.h>
 #include <debuff.h>
 #include <monster.h>
+#ifdef USE_SDL2
+  #include <SDL2/SDL.h>
+  #include <SDL2/SDL_image.h>
+  #include <SDL2/SDL_ttf.h>
+#endif
 #include <player.h>
+#include <welcome.h>
 
 #include <trace.h>
 #include <battle.h>
+#include <sdl_api.h>
 #include <shop.h>
 #include <dialog.h>
 #include <input.h>
 #include <terminal_utils.h>
 #include <event.h>
 #include <sdl_animation.h>
-#include <sdl_api.h>
 #include <image.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
 #include <event_render.h>
 #include <game.h>
 
@@ -70,7 +79,7 @@ void vSDL_SetupMain(SDL_Renderer **pSDL_Renderer, SDL_Window **pSDL_Window){
   *pSDL_Renderer = SDL_CreateRenderer(*pSDL_Window, -1, SDL_RENDERER_ACCELERATED );
 
   if ( iIMG_LoadAll(*pSDL_Renderer) == FALSE )
-    vTraceVarArgsFn("Imagens não inicializadas (iIMG_LoadAll falhou)");
+    if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn("Imagens não inicializadas (iIMG_LoadAll falhou)");
 
   SDL_SetRenderDrawBlendMode(*pSDL_Renderer, SDL_BLENDMODE_BLEND);
 
@@ -261,12 +270,14 @@ static void vSDL_DialogScrollLines(int iDelta, int iVisible) {
 
   gstDlgList.iTopIndex = giDlgTopIndex;
 
-  vTraceVarArgsFn(
-    "Scroll atualizado: TopIndex=%d / Total=%d / Visible=%d",
-    giDlgTopIndex,
-    iTotal,
-    iVisible
-  );
+  if ( DEBUG_SDL_MSGS ) {
+    vTraceVarArgsFn(
+      "Scroll atualizado: TopIndex=%d / Total=%d / Visible=%d",
+      giDlgTopIndex,
+      iTotal,
+      iVisible
+    );
+  }
 }
 
 void vSDL_DialogHandleMouse(SDL_Event *pstEvt, int iX, int iY, int iW, int iH) {
@@ -549,7 +560,7 @@ void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_M
   SDL_Rect stRectMesa;
   int ii;
 
-  vTraceVarArgsFn("iMonsterCt=%d iHandCt=%d", iMonsterCt, pstDeck->iHandCount);
+  if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn("iMonsterCt=%d iHandCt=%d", iMonsterCt, pstDeck->iHandCount);
 
   stRectMesa.x = 50;
   stRectMesa.y = 50;
@@ -877,37 +888,38 @@ void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_M
 void vSDL_MainInit(void) {
   int iImgFlags;
   int iImgInitted;
-  vTraceVarArgsFn(" -- Begin");
+  if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn(" -- Begin");
 
   SDL_SetMainReady();
 
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    if (DEBUG_MSGS)
-      vTraceVarArgsFn("Couldn't initialize SDL: %s", SDL_GetError());
+    if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn("Couldn't initialize SDL: %s", SDL_GetError());
     return;
   }
 
   iImgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
   iImgInitted = IMG_Init(iImgFlags);
   if ((iImgInitted & iImgFlags) != iImgFlags) {
-    vTraceVarArgsFn("Erro IMG_Init: %s", IMG_GetError());
+    if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn("Erro IMG_Init: %s", IMG_GetError());
   }
 
   if (TTF_WasInit() == 0) {
-    if (TTF_Init() != 0)
-      vTraceVarArgsFn("Erro TTF_Init: %s", TTF_GetError());
+    if (TTF_Init() != 0) {
+      if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn("Erro TTF_Init: %s", TTF_GetError());
+    }
   }
 
   gFont = ttfSDL_InitFont();
-  if (!gFont)
-    vTraceVarArgsFn("Erro ao carregar fonte: %s", TTF_GetError());
+  if (!gFont) {
+    if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn("Erro ao carregar fonte: %s", TTF_GetError());
+  }
 
-  vInitImgConf();
-  if (bLoadImgListFromFile() == FALSE)
-    vTraceVarArgsFn("Erro ao carregar image list");
+  if (bLoadImgListFromFile() == FALSE) {
+    if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn("Erro ao carregar image list");
+  }
 
   vEVENT_Init();
-  vTraceVarArgsFn(" -- End");
+  if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn(" -- End");
 }
 
 int iHitTestMonster(int iX, int iY) {
@@ -1000,7 +1012,7 @@ void vRedraw(SDL_Renderer *pSDL_Renderer,
   bRedrawDialog = (iRedrawAction & REDRAW_DIALOG) != 0;
   bRedrawTable  = (iRedrawAction & REDRAW_TABLE)  != 0;
 
-  vTraceVarArgsFn("bRedrawDialog=%d bRedrawTable=%d gbAnimateHandDraw=%d",
+  if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn("bRedrawDialog=%d bRedrawTable=%d gbAnimateHandDraw=%d",
                   bRedrawDialog, bRedrawTable, gbAnimateHandDraw);
 
   if (bRedrawDialog == 0 && bRedrawTable == 0)
@@ -1024,18 +1036,112 @@ void vRedraw(SDL_Renderer *pSDL_Renderer,
   SDL_RenderPresent(pSDL_Renderer);
 }
 
+void vMessageBox(const char *kpszMsg, const char *kpszFooterMsg) {
+  SDL_Surface* pstMsgBoxTextSurface = NULL;
+  SDL_Texture* pstMsgBoxTextTexture = NULL;
+  SDL_Rect stFooterTextRect = { 0 };
+  SDL_Surface* pstFooterTextSurface = NULL;
+  SDL_Texture* pstFooterTextTexture = NULL;
+  int bShowMsgBox = TRUE;
+  int bRenderer = TRUE;
+  SDL_Color stBackgroundColor;
+  SDL_Color stBorderColor;
+  SDL_Color stTextColor;
+  SDL_Rect stRect;
+  SDL_Rect stTextRect;
+  SDL_Event unEvent;
+
+  if ( bStrIsEmpty(kpszMsg) ) return;
+
+  stBackgroundColor.r = 255;
+  stBackgroundColor.g = 255;
+  stBackgroundColor.b = 255;
+  stBackgroundColor.a = 255;
+
+  stBorderColor.r = 0;
+  stBorderColor.g = 0;
+  stBorderColor.b = 0;
+  stBorderColor.a = 255;
+
+  stTextColor.r = 0;
+  stTextColor.g = 0;
+  stTextColor.b = 0;
+  stTextColor.a = 255;
+
+  stRect.h = 100;
+  stRect.w = 800 / 2;
+  stRect.x = (800 - stRect.w) / 2;
+  stRect.y = 800 / 4;
+
+  pstMsgBoxTextSurface = TTF_RenderText_Blended(gFont, kpszMsg, stTextColor);
+  pstMsgBoxTextTexture = SDL_CreateTextureFromSurface(gpSDL_Renderer, pstMsgBoxTextSurface);
+  stTextRect.w = pstMsgBoxTextSurface->w;
+  stTextRect.h = pstMsgBoxTextSurface->h;
+  stTextRect.x = stRect.x + (stRect.w - stTextRect.w) / 2;
+  stTextRect.y = stRect.y + (stRect.h - stTextRect.h) / 4;
+
+
+
+  pstFooterTextSurface = TTF_RenderText_Blended(gFont, kpszFooterMsg, stTextColor);
+  pstFooterTextTexture = SDL_CreateTextureFromSurface(gpSDL_Renderer, pstFooterTextSurface);
+
+  stFooterTextRect.w = pstFooterTextSurface->w;
+  stFooterTextRect.h = pstFooterTextSurface->h;
+  stFooterTextRect.x = stRect.x + (stRect.w - stFooterTextRect.w) / 2;
+  stFooterTextRect.y = stRect.y + stRect.h - stFooterTextRect.h - 10;
+
+  bRenderer = TRUE;
+  while ( bShowMsgBox ) {
+    while ( SDL_PollEvent(&unEvent) ) {
+      if ( unEvent.type == SDL_KEYDOWN || unEvent.type == SDL_QUIT ) {
+        bShowMsgBox = FALSE;
+        bRenderer = FALSE;
+        break;
+      }
+    }
+
+    if ( bRenderer ) {
+      SDL_SetRenderDrawColor(gpSDL_Renderer, stBackgroundColor.r, stBackgroundColor.g, stBackgroundColor.b, stBackgroundColor.a);
+      SDL_RenderFillRect(gpSDL_Renderer, &stRect);
+      SDL_SetRenderDrawColor(
+        gpSDL_Renderer,
+        stBorderColor.r,
+        stBorderColor.g,
+        stBorderColor.b,
+        stBorderColor.a
+      );
+      SDL_RenderDrawRect(gpSDL_Renderer, &stRect);
+      SDL_RenderCopy(gpSDL_Renderer, pstMsgBoxTextTexture, NULL, &stTextRect);
+      SDL_RenderCopy(gpSDL_Renderer, pstFooterTextTexture, NULL, &stFooterTextRect);
+      SDL_RenderPresent(gpSDL_Renderer);
+      if ( DEBUG_SDL_ALL ) {
+        vTraceVarArgsFn("vMessageBox - %s", kpszMsg);
+        vTraceVarArgsFn("vMessageBox - %s", kpszFooterMsg);
+      }
+      bRenderer = FALSE;
+    }
+  }
+
+  SDL_FreeSurface(pstMsgBoxTextSurface);
+  SDL_DestroyTexture(pstMsgBoxTextTexture);
+  SDL_FreeSurface(pstFooterTextSurface);
+  SDL_DestroyTexture(pstFooterTextTexture);
+}
+
 void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCt) {
   int iRedrawAction;
   int bHasPlayableCards;
   uint64_t ui64FrameStart;
   uint64_t ui64FrameTime;
 
-  iRedrawAction = REDRAW_ALL;
+  iRedrawAction = REDRAW_TABLE;
   bHasPlayableCards = FALSE;
 
-  vTraceVarArgsFn(" --- SDL MAIN LOOP");
+  if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn(" --- SDL MAIN LOOP");
 
   gbAnimateHandDraw = TRUE;
+
+  vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
 
   while (*pbRunning) {
 
@@ -1062,18 +1168,21 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       continue;
     }
 
-    if (iRedrawAction == -2)
+    if (iRedrawAction == -2) {
+      vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
       continue;
+    }
 
     if (!iAnyMonsterAlive(pastMonsters, iMonsterCt)) {
       char szMsg[128];
       memset(szMsg, 0x00, sizeof(szMsg));
       snprintf(szMsg, sizeof(szMsg), "*** Nivel %d completo! ***", giLevel);
       vPrintLine(szMsg, NO_NEW_LINE);
-      vRedraw(pSDL_Renderer, REDRAW_DIALOG, pstDeck, pastMonsters, iMonsterCt);
-      iRedrawAction = REDRAW_ALL;
+      iRedrawAction = REDRAW_TABLE;
       vAddPlayerReward(&gstPlayer);
+      vEVR_ClearAll();
       iSDL_OpenShop(pSDL_Renderer, &gstPlayer, pstDeck);
+      vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
       giLevel++;
       vInitMonstersForLevel(pastMonsters, giLevel, &iMonsterCt);
       vStartNewTurn(pstDeck);
@@ -1081,30 +1190,47 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       gbAnimateHandDraw = TRUE;
     }
     else if (gstPlayer.iEnergy <= 0 || !(bHasPlayableCards = bHasAnyPlayableCard(pstDeck))) {
-      vTraceVarArgsFn("Player Energy=[%d] | Got any playable card?=%d",
+      if ( DEBUG_SDL_MSGS ) {
+        vTraceVarArgsFn("Player Energy=[%d] | Got any playable card?=%d",
                       gstPlayer.iEnergy, bHasPlayableCards);
-
-      vRedraw(pSDL_Renderer, REDRAW_ALL, pstDeck, pastMonsters, iMonsterCt);
+      }
+      vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
 
       vDoEnemyActions(pastMonsters, iMonsterCt);
       vPrintLine("Iniciando novo turno, aguarde...", INSERT_NEW_LINE);
-      vRedraw(pSDL_Renderer, REDRAW_ALL, pstDeck, pastMonsters, iMonsterCt);
+      vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
       iRedrawAction = REDRAW_NONE;
 
-      if (gstPlayer.iHP <= 0) {
+      if ( gstPlayer.iHP <= 0 ) {
         vPrintLine("Voce morreu!", INSERT_NEW_LINE);
-        vRedraw(pSDL_Renderer, REDRAW_ALL, pstDeck, pastMonsters, iMonsterCt);
+        vMessageBox("Voce morreu!", "Pressione qualquer tecla para continuar");
+        vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
         iRedrawAction = REDRAW_NONE;
-        SDL_Delay(2500);
-        *pbRunning = FALSE;
-        break;
+        vSDL_WelcomeInit();
+        if ( iSDL_OpenWelcome(pSDL_Renderer) == WELCOME_EXIT ) {
+          pbRunning = FALSE;
+          break;
+        }
+        vEVR_ClearAll();
+        vInitBasicDeck(pstDeck);
+        iDrawMultipleCard(INIT_HAND_CARDS, pstDeck);
+        vInitPlayer(pstDeck, !gbSDL_Mode);
+        giLevel = 1;
+        gstGame.iLevel = giLevel;
+        gstGame.iStatus = STATUS_WELCOME;
+        gstGame.iLastState = STATE_NONE;
+        gstGame.iState = STATE_WELCOME_BEGIN;
+        vInitMonstersForLevel(pastMonsters, giLevel, &iMonsterCt);
+        vInitDialog();
+        iRedrawAction = REDRAW_TABLE;
+        vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
       }
 
       vStartNewTurn(pstDeck);
       vTraceDeck(pstDeck, TRACE_DECK_ALL);
       gbAnimateHandDraw = TRUE;
 
-      iRedrawAction = REDRAW_ALL;
+      iRedrawAction = REDRAW_TABLE;
     }
 
     if (iEVR_Tick(ui64FrameStart) != FALSE) iRedrawAction |= REDRAW_TABLE;
@@ -1120,11 +1246,11 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
     }
   }
   
-  vTraceVarArgsFn(" --- SDL MAIN LOOP END");
+  if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn(" --- SDL MAIN LOOP END");
 }
 
 void vSDL_MainQuit(void) {
-  vTraceVarArgsFn(" -- Begin");
+  if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn(" -- Begin");
 
   if (gFont) {
     TTF_CloseFont(gFont);
@@ -1132,7 +1258,6 @@ void vSDL_MainQuit(void) {
   }
 
   vIMG_UnloadAll();
-  vFreeImgList();
 
   if (gpSDL_Renderer) {
     SDL_DestroyRenderer(gpSDL_Renderer);
@@ -1149,7 +1274,7 @@ void vSDL_MainQuit(void) {
   SDL_Quit();
   vEVENT_Quit();
 
-  vTraceVarArgsFn(" -- End ");
+  if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn(" -- End ");
 }
 
 #endif /* USE_SDL2 */

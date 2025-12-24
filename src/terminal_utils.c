@@ -1,6 +1,15 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <card_game.h>
 #include <debuff.h>
 #include <deck.h>
 #include <monster.h>
+#ifdef USE_SDL2
+  #include <SDL2/SDL.h>
+#endif
 #include <player.h>
 #include <dialog.h>
 #include <input.h>

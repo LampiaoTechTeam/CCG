@@ -1,15 +1,21 @@
 #ifdef USE_SDL2
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <card_game.h>
 #include <deck.h>
 #include <debuff.h>
 #include <monster.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <player.h>
 #include <battle.h>
 #include <sdl_api.h>
 #include <trace.h>
 #include <event.h>
 #include <event_render.h>
-#include <SDL2/SDL.h>
 #include <terminal_utils.h>
 #include <game.h>
 
@@ -96,13 +102,18 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
       if ( pSDL_EVENT_Ev->key.keysym.sym == SDLK_SPACE ) {
         char szMsg[32] = "";
         memset(szMsg, 0x00, sizeof(szMsg));
-        switch ( gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_RUN : STATUS_PAUSE) ) {
+        switch ( gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_GAMING : STATUS_PAUSE) ) {
           case STATUS_PAUSE: {
             snprintf(szMsg, sizeof(szMsg), "Jogo pausado");
+            gstGame.iLastState = gstGame.iState;
+            gstGame.iState = STATE_PAUSE_GAMING;
             break;
           }
-          case STATUS_RUN:
+          case STATUS_GAMING:
           default: {
+            /* TODO: Restore LastStatus function */
+            gstGame.iState = gstGame.iLastState;
+            gstGame.iLastState = STATE_NONE;
             snprintf(szMsg, sizeof(szMsg), "Jogo despausado");
             break;
           }
@@ -191,7 +202,7 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
             gstPlayer.iEnergy -= pstCard->iCost;
             vDiscardCard(pstDeck, giPendingCard);
             giPendingCard = -1;
-            iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
+            iRedrawReturnStatus |= (REDRAW_TABLE);
             break;
           }
 
@@ -210,7 +221,7 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
             vDiscardCard(pstDeck, giPendingCard);
             
             giPendingCard = -1;
-            iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
+            iRedrawReturnStatus |= (REDRAW_TABLE);
             break;
           }
 
@@ -237,7 +248,7 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
             gstPlayer.iEnergy -= pstCard->iCost;
             vDiscardCard(pstDeck, giPendingCard);
             giPendingCard = -1;
-            iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
+            iRedrawReturnStatus |= (REDRAW_TABLE);
           }
           /* se iAlive > 1, apenas mantém giPendingCard e aguarda clique no monstro */
           break;
@@ -259,7 +270,7 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
             gstPlayer.iEnergy -= pstCard->iCost;
             vDiscardCard(pstDeck, giPendingCard);
             giPendingCard = -1;
-            iRedrawReturnStatus |= (REDRAW_TABLE | REDRAW_DIALOG);
+            iRedrawReturnStatus |= (REDRAW_TABLE);
           }
           if (iMonIdx < 0) {
             giPendingCard = -1;

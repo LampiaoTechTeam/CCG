@@ -1,15 +1,22 @@
 #ifdef USE_SDL2
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <card_game.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <deck.h>
 #include <debuff.h>
 #include <monster.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <player.h>
 #include <battle.h>
 #include <sdl_api.h>
 #include <event_render.h>
-#include <SDL2/SDL.h>
 
 #define EVR_MAX_POPUPS   16
 #define EVR_MAX_MONSTERS 64
@@ -40,7 +47,7 @@ static uint64_t gui64NowMs = 0;
 
 extern SDL_Rect gMonsterRects[64];
 
-static void vEVR_ClearAll(void) {
+void vEVR_ClearAll(void) {
   memset(gastPopups, 0x00, sizeof(gastPopups));
   memset(gastMonFlash, 0x00, sizeof(gastMonFlash));
   memset(&gstPlayerFlash, 0x00, sizeof(gstPlayerFlash));

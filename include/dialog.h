@@ -1,7 +1,7 @@
 #ifndef DIALOG_H
 #define DIALOG_H
 
-#include <card_game.h>
+// #include <card_game.h>
 
 /* Nó de diálogo (duplamente encadeado) */
 typedef struct STRUCT_DIALOG {

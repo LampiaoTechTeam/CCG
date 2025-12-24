@@ -8,11 +8,19 @@
  *
  */
 
+#include <stdio.h>
+
+#include <card_game.h>
 #include <deck.h>
 #include <debuff.h>
 #include <trace.h>
 #include <terminal_utils.h>
 #include <monster.h>
+
+#ifdef USE_SDL2
+  #include <SDL2/SDL.h>
+#endif
+
 #include <player.h>
 #include <battle.h> 
 #include <input.h>

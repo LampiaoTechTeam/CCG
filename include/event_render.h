@@ -2,7 +2,7 @@
   #define _EVENT_RENDER_H_
 
   #ifdef USE_SDL2
-    #include <card_game.h>
+    // #include <card_game.h>
 
     void vEVR_Init(void);
     void vEVR_Quit(void);
@@ -16,6 +16,7 @@
 
     int iEVR_Tick(uint64_t ui64NowMs);
     void vEVR_Render(SDL_Renderer *pSDL_Renderer);
+    void vEVR_ClearAll(void);
 
   #endif /* USE_SDL2 */
 

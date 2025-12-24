@@ -7,11 +7,11 @@
  * Example: card flip 3D illusion.
  */
 
-#ifdef USE_SDL2
-  #ifndef _SDL_ANIMATION_H_
-    #define _SDL_ANIMATION_H_
+#ifndef _SDL_ANIMATION_H_
+  #define _SDL_ANIMATION_H_
+  #ifdef USE_SDL2
 
-    #include <card_game.h>
+    // #include <card_game.h>
 
     typedef struct STRUCT_ANIMATE_FLIP {
       int bIsFlipping;             /* 1 = animando, 0 = parado */
@@ -49,5 +49,5 @@
 
     /* Largura mínima do squeeze para evitar aliás/linha de 1px sumindo */
     #define FLIP_MIN_SCALE_X 0.08
-  #endif /* _SDL_ANIMATION_H_ */
-#endif /* USE_SDL2 */
+  #endif /* USE_SDL2 */
+#endif /* _SDL_ANIMATION_H_ */

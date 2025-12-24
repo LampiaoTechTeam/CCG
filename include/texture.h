@@ -7,11 +7,11 @@
  *  |- Mainly data structures and rendering
  */
 
-#ifdef USE_SDL2
-  #ifndef _TEXTURE_H_
-    #define _TEXTURE_H_
+#ifndef _TEXTURE_H_
+  #define _TEXTURE_H_
+  #ifdef USE_SDL2
 
-    #include <card_game.h>
+    // #include <card_game.h>
     
     #define DESTROY_TEXTURES_NONE 0
     #define DESTROY_TEXTURES      1
@@ -125,5 +125,5 @@
       gstTextureList.pSDL_Texture = NULL;
       gstTextureList.pstNext = NULL;
     } /* vTXTR_InitList */
-  #endif /* _TEXTURE_H_ */
-#endif
+  #endif
+#endif /* _TEXTURE_H_ */

@@ -1,6 +1,12 @@
+#include <stdio.h>
+#include <card_game.h>
 #include <debuff.h>
 #include <deck.h>
 #include <monster.h>
+#ifdef USE_SDL2
+  #include <SDL2/SDL.h>
+  #include <SDL2/SDL_ttf.h>
+#endif
 #include <player.h>
 #include <terminal_utils.h>
 #include <trace.h>

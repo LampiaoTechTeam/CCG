@@ -16,7 +16,8 @@
  *                                                                            *
  ******************************************************************************/ 
   #include <errno.h>
-  #include <card_game.h>
+  // #include <card_game.h>
+  #include <sys_interface.h>
 
   #ifdef _WIN32
     /* Winsock2 deve vir antes de windows.h e antes de time.h */
@@ -53,10 +54,15 @@
   #define DEBUG_DIALOG    gszDebugLevel[0] >=  DEBUG_LVL_MORE_DETAILS
   #define DEBUG_ALL       gszDebugLevel[0] >=  DEBUG_LVL_ALL
 
-  #define DEBUG_SDL_MSGS      giDebugLevel[1] >=  DEBUG_LVL_FNCALL
-  #define DEBUG_SDL_MORE_MSGS giDebugLevel[1] >=  DEBUG_LVL_DETAILS
-  #define DEBUG_SDL_DIALOG    giDebugLevel[1] >=  DEBUG_LVL_MORE_DETAILS
-  #define DEBUG_SDL_ALL       giDebugLevel[1] >=  DEBUG_LVL_ALL
+  #define DEBUG_SDL_MSGS      gszDebugLevel[1] >=  DEBUG_LVL_FNCALL
+  #define DEBUG_SDL_MORE_MSGS gszDebugLevel[1] >=  DEBUG_LVL_DETAILS
+  #define DEBUG_SDL_DIALOG    gszDebugLevel[1] >=  DEBUG_LVL_MORE_DETAILS
+  #define DEBUG_SDL_ALL       gszDebugLevel[1] >=  DEBUG_LVL_ALL
+
+  #define DEBUG_XML_MSGS      gszDebugLevel[2] >=  DEBUG_LVL_FNCALL
+  #define DEBUG_XML_MORE_MSGS gszDebugLevel[2] >=  DEBUG_LVL_DETAILS
+  #define DEBUG_XML_DIALOG    gszDebugLevel[2] >=  DEBUG_LVL_MORE_DETAILS
+  #define DEBUG_XML_ALL       gszDebugLevel[2] >=  DEBUG_LVL_ALL
 
   #define vTraceVarArgsFn(FORMAT, ...) _vTraceVarArgsFn(__FILE__, __LINE__, __func__, FORMAT, ##__VA_ARGS__)
   #define vTraceMsgDialog(FORMAT, ...) _vTraceMsgDialog(FORMAT, ##__VA_ARGS__)
@@ -86,7 +92,7 @@
   void _vTraceMsgDialog( char *szMsg, ... );
   void vTracePid( char *szMsg, int iMsgLen );
   void vTraceMsgNoNL( char *szMsg );
-  void vInitLogs( void );
+  void vInitLogs(char* pszTrace, const char* pszDebugLevel);
   void _vTraceVarArgsFn(char *pszModuleName, const int kiLine, const char *kpszFunctionName, const char *kpszFmt, ...);
   void vTraceMainLoopEnd();
   void vTraceMainLoopInit();

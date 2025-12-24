@@ -1,10 +1,10 @@
 #ifndef SHOP_H
   #define SHOP_H
-  #include <card_game.h>
-  #ifdef USE_SDL2
-    #include <sdl_api.h>
-    #include <SDL2/SDL.h>
-  #endif
+  // #include <card_game.h>
+  // #ifdef USE_SDL2
+  //   #include <sdl_api.h>
+  //   #include <SDL2/SDL.h>
+  // #endif
 
   #define SHOP_PRICE_POISON            15
   #define SHOP_PRICE_PARALIZE          20
@@ -23,6 +23,7 @@
     int iPrice;
     int iStock;
     int iTextureId; /* ícone do item, já carregado em outro lugar */
+    SDL_Rect stRect;
   } STRUCT_SHOP_ITEM, *PSTRUCT_SHOP_ITEM;
 
   typedef struct {

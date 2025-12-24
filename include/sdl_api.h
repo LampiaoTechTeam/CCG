@@ -1,9 +1,9 @@
-#ifdef USE_SDL2
-  #include <card_game.h>
+#ifndef SDL_API_H
+  #define SDL_API_H
+  #ifdef USE_SDL2
+  // #include <card_game.h>
   #include <font.h>
   #include <dialog.h>
-  #ifndef SDL_API_H
-    #define SDL_API_H
     
     extern int giSelectedMonster;
     /** Bitwise redraw options */

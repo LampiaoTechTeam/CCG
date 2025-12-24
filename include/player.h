@@ -12,7 +12,7 @@
 #ifndef PLAYER_H
   #define PLAYER_H
 
-  #include <card_game.h>
+  // #include <card_game.h>
 
   #define PLAYER_GET_NAME_NONE 0
   #define PLAYER_GET_NAME      1

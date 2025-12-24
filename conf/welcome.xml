@@ -1,0 +1,21 @@
+<?xml version='1.0'?>
+
+<WELCOME>
+  <PANEL_X></PANEL_X>
+  <PANEL_Y></PANEL_Y>
+  <PANEL_H></PANEL_H>
+  <PANEL_W></PANEL_W>
+  <CELL_H></CELL_H>
+  <CELL_W></CELL_W>
+  <CELL_PAD></CELL_PAD>
+  <TITLE_H></TITLE_H>
+  <FOOTER_H></FOOTER_H>
+  <FONT_TITLE></FONT_TITLE>
+  <FONT_UI></FONT_UI>
+  <ITEM_LIST>
+    <ITEM><ID>1</ID><NAME>Comecar Novo Jogo</NAME><H></H><W></W><X></X><Y></Y></ITEM>
+    <ITEM><ID>2</ID><NAME>Carregar Jogo</NAME><H></H><W></W><X></X><Y></Y></ITEM>
+    <ITEM><ID>3</ID><NAME>Configuracoes</NAME><H></H><W></W><X></X><Y></Y></ITEM>
+    <ITEM><ID>4</ID><NAME>Sair</NAME><ACTION>iWelcomeSair</ACTION><H></H><W></W><X></X><Y></Y></ITEM>
+  </ITEM_LIST>
+</WELCOME>

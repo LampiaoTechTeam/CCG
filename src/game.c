@@ -5,12 +5,17 @@
 #include <terminal_utils.h>
 #include <deck.h>
 #include <monster.h>
+#ifdef USE_SDL2
+  #include <SDL2/SDL.h>
+#endif
 #include <player.h>
 #include <game.h>
 
 #ifdef LINUX
   #include <unistd.h>
 #endif
+#include <consts.h>
+#include <card_game.h>
 
 int iGameSave(void) {
   FILE* fpGameDat = NULL;

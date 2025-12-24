@@ -7,6 +7,11 @@
  *
  */
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <card_game.h>
+
 #include <trace.h>
 
 #ifdef LINUX
@@ -184,31 +189,37 @@ void vSetLogFileTitle(void) {
   sprintf(gszTraceFileDialog, "%s_dialog.log", gkpszProgramName);
 } /* vSetLogFile */
 
-void vInitLogs(void) {
+void vInitLogs(char* pszTrace, const char* pszDebugLevel) {
   char szPath[_MAX_PATH + 8];
   char szPath2[_MAX_PATH + 8];
   char szName[_MAX_PATH];
   char szExt[_MAX_PATH];
-  
+
   memset(szPath, 0x00, sizeof(szPath));
   memset(szName, 0x00, sizeof(szName));
   memset(szExt, 0x00, sizeof(szExt));
 
-  vSetLogFileTitle();
   vSetRootPathFromCwd();
-
-  iDIR_SplitFilename(gszTraceFile, szPath, szName, szExt);
-  snprintf(szPath, sizeof(szPath), "%s/log", gszRootPathFromBin);
-  if (!iDIR_IsDir(szPath)) {
-    if (!iDIR_MkDir(szPath)) {
+  if ( !pszTrace ) {
+    vSetLogFileTitle();
+    iDIR_SplitFilename(gszTraceFile, szPath, szName, szExt);
+    snprintf(szPath, sizeof(szPath), "%s/log", gszRootPathFromBin);
+    sprintf(gszTraceFile, "%s/%s%s",szPath,szName,szExt);
+  }
+  else {
+    iDIR_SplitFilename(pszTrace, szPath, szName, szExt);
+    snprintf(gszTraceFile, sizeof(gszTraceFile), "%s", pszTrace);
+  }
+  if ( !iDIR_IsDir(szPath) ) {
+    if ( !iDIR_MkDir(szPath) ) {
       fprintf(stderr, "E: Impossible create dir %s!\n"
-              "%s\n",
-              szPath, strerror(errno));
+      "%s\n",
+      szPath, strerror(errno));
       exit(EXIT_FAILURE);
     }
   }
-;
-  sprintf(gszTraceFile, "%s/%s%s",szPath,szName,szExt);
+  if ( pszDebugLevel ) snprintf(gszDebugLevel, sizeof(gszDebugLevel), "%s", pszDebugLevel);
+
   iDIR_SplitFilename(gszTraceFileDialog, szPath2, szName, szExt);
   sprintf(gszTraceFileDialog, "%s/%s%s",szPath,szName,szExt);
 } /* vInitLogs */

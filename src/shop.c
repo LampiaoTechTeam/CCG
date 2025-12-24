@@ -1,15 +1,28 @@
+#include <stdio.h>
+#include <card_game.h>
 #include <debuff.h>
 #include <deck.h>
 #include <trace.h>
 #include <terminal_utils.h>
 #include <monster.h>
+#ifdef USE_SDL2
+  #include <SDL2/SDL_rect.h>
+#endif
 #include <player.h>
+#ifdef USE_SDL2
+  #include <SDL2/SDL.h>
+  #include <SDL2/SDL_ttf.h>
+  #include <sdl_api.h>
+#endif
 #include <input.h>
 #include <shop.h>
 
 int gbShopOpen = FALSE;
 
 #ifdef USE_SDL2
+  SDL_Rect gstButtonBuy;
+  SDL_Rect gstButtonExit;
+
   void vSDL_ShopInit(PSTRUCT_SHOP pstShop){
     int ii;
     time_t lTime;
@@ -34,9 +47,6 @@ int gbShopOpen = FALSE;
       pstShop->aItems[ii].iTextureId = -1;
     }
   }
-
-  SDL_Rect gstButtonBuy;
-  SDL_Rect gstButtonExit;
 
   /* Desenha o Shop completo */
   int iShopDraw(SDL_Renderer *pSDL_Renderer, PSTRUCT_SHOP pstShop, PSTRUCT_PLAYER pstPlayer){
@@ -74,10 +84,12 @@ int gbShopOpen = FALSE;
     iY = stPanel.y + 60;
 
     for (i = 0; i < pstShop->iNumItems; i++) {
-      stItem.x = iX;
-      stItem.y = iY + (i * 60);
-      stItem.w = stPanel.w - 80;
-      stItem.h = 50;
+      pstShop->aItems[i].stRect.x = iX;
+      pstShop->aItems[i].stRect.y = iY + (i * 60);
+      pstShop->aItems[i].stRect.w = stPanel.w - 80;
+      pstShop->aItems[i].stRect.h = 50;
+
+      stItem = pstShop->aItems[i].stRect;
 
       /* Fundo do item */
       if (i == pstShop->iSelected)
@@ -184,15 +196,23 @@ int gbShopOpen = FALSE;
         else if (stEvent.type == SDL_MOUSEBUTTONDOWN) {
           int mx = stEvent.button.x;
           int my = stEvent.button.y;
-
+          int ii = 0;
           /* Detectar clique no botão BUY */
 
-          if (mx >= gstButtonBuy.x && mx <= gstButtonBuy.x + gstButtonBuy.w &&
-              my >= gstButtonBuy.y && my <= gstButtonBuy.y + gstButtonBuy.h)
+          if ( bAreCoordsInSDL_Rect(&gstButtonBuy, mx, my) ) {
             iDoBuy = 1;
-          if (mx >= gstButtonExit.x && mx <= gstButtonExit.x + gstButtonExit.w &&
-              my >= gstButtonExit.y && my <= gstButtonExit.y + gstButtonExit.h)
+          }
+
+          if ( bAreCoordsInSDL_Rect(&gstButtonExit, mx, my) ) {
             iDoExit = 1;
+          }
+
+          for ( ii = 0; ii < stShop.iNumItems; ii++ ) {
+            if ( bAreCoordsInSDL_Rect(&stShop.aItems[ii].stRect, mx, my) ) {
+              stShop.iSelected = ii;
+              break;
+            }
+          }
         }
       }
 

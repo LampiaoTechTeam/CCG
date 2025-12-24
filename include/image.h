@@ -1,10 +1,11 @@
-#ifdef USE_SDL2
-  #ifndef _IMAGE_H_
-    #define _IMAGE_H_
+#ifndef _IMAGE_H_
+  #define _IMAGE_H_
+  #ifdef USE_SDL2
 
-    #include <card_game.h>
-    #include <SDL2/SDL.h>
-    #include <SDL2/SDL_image.h>
+    // #include <card_game.h>
+    // #include <SDL2/SDL.h>
+    // #include <SDL2/SDL_image.h>
+    #include <xml.h>
 
     #define MAX_IMAGES 64
 
@@ -14,14 +15,7 @@
     #define IMAGE_TYPE_TILELIST    3
 
     #define CONF_DIR       "conf"
-    #define IMG_PATH_TITLE "images.dat"
-
-    typedef struct STRUCT_IMAGE_CONF{
-      int iType;
-      char *pszPath;
-      char iCardId;
-      struct STRUCT_IMAGE_CONF *pstNext;
-    }STRUCT_IMAGE_CONF, *PSTRUCT_IMAGE_CONF;
+    #define IMG_PATH_TITLE "image.xml"
 
     typedef struct STRUCT_IMAGE {
       int          iType;
@@ -34,13 +28,10 @@
 
     extern STRUCT_IMAGE gImages[MAX_IMAGES];
     extern int giImageCount;
-    extern STRUCT_IMAGE_CONF gstImgConf;
 
     int  bLoadImgListFromFile();
-    void vFreeImgList();
-    void vInitImgConf();
-    void vTraceImgList();
     void vIMG_TraceList();
+    void vIMG_TraceIdx(int iIdx);
 
     SDL_Surface *pSDL_SRFC_LoadImage(char *pszImgPath);
     SDL_Texture *pSDL_LoadTextureFromPath(SDL_Renderer *pSDL_Renderer, char *pszPath);

@@ -1,7 +1,7 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
-#include <card_game.h>
+// #include <card_game.h>
 
 /**
  * @brief ...
@@ -19,6 +19,7 @@ typedef struct STRUCT_GAME_CONTEXT {
 typedef struct STRUCT_GAME {
   int iStatus;
   int iState;
+  int iLastState;
   int iLevel;
   STRUCT_GAME_CONTEXT stGameContext;
   int iRedrawAction;
