@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <string.h>
 #include <debuff.h>
 #include <deck.h>
 #include <monster.h>

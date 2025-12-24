@@ -32,10 +32,12 @@ STRUCT_XML astWelcomeItemXml[] = {
   { "ITEM", XMLTYPE_PROC    , 0                              , NULL                      , icbackWelcomeItem },
   { "ID"  , XMLTYPE_INT     , 0                              , &stWrkWelcomeItem.iIdItem , NULL          },
   { "NAME", XMLTYPE_STRING  , sizeof(stWrkWelcomeItem.szName), stWrkWelcomeItem.szName   , NULL          },
+#ifdef USE_SLD2
   { "H"   , XMLTYPE_INT     , 0                              , &stWrkWelcomeItem.stRect.h, NULL          },
   { "W"   , XMLTYPE_INT     , 0                              , &stWrkWelcomeItem.stRect.w, NULL          },
   { "X"   , XMLTYPE_INT     , 0                              , &stWrkWelcomeItem.stRect.x, NULL          },
   { "Y"   , XMLTYPE_INT     , 0                              , &stWrkWelcomeItem.stRect.y, NULL          },
+#endif
   { NULL  , XMLTYPE_NULL    , 0                              , NULL                      , NULL          }
 };
 

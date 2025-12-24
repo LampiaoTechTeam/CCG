@@ -15,7 +15,9 @@
   typedef struct {
     int iIdItem;
     char szName[64];
+  #ifdef USE_SDL2
     SDL_Rect stRect;
+  #endif
   } STRUCT_WELCOME_ITEM, *PSTRUCT_WELCOME_ITEM;
 
   typedef struct {

@@ -23,7 +23,9 @@
     int iPrice;
     int iStock;
     int iTextureId; /* ícone do item, já carregado em outro lugar */
+  #ifdef USE_SDL2
     SDL_Rect stRect;
+  #endif
   } STRUCT_SHOP_ITEM, *PSTRUCT_SHOP_ITEM;
 
   typedef struct {

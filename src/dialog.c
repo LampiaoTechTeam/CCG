@@ -1,6 +1,9 @@
 #ifdef USE_SDL2
   #include <SDL2/SDL.h>
 #endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <dialog.h>
 #include <debuff.h>
 #include <deck.h>

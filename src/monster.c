@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <card_game.h>
 #include <debuff.h>
 #include <deck.h>

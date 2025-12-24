@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <debuff.h>
 #include <deck.h>
 #include <monster.h>
@@ -249,8 +250,10 @@ int CCG_Main(int argc, char *argv[]){
     vShowInitDialog();
   #endif
 
-  vSDL_WelcomeInit();
-  if ( iSDL_OpenWelcome(pSDL_Rnd) == WELCOME_EXIT ) return 0;
+  #ifdef USE_SDL2
+    vSDL_WelcomeInit();
+    if ( iSDL_OpenWelcome(pSDL_Rnd) == WELCOME_EXIT ) return 0;
+  #endif
 
   vInitBasicDeck(&stDeck);
   iDrawMultipleCard(INIT_HAND_CARDS, &stDeck);

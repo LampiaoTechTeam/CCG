@@ -11,7 +11,7 @@
   #include <SDL2/SDL.h>
   #include <SDL2/SDL_rect.h>
   #include <SDL2/SDL_ttf.h>
-#endif
+#include <stdio.h>
 #include <debuff.h>
 #include <deck.h>
 #include <dialog.h>
@@ -155,4 +155,4 @@ void vSetPlayerHUDRect( SDL_Rect *pSDL_RECT_Hud ) {
 
   if( DEBUG_MSGS ) vTraceEnd();
 }
-
+#endif
