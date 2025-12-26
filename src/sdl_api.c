@@ -1144,8 +1144,11 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
   vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
 
   while (*pbRunning) {
-
+#if SDL_MAJOR_VERSION >=2 && SDL_MINOR_VERSION >= 0 && SDL_PATCHLEVEL >= 18
     ui64FrameStart = SDL_GetTicks64();
+#else
+    ui64FrameStart = SDL_GetTicks();
+#endif
 
     while (SDL_PollEvent(pSDL_Event)) {
       iRedrawAction |= iEVENT_HandlePollEv(
@@ -1240,7 +1243,11 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
 
     iRedrawAction = REDRAW_NONE;
 
+#if SDL_MAJOR_VERSION >=2 && SDL_MINOR_VERSION >= 0 && SDL_PATCHLEVEL >= 18
     ui64FrameTime = SDL_GetTicks64() - ui64FrameStart;
+#else
+    ui64FrameTime = SDL_GetTicks() - ui64FrameStart;
+#endif
     if (ui64FrameTime < VSYNC_TIME) {
       SDL_Delay(VSYNC_TIME - ui64FrameTime);
     }
