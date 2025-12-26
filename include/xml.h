@@ -18,7 +18,6 @@ extern "C" {
 #include <string.h>
 #include <errno.h>
 #include <libxml/parser.h>
-#include <libxml/parser.h>
 #include <trace.h>
 
 /**

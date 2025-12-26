@@ -199,8 +199,10 @@ void vInitLogs(char* pszTrace, const char* pszDebugLevel) {
   memset(szName, 0x00, sizeof(szName));
   memset(szExt, 0x00, sizeof(szExt));
 
+  
+  
   vSetRootPathFromCwd();
-  if ( !pszTrace ) {
+  if ( bStrIsEmpty(pszTrace) ) {
     vSetLogFileTitle();
     iDIR_SplitFilename(gszTraceFile, szPath, szName, szExt);
     snprintf(szPath, sizeof(szPath), "%s/log", gszRootPathFromBin);
@@ -212,10 +214,15 @@ void vInitLogs(char* pszTrace, const char* pszDebugLevel) {
   }
   if ( !iDIR_IsDir(szPath) ) {
     if ( !iDIR_MkDir(szPath) ) {
-      fprintf(stderr, "E: Impossible create dir %s!\n"
-      "%s\n",
-      szPath, strerror(errno));
-      exit(EXIT_FAILURE);
+      sprintf(gszRootPathFromBin, "%s", ROOT_PATH_FROM_BIN);
+      snprintf(szPath, sizeof(szPath), "%s/log", gszRootPathFromBin);
+      sprintf(gszTraceFile, "%s/%s%s",szPath,szName,szExt);
+        if ( !iDIR_MkDir(szPath) ) {
+        fprintf(stderr, "E: Impossible create dir [%s]!\n"
+        "%s\n",
+        szPath, strerror(errno));
+        exit(EXIT_FAILURE);
+      }
     }
   }
   if ( pszDebugLevel ) snprintf(gszDebugLevel, sizeof(gszDebugLevel), "%s", pszDebugLevel);
