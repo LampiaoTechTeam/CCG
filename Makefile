@@ -74,7 +74,8 @@ ifdef LINUX
 endif
 ifdef APPLE
     INC_DIR += -I/opt/homebrew/include -I /opt/homebrew/opt/libxml2/include/libxml2
-else
+endif
+ifdef _WIN32
     INC_DIR += -I$(MSYS_PREFIX)/include/libxml2
 endif
 
