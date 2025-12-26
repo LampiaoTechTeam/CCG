@@ -170,7 +170,7 @@
     };
   #endif
   
-  #ifndef LINUX
+  #if !defined(LINUX) && !defined(APPLE)
     #define CCG_Main SDL_main
   #else
     #define CCG_Main main

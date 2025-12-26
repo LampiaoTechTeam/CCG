@@ -15,7 +15,9 @@ ifeq ($(findstring cygwin,$(GCC_TARGET)),cygwin)
 endif
 
 ifndef _WIN32
-    LINUX = 1
+    ifndef APPLE
+      LINUX = 1
+    endif
 endif
 
 -include build/config.mk
@@ -69,6 +71,9 @@ SDL_ADD_LIBS =
 
 ifdef LINUX
     INC_DIR += -I/usr/include/libxml2
+endif
+ifdef APPLE
+    INC_DIR += -I/opt/homebrew/include -I /opt/homebrew/opt/libxml2/include/libxml2
 else
     INC_DIR += -I$(MSYS_PREFIX)/include/libxml2
 endif
@@ -83,7 +88,12 @@ else
     INC_DIR      += -I$(MSYS_PREFIX)/include
 endif
 endif
+
+ifdef APPLE
+    SDL_ADD_LIBS += -L/opt/homebrew/lib -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_image
+else
     SDL_ADD_LIBS += -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_image
+endif
 endif
 
 LIBS  = -lxml2
@@ -97,6 +107,11 @@ endif
 ifdef LINUX
     CCOPT += -DLINUX
     LIBS  += -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags $(SDL_ADD_LIBS) -DLINUX
+endif
+
+ifdef APPLE
+  CCOPT += -Wno-main -DAPPLE
+  LIBS +=  -L /opt/homebrew/lib -L /opt/homebrew/opt/libxml2/lib $(SDL_ADD_LIBS)
 endif
 
 ifdef USE_SDL2

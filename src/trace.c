@@ -14,7 +14,7 @@
 
 #include <trace.h>
 
-#ifdef LINUX
+#if defined(LINUX) || defined(APPLE)
   #include <sys/time.h>
   #include <sys/types.h>
   #include <stdarg.h>
