@@ -235,8 +235,6 @@ int CCG_Main(int argc, char *argv[]){
   /** Reading cmdline options like using SDL2 or not, debug level ... */
   vParseCmdlineArgs(argc, argv);
 
-  iInitOsInterface();
-
   if ( bShowHelp ) {
     vShowHelp();
     return 0;
