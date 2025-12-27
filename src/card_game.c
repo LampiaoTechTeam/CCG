@@ -269,11 +269,7 @@ int CCG_Main(int argc, char *argv[]){
      
   #ifdef USE_SDL2
     if ( gbSDL_Mode ) {
-      char szScreenXmlPath[512] = "";
-      memset(szScreenXmlPath, 0x00, sizeof(szScreenXmlPath));
-      snprintf(szScreenXmlPath, sizeof(szScreenXmlPath), "%s%cscreen.xml", gstGlobalPrm.szConfDir, DIR_SEPARATOR);
-      if ( !bLoadScreenXml(szScreenXmlPath) ) {
-        fprintf(stderr, "Falha ao carregar o arquivo %s!", szScreenXmlPath);
+      if ( !bLoadScreenXml() ) {
         return -1;
       }
       vSDL_SetupMain(&pSDL_Rnd, &pSDL_Wndw);
@@ -300,6 +296,8 @@ int CCG_Main(int argc, char *argv[]){
     vInitDialog();
   }
   else {
+    vGameLoadCtxVars(&gstGame.stGameContext, &stDeck, &gstPlayer, astMonsters, &iMonsterCount);
+    /**
     vTraceVarArgsFn("memcpy(&stDeck, gstGame.stGameContext.stPlayer.astPlayerCards, sizeof(STRUCT_DECK));");
     memcpy(&stDeck, gstGame.stGameContext.stPlayer.astPlayerCards, sizeof(STRUCT_DECK));
     vTraceVarArgsFn("memcpy(&gstPlayer, &gstGame.stGameContext.stPlayer, sizeof(STRUCT_PLAYER));");
@@ -309,6 +307,7 @@ int CCG_Main(int argc, char *argv[]){
     vTraceVarArgsFn("iMonsterCount = gstGame.stGameContext.iCtMonster;");
     iMonsterCount = gstGame.stGameContext.iCtMonster;
     vTraceVarArgsFn("FINISH");
+     */
   }
  
   #ifdef FAKE

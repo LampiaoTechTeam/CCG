@@ -53,5 +53,12 @@ int iGameLoad(void);
  */
 int iGameDelete(void);
 
+/**
+ * @brief ...
+ *
+ * @return void
+ */
+void vGameLoadCtxVars(PSTRUCT_GAME_CONTEXT pstGameCtx, PSTRUCT_DECK pstDeck, PSTRUCT_PLAYER pstPlayer, PSTRUCT_MONSTER pastMonster, int *piMonsterCt);
+
 #endif
 

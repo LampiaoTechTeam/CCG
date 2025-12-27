@@ -85,7 +85,7 @@ typedef struct STRUCT_SCREEN {
 
 extern STRUCT_SCREEN gstScreen;
 
-int bLoadScreenXml(char* pszXmlPath);
+int bLoadScreenXml(void);
 
 int iSCREEN_SetLayout(int iID);
 int iSCREEN_GetLayout(void);

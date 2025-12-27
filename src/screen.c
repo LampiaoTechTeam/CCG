@@ -14,6 +14,8 @@
 #include <sys_interface.h>
 #include <xml.h>
 #include <screen.h>
+#include <card_game.h>
+#include <consts.h>
 
 STRUCT_SCREEN_COLOR stWrkColor;
 STRUCT_SCREEN_RECT stWrkRect;
@@ -240,20 +242,23 @@ static void vTraceScreen(void) {
   vTraceMsg("================================================");
 }
 
-int bLoadScreenXml(char* szXmlPath) {
+int bLoadScreenXml() {
   int ii = 0;
   int jj = 0;
   int kk = 0;
+  char szScreenXmlPath[_MAX_PATH+_MAX_PATH] = "";
 
   if ( DEBUG_SCREEN_MSGS ) vTraceVarArgsFn("begin");
 
-  if ( bStrIsEmpty(szXmlPath) ) {
-    if ( DEBUG_SCREEN_MSGS ) vTraceVarArgsFn("szXmlPath is empty!");
+  memset(szScreenXmlPath, 0x00, sizeof(szScreenXmlPath));
+  snprintf(szScreenXmlPath, sizeof(szScreenXmlPath), "%s%cscreen.xml", gstGlobalPrm.szConfDir, DIR_SEPARATOR);
+  if ( bStrIsEmpty(szScreenXmlPath) ) {
+    if ( DEBUG_SCREEN_MSGS ) vTraceVarArgsFn("szScreenXmlPath is empty!");
     return 0;
   }
 
-  if ( !bLoadXmlFromFile(szXmlPath, astScreenXml) ) {
-    if ( DEBUG_SCREEN_MSGS ) vTraceVarArgsFn("Falha ao carregar arquivo %s", szXmlPath);
+  if ( !bLoadXmlFromFile(szScreenXmlPath, astScreenXml) ) {
+    if ( DEBUG_SCREEN_MSGS ) vTraceVarArgsFn("Falha ao carregar arquivo %s", szScreenXmlPath);
     return 0;
   }
 

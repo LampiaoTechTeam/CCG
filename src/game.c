@@ -70,6 +70,18 @@ void vTraceGame(void) {
   vTracePlayer(&gstGame.stGameContext.stPlayer);
 }
 
+void vGameLoadCtxVars(PSTRUCT_GAME_CONTEXT pstGameCtx, PSTRUCT_DECK pstDeck, PSTRUCT_PLAYER pstPlayer, PSTRUCT_MONSTER pastMonster, int *piMonsterCt){
+   vTraceVarArgsFn("memcpy(&stDeck, gstGame.stGameContext.stPlayer.astPlayerCards, sizeof(STRUCT_DECK));");
+    memcpy(pstDeck, pstGameCtx->stPlayer.astPlayerCards, sizeof(STRUCT_DECK));
+    vTraceVarArgsFn("memcpy(&gstPlayer, &gstGame.stGameContext.stPlayer, sizeof(STRUCT_PLAYER));");
+    memcpy(pstPlayer, &pstGameCtx->stPlayer, sizeof(STRUCT_PLAYER));
+    vTraceVarArgsFn("memcpy(&astMonsters, &gstGame.stGameContext.astMonster, sizeof(STRUCT_MONSTER) * gstGame.stGameContext.iCtMonster);");
+    memcpy(pastMonster, pstGameCtx->astMonster, sizeof(STRUCT_MONSTER) * pstGameCtx->iCtMonster);
+    vTraceVarArgsFn("iMonsterCount = gstGame.stGameContext.iCtMonster;");
+    *piMonsterCt = pstGameCtx->iCtMonster;
+    vTraceVarArgsFn("FINISH");
+}
+
 int iGameSave(void) {
   FILE* fpGameDat = NULL;
   char szGameDatPath[512] = "";
