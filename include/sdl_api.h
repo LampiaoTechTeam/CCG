@@ -37,6 +37,16 @@
     #define SDL_COLOR_MESA         SDL_COLOR_TABLE_GREEN
     #define SDL_COLOR_MESA_BRDR    SDL_COLOR_TABLE_BORDER
     #define SDL_COLOR_MONSTER      SDL_RGB_RED_BLOOD
+
+    #define FINISH_PROGRAM   1
+
+    #define LAYOUT_MAIN_MENU 1
+    #define LAYOUT_TABLE     2
+    #define LAYOUT_SHOP      3
+    #define LAYOUT_PAUSE     4
+
+    #define ELM_TYPE_MENU    1
+    #define ELM_TYPE_BUTTON  2
     
     #define SDL_COLOR_FROM_RGB_OPACITY(RGB, OPACITY) \
       ((unsigned char[4]){ (RGB)[0], (RGB)[1], (RGB)[2], (unsigned char)(OPACITY) })
@@ -58,6 +68,8 @@
                          int iOffX, int iOffY);
     void vSDL_SetupMain(SDL_Renderer **pSDL_Renderer, SDL_Window **pSDL_Window);
     void vSDL_MainInit();
+    void vSDL_DrawMenu(SDL_Renderer* pSDL_Renderer, void* pstMenu);
+    void vSDL_DrawPause(SDL_Renderer* pSDL_Renderer);
     void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCt);
     void vSDL_MainQuit(void);
     void vSDL_ToggleFullscreen(void); 

@@ -32,7 +32,7 @@
     int  iDebuffCt;
     char szPlayerName[PLAYER_NAME_SIZE];
     STRUCT_DEBUFF stDebuff[PLAYER_MAX_DEBUFFS];
-    PSTRUCT_DECK  pstPlayerCards;
+    STRUCT_DECK  astPlayerCards[MAX_DECK];
   }STRUCT_PLAYER, *PSTRUCT_PLAYER;
 
   extern STRUCT_PLAYER gstPlayer;
@@ -43,4 +43,5 @@
   void vInitPlayer(PSTRUCT_DECK pstGameDeck, int bReadName);
   void vShowPlayer();
   void vStartNewTurn(PSTRUCT_DECK pstDeck);
+  void vTracePlayer(PSTRUCT_PLAYER pstPlayer);
 #endif

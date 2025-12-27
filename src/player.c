@@ -42,8 +42,12 @@ void vStartNewTurn(PSTRUCT_DECK pstDeck) {
   vTraceDeck(pstDeck, (TRACE_DISCARD_PILE|TRACE_DRAW_PILE));  
 }
 
-void vTracePlayer(){
+void vTracePlayer(PSTRUCT_PLAYER pstPlayer){
   char szDbg[1024];
+
+  if ( !pstPlayer ) {
+    pstPlayer = &gstPlayer;
+  }
 
   memset(szDbg, 0, sizeof(szDbg));
   sprintf(szDbg,
@@ -51,14 +55,14 @@ void vTracePlayer(){
     "Energia =[%d] "
     "Escudo  =[%d] "
     "Dinheiro=[%d] ",
-    gstPlayer.szPlayerName,
-    gstPlayer.iEnergy,
-    gstPlayer.iBlock,
-    gstPlayer.iGold
+    pstPlayer->szPlayerName,
+    pstPlayer->iEnergy,
+    pstPlayer->iBlock,
+    pstPlayer->iGold
   );
   vTraceVarArgsFn(szDbg);
-  vTraceDeck(gstPlayer.pstPlayerCards, TRACE_DECK_ALL);
-  vTraceDebuffList(gstPlayer.stDebuff, gstPlayer.iDebuffCt);
+  vTraceDeck(pstPlayer->astPlayerCards, TRACE_DECK_ALL);
+  vTraceDebuffList(pstPlayer->stDebuff, pstPlayer->iDebuffCt);
 }
 
 void vInitPlayer(PSTRUCT_DECK pstGameDeck, int bReadName){
@@ -70,7 +74,7 @@ void vInitPlayer(PSTRUCT_DECK pstGameDeck, int bReadName){
   if ( bReadName )
     vReadPlayerName(gstPlayer.szPlayerName, PLAYER_NAME_SIZE);
 
-  gstPlayer.pstPlayerCards = pstGameDeck;
+  memcpy(gstPlayer.astPlayerCards, pstGameDeck, sizeof(STRUCT_DECK) * MAX_DECK);
 }
 
 

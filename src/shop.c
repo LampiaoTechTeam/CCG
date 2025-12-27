@@ -13,6 +13,7 @@
   #include <SDL2/SDL.h>
   #include <SDL2/SDL_ttf.h>
   #include <sdl_api.h>
+  #include <screen.h>
 #endif
 #include <input.h>
 #include <shop.h>
@@ -50,43 +51,53 @@ int gbShopOpen = FALSE;
 
   /* Desenha o Shop completo */
   int iShopDraw(SDL_Renderer *pSDL_Renderer, PSTRUCT_SHOP pstShop, PSTRUCT_PLAYER pstPlayer){
-    SDL_Rect stPanel;
     SDL_Rect stItem;
     SDL_Color stCorBranco = {255, 255, 255, 255};
     SDL_Color stCorAmarelo = {255, 215, 0, 255};
-    char szBuffer[64];
-    int i;
-    int iX;
-    int iY;
+    char szBuffer[64] = "";
+    int i = 0;
+    int iX = 0;
+    int iY = 0;
+    PSTRUCT_ELEMENT pstPanel = NULL;
+    PSTRUCT_ELEMENT pstTitle = NULL;
+    PSTRUCT_ELEMENT pstBuyBtn = NULL;
+    PSTRUCT_ELEMENT pstBuyBtnLabel = NULL;
+    PSTRUCT_ELEMENT pstExitBtn = NULL;
+    PSTRUCT_ELEMENT pstExitBtnLabel = NULL;
+    PSTRUCT_ELEMENT pstGoldLabel = NULL;
 
     if (pSDL_Renderer == NULL || pstShop == NULL || pstPlayer == NULL)
       return -1;
 
     SDL_RenderClear(pSDL_Renderer);
 
-    /* Painel principal */
-    stPanel.x = 80;
-    stPanel.y = 60;
-    stPanel.w = 640;
-    stPanel.h = 460;
+    iSCREEN_SetLayout(LAYOUT_SHOP);
 
-    vSDL_DrawRectShadow(pSDL_Renderer, &stPanel, 6, 6, 80);
+    /* Painel principal */
+    pstPanel = pstSCREEN_GetElementByName("PANEL");
+    if ( !pstPanel ) {
+      vTraceVarArgsFn("Falha ao obter o elemento PANEL!");
+      _exit(1);
+    }
+
+    vSDL_DrawRectShadow(pSDL_Renderer, (SDL_Rect*) &pstPanel->stRect, 6, 6, 80);
     SDL_SetRenderDrawColor(pSDL_Renderer, 40, 40, 50, 255);
-    SDL_RenderFillRect(pSDL_Renderer, &stPanel);
+    SDL_RenderFillRect(pSDL_Renderer, (SDL_Rect*) &pstPanel->stRect);
     SDL_SetRenderDrawColor(pSDL_Renderer, 220, 220, 230, 255);
-    SDL_RenderDrawRect(pSDL_Renderer, &stPanel);
+    SDL_RenderDrawRect(pSDL_Renderer, (SDL_Rect*) &pstPanel->stRect);
 
     /* Título */
-    vSDL_DrawText(pSDL_Renderer, "SHOP", stPanel.x + 20, stPanel.y + 20, stCorBranco);
+    pstTitle = pstSCREEN_GetElementByName("TITLE");
+    vSDL_DrawText(pSDL_Renderer, pstTitle->szText, pstTitle->stRect.x, pstTitle->stRect.y, *(SDL_Color*)&pstTitle->stFgColor);
 
     /* Itens da loja */
-    iX = stPanel.x + 40;
-    iY = stPanel.y + 60;
+    iX = pstPanel->stRect.x + 40;
+    iY = pstPanel->stRect.y + 60;
 
     for (i = 0; i < pstShop->iNumItems; i++) {
       pstShop->aItems[i].stRect.x = iX;
       pstShop->aItems[i].stRect.y = iY + (i * 60);
-      pstShop->aItems[i].stRect.w = stPanel.w - 80;
+      pstShop->aItems[i].stRect.w = pstPanel->stRect.w - 80;
       pstShop->aItems[i].stRect.h = 50;
 
       stItem = pstShop->aItems[i].stRect;
@@ -108,30 +119,35 @@ int gbShopOpen = FALSE;
     }
 
     /* Botão BUY */
-    gstButtonBuy.x = stPanel.x + 80;
-    gstButtonBuy.y = stPanel.y + stPanel.h + 60;
-    gstButtonBuy.w = 150;
-    gstButtonBuy.h = 40;
+    pstBuyBtn = pstSCREEN_GetElementByName("BUY_BUTTON");
+    gstButtonBuy.x = pstBuyBtn->stRect.x;
+    gstButtonBuy.y = pstBuyBtn->stRect.y;
+    gstButtonBuy.w = pstBuyBtn->stRect.w;
+    gstButtonBuy.h = pstBuyBtn->stRect.h;
     vSDL_DrawRectShadow(pSDL_Renderer, &gstButtonBuy, 3, 3, 90);
     SDL_SetRenderDrawColor(pSDL_Renderer, 40, 120, 40, 255);
     SDL_RenderFillRect(pSDL_Renderer, &gstButtonBuy);
     SDL_RenderDrawRect(pSDL_Renderer, &gstButtonBuy);
-    vSDL_DrawText(pSDL_Renderer, "BUY", gstButtonBuy.x + 55, gstButtonBuy.y + 12, stCorBranco);
+    pstBuyBtnLabel = pstSCREEN_GetElementByName("BUY_LABEL");
+    vSDL_DrawText(pSDL_Renderer, pstBuyBtnLabel->szText, pstBuyBtnLabel->stRect.x, pstBuyBtnLabel->stRect.y, *(SDL_Color*)&pstBuyBtnLabel->stFgColor);
 
     /* Botão EXIT */
-    gstButtonExit.x = stPanel.x + stPanel.w - 250;
-    gstButtonExit.y = gstButtonBuy.y;
-    gstButtonExit.w = 150;
-    gstButtonExit.h = 40;
+    pstExitBtn = pstSCREEN_GetElementByName("EXIT_BUTTON");
+    gstButtonExit.x = pstExitBtn->stRect.x;
+    gstButtonExit.y = pstExitBtn->stRect.y;
+    gstButtonExit.w = pstExitBtn->stRect.w;
+    gstButtonExit.h = pstExitBtn->stRect.h;
     vSDL_DrawRectShadow(pSDL_Renderer, &gstButtonExit, 3, 3, 90);
     SDL_SetRenderDrawColor(pSDL_Renderer, 120, 40, 40, 255);
     SDL_RenderFillRect(pSDL_Renderer, &gstButtonExit);
     SDL_RenderDrawRect(pSDL_Renderer, &gstButtonExit);
-    vSDL_DrawText(pSDL_Renderer, "EXIT", gstButtonExit.x + 50, gstButtonExit.y + 12, stCorBranco);
+    pstExitBtnLabel = pstSCREEN_GetElementByName("EXIT_LABEL");
+    vSDL_DrawText(pSDL_Renderer, pstExitBtnLabel->szText, pstExitBtnLabel->stRect.x, pstExitBtnLabel->stRect.y, *(SDL_Color*)&pstExitBtnLabel->stFgColor);
 
     /* Ouro atual */
-    snprintf(szBuffer, sizeof(szBuffer), "Gold: %d", pstPlayer->iGold);
-    vSDL_DrawText(pSDL_Renderer, szBuffer, stPanel.x + 20, stPanel.y + stPanel.h - 30, stCorAmarelo);
+    pstGoldLabel = pstSCREEN_GetElementByName("Gold");
+    snprintf(szBuffer, sizeof(szBuffer), "%s: %d", pstGoldLabel->szText, pstPlayer->iGold);
+    vSDL_DrawText(pSDL_Renderer, szBuffer, pstGoldLabel->stRect.x, pstGoldLabel->stRect.y, *(SDL_Color*)&pstGoldLabel->stFgColor);
     
     SDL_RenderPresent(pSDL_Renderer);
     return 0;
@@ -162,6 +178,8 @@ int gbShopOpen = FALSE;
     if (pSDL_Renderer == NULL || pstPlayer == NULL || pstDeck == NULL)
       return -1;
 
+    iSCREEN_SetLayout(LAYOUT_SHOP);
+
     vSDL_ShopInit(&stShop);
     gbShopOpen = TRUE;
     bRunning = TRUE;
@@ -174,8 +192,9 @@ int gbShopOpen = FALSE;
       iDoExit = 0;
 
       while (SDL_PollEvent(&stEvent)) {
-        if (stEvent.type == SDL_QUIT)
-          return 0;
+        if (stEvent.type == SDL_QUIT) {
+          return SHOP_EXIT;
+        }
         if (stEvent.type == SDL_KEYDOWN) {
           SDL_Keycode key = stEvent.key.keysym.sym;
           if (key == SDLK_ESCAPE)

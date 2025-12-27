@@ -40,7 +40,9 @@ int iParseXmlFields(xmlNodePtr pstNode, STRUCT_XML astXml[]) {
             break;
           }
           case XMLTYPE_STRING: {
-            snprintf((char*)astXml[ii].pData, astXml[ii].zDataSize, "%s", (char*)pszContent);
+            if ( astXml[ii].zDataSize > 0 ) {
+              snprintf((char*)astXml[ii].pData, astXml[ii].zDataSize, "%s", (char*)pszContent);
+            }
             break;
           }
           case XMLTYPE_PROC: {

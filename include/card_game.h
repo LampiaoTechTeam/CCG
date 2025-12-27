@@ -36,6 +36,7 @@
    * @brief Estados do jogo
    */
   typedef enum ENUM_GAME_STATUS {
+    STATUS_NONE = -1,
     STATUS_WELCOME,
     STATUS_NEW_GAME,
     STATUS_GAMING,

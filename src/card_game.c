@@ -23,6 +23,7 @@
 #include <welcome.h>
 #include <consts.h>
 #include <conf.h>
+#include <screen.h>
 
 /** === Globals === */
 char *gkpszProgramName;
@@ -201,6 +202,8 @@ void vParseCmdlineArgs(int argc, char *argv[]){
   }
 }
 
+int iSDL_OpenShop(SDL_Renderer *pSDL_Renderer, PSTRUCT_PLAYER pstPlayer, PSTRUCT_DECK pstDeck);
+
 /**
  * 
  *  Main 
@@ -232,6 +235,8 @@ int CCG_Main(int argc, char *argv[]){
   /** Reading cmdline options like using SDL2 or not, debug level ... */
   vParseCmdlineArgs(argc, argv);
 
+  iInitOsInterface();
+
   if ( bShowHelp ) {
     vShowHelp();
     return 0;
@@ -245,8 +250,16 @@ int CCG_Main(int argc, char *argv[]){
   vInitLogs(gstGlobalPrm.szTrace, gstGlobalPrm.szDebugLevel);
      
   #ifdef USE_SDL2
-    if ( gbSDL_Mode )      
+    if ( gbSDL_Mode ) {
+      char szScreenXmlPath[512] = "";
+      memset(szScreenXmlPath, 0x00, sizeof(szScreenXmlPath));
+      snprintf(szScreenXmlPath, sizeof(szScreenXmlPath), "%s%cscreen.xml", gstGlobalPrm.szConfDir, DIR_SEPARATOR);
+      if ( !bLoadScreenXml(szScreenXmlPath) ) {
+        fprintf(stderr, "Falha ao carregar o arquivo %s!", szScreenXmlPath);
+        return -1;
+      }
       vSDL_SetupMain(&pSDL_Rnd, &pSDL_Wndw);
+    }
     else
       vShowInitDialog();
   #else
@@ -255,14 +268,30 @@ int CCG_Main(int argc, char *argv[]){
 
   #ifdef USE_SDL2
     vSDL_WelcomeInit();
-    if ( iSDL_OpenWelcome(pSDL_Rnd) == WELCOME_EXIT ) return 0;
+    if ( iSDL_OpenWelcome(pSDL_Rnd) == FINISH_PROGRAM ) {
+      if ( gbSDL_Mode ) vSDL_MainQuit();
+      return 0;
+    }
   #endif
 
-  vInitBasicDeck(&stDeck);
-  iDrawMultipleCard(INIT_HAND_CARDS, &stDeck);
-  vInitPlayer(&stDeck, !gbSDL_Mode);
-  vInitMonstersForLevel(astMonsters, giLevel, &iMonsterCount);
-  vInitDialog();
+  if ( !gbLoadGameFromFile ) {
+    vInitBasicDeck(&stDeck);
+    iDrawMultipleCard(INIT_HAND_CARDS, &stDeck);
+    vInitPlayer(&stDeck, !gbSDL_Mode);
+    vInitMonstersForLevel(astMonsters, giLevel, &iMonsterCount);
+    vInitDialog();
+  }
+  else {
+    vTraceVarArgsFn("memcpy(&stDeck, gstGame.stGameContext.stPlayer.astPlayerCards, sizeof(STRUCT_DECK));");
+    memcpy(&stDeck, gstGame.stGameContext.stPlayer.astPlayerCards, sizeof(STRUCT_DECK));
+    vTraceVarArgsFn("memcpy(&gstPlayer, &gstGame.stGameContext.stPlayer, sizeof(STRUCT_PLAYER));");
+    memcpy(&gstPlayer, &gstGame.stGameContext.stPlayer, sizeof(STRUCT_PLAYER));
+    vTraceVarArgsFn("memcpy(&astMonsters, &gstGame.stGameContext.astMonster, sizeof(STRUCT_MONSTER) * gstGame.stGameContext.iCtMonster);");
+    memcpy(&astMonsters, &gstGame.stGameContext.astMonster, sizeof(STRUCT_MONSTER) * gstGame.stGameContext.iCtMonster);
+    vTraceVarArgsFn("iMonsterCount = gstGame.stGameContext.iCtMonster;");
+    iMonsterCount = gstGame.stGameContext.iCtMonster;
+    vTraceVarArgsFn("FINISH");
+  }
  
   #ifdef FAKE
     vFakeOpenShopEarly(&stDeck);

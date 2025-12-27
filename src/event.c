@@ -104,7 +104,7 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
         memset(szMsg, 0x00, sizeof(szMsg));
         switch ( gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_GAMING : STATUS_PAUSE) ) {
           case STATUS_PAUSE: {
-            snprintf(szMsg, sizeof(szMsg), "Jogo pausado");
+            // snprintf(szMsg, sizeof(szMsg), "Jogo pausado");
             gstGame.iLastState = gstGame.iState;
             gstGame.iState = STATE_PAUSE_GAMING;
             break;
@@ -114,12 +114,12 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
             /* TODO: Restore LastStatus function */
             gstGame.iState = gstGame.iLastState;
             gstGame.iLastState = STATE_NONE;
-            snprintf(szMsg, sizeof(szMsg), "Jogo despausado");
+            // snprintf(szMsg, sizeof(szMsg), "Jogo despausado");
             break;
           }
         }
-        vPrintLine(szMsg, NO_NEW_LINE);
-        iRedrawReturnStatus = REDRAW_ALL;
+        // vPrintLine(szMsg, NO_NEW_LINE);
+        iRedrawReturnStatus = REDRAW_TABLE;
         break;
       }
 

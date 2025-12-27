@@ -1,10 +1,5 @@
 #ifndef SHOP_H
   #define SHOP_H
-  // #include <card_game.h>
-  // #ifdef USE_SDL2
-  //   #include <sdl_api.h>
-  //   #include <SDL2/SDL.h>
-  // #endif
 
   #define SHOP_PRICE_POISON            15
   #define SHOP_PRICE_PARALIZE          20
@@ -16,6 +11,8 @@
   #define SHOP_MAX_ITEMS 24
   #define SHOP_COLS 4
   #define SHOP_ROWS 3
+
+  #define SHOP_EXIT 1
 
   typedef struct {
     int iIdItem;

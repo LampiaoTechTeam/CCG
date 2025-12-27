@@ -64,6 +64,11 @@
   #define DEBUG_XML_DIALOG    gszDebugLevel[2] >=  DEBUG_LVL_MORE_DETAILS
   #define DEBUG_XML_ALL       gszDebugLevel[2] >=  DEBUG_LVL_ALL
 
+  #define DEBUG_SCREEN_MSGS      gszDebugLevel[3] >=  DEBUG_LVL_FNCALL
+  #define DEBUG_SCREEN_MORE_MSGS gszDebugLevel[3] >=  DEBUG_LVL_DETAILS
+  #define DEBUG_SCREEN_DIALOG    gszDebugLevel[3] >=  DEBUG_LVL_MORE_DETAILS
+  #define DEBUG_SCREEN_ALL       gszDebugLevel[3] >=  DEBUG_LVL_ALL
+
   #define vTraceVarArgsFn(FORMAT, ...) _vTraceVarArgsFn(__FILE__, __LINE__, __func__, FORMAT, ##__VA_ARGS__)
   #define vTraceMsgDialog(FORMAT, ...) _vTraceMsgDialog(FORMAT, ##__VA_ARGS__)
   #define vTraceBegin() vTraceVarArgsFn(" -- Begin -- ")

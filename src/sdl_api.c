@@ -29,6 +29,7 @@
 #include <image.h>
 #include <event_render.h>
 #include <game.h>
+#include <screen.h>
 
 /* ---------------------------------------------  */
 /*                   Locals                       */
@@ -72,8 +73,8 @@ void vSDL_SetupMain(SDL_Renderer **pSDL_Renderer, SDL_Window **pSDL_Window){
     "CCG",
     SDL_WINDOWPOS_UNDEFINED,
     SDL_WINDOWPOS_UNDEFINED,
-    800,
-    800,
+    gstScreen.iWindowWidth,
+    gstScreen.iWindowHeight,
     SDL_WINDOW_SHOWN
   );
   *pSDL_Renderer = SDL_CreateRenderer(*pSDL_Window, -1, SDL_RENDERER_ACCELERATED );
@@ -344,16 +345,22 @@ void vSDL_DrawText(SDL_Renderer *pSDL_Renderer, const char *szTxt, int iX, int i
 }
 
 int bAreCoordsInSDL_Rect(SDL_Rect *pSDL_RECT, int iX, int iY) {
-  if (pSDL_RECT == NULL)
-    return FALSE;
-
+  int bRsl = FALSE;
+  if ( DEBUG_SDL_ALL ) {
+    vTraceVarArgsFn("begin");
+    vTraceVarArgsFn("pSDL_RECT=%p", pSDL_RECT);
+    vTraceVarArgsFn("iX=%d", iX);
+    vTraceVarArgsFn("iY=%d", iY);
+  }
+  if ( pSDL_RECT == NULL ) return FALSE;
   if (iX >= pSDL_RECT->x &&
       iY >= pSDL_RECT->y &&
       iX <= pSDL_RECT->x + pSDL_RECT->w &&
       iY <= pSDL_RECT->y + pSDL_RECT->h) {
-    return TRUE;
+    bRsl = TRUE;
   }
-  return FALSE;
+  if ( DEBUG_SDL_ALL ) vTraceVarArgsFn("end - [%s]", bRsl ? "TRUE" : "FALSE");
+  return bRsl;
 }
 
 void vSDL_DialogDraw(SDL_Renderer *pSDL_Renderer,
@@ -556,21 +563,27 @@ void vSDL_DrawHUD(SDL_Renderer *pSDL_Renderer, PSTRUCT_PLAYER pstPlayer) {
   vSDL_DrawText(pSDL_Renderer, szBlock, iXBlock, iY, stColBlock);
 }
 
+STRUCT_MONSTER* gpastMonster;
+int giCtMonsters = 0;
+
 void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCt) {
-  SDL_Rect stRectMesa;
-  int ii;
+  int ii = 0;
+  PSTRUCT_ELEMENT pstTable = NULL;
 
   if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn("iMonsterCt=%d iHandCt=%d", iMonsterCt, pstDeck->iHandCount);
 
-  stRectMesa.x = 50;
-  stRectMesa.y = 50;
-  stRectMesa.w = 700;
-  stRectMesa.h = 500;
+  iSCREEN_SetLayout(LAYOUT_TABLE);
+
+  pstTable = pstSCREEN_GetElementByName("TABLE");
+  if ( !pstTable ) {
+    vTraceVarArgsFn("Falha ao pegar o elemento TABLE!");
+    _exit(1);
+  }
 
   SET_RENDER_DRAW_COLOR(pSDL_Renderer, SDL_COLOR_FROM_RGB_OPACITY(SDL_RGB_TABLE_GREEN, OPACITY_OPAQUE));
-  SDL_RenderFillRect(pSDL_Renderer, &stRectMesa);
+  SDL_RenderFillRect(pSDL_Renderer, (SDL_Rect*)&pstTable->stRect);
   SET_RENDER_DRAW_COLOR(pSDL_Renderer, SDL_COLOR_FROM_RGB_OPACITY(SDL_RGB_TABLE_BORDER, OPACITY_OPAQUE));
-  SDL_RenderDrawRect(pSDL_Renderer, &stRectMesa);
+  SDL_RenderDrawRect(pSDL_Renderer, (SDL_Rect*)&pstTable->stRect);
 
   /* --------------------- */
   /*      MONSTROS         */
@@ -599,7 +612,7 @@ void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_M
     iGapX = 16;
     iGapY = 18;
 
-    iUsableW = stRectMesa.w - iPad * 2;
+    iUsableW = pstTable->stRect.w - iPad * 2;
 
     /* colunas (grid) */
     if (iMonsterCt <= 0) {
@@ -668,8 +681,8 @@ void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_M
       iCol = ii % iCols;
       iRow = ii / iCols;
 
-      iSlotX = stRectMesa.x + iPad + iCol * (iSlotW + iGapX);
-      iSlotY = stRectMesa.y + iPad + iRow * (iCardH + iGapY);
+      iSlotX = pstTable->stRect.x + iPad + iCol * (iSlotW + iGapX);
+      iSlotY = pstTable->stRect.y + iPad + iRow * (iCardH + iGapY);
 
       /* carta centralizada dentro do slot */
       stRectMonster.w = iCardW;
@@ -794,7 +807,7 @@ void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_M
     int iSlotW;
 
     iPadX = 24;
-    iUsableW = stRectMesa.w - iPadX * 2;
+    iUsableW = pstTable->stRect.w - iPadX * 2;
     iSlotW = iUsableW / pstDeck->iHandCount;
 
     for (ii = 0; ii < pstDeck->iHandCount; ii++) {
@@ -820,8 +833,8 @@ void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_M
 
       stRectCard.w = iCardW;
       stRectCard.h = iCardH;
-      stRectCard.x = stRectMesa.x + iPadX + ii * iSlotW + (iSlotW - stRectCard.w) / 2;
-      stRectCard.y = stRectMesa.y + stRectMesa.h - stRectCard.h - 20;
+      stRectCard.x = pstTable->stRect.x + iPadX + ii * iSlotW + (iSlotW - stRectCard.w) / 2;
+      stRectCard.y = pstTable->stRect.y + pstTable->stRect.h - stRectCard.h - 20;
 
       if (ii < (int)(sizeof(gCardRects) / sizeof(gCardRects[0])))
         gCardRects[ii] = stRectCard;
@@ -1128,6 +1141,192 @@ void vMessageBox(const char *kpszMsg, const char *kpszFooterMsg) {
   SDL_DestroyTexture(pstFooterTextTexture);
 }
 
+void vSDL_DrawMenu(SDL_Renderer* pSDL_Renderer, void* pstMenu) {
+  int ii = 0;
+  int iX = 0;
+  int iY = 0;
+  PSTRUCT_ELEMENT pstScreenMenu = (PSTRUCT_ELEMENT) pstMenu;
+
+  if ( !pSDL_Renderer || !pstMenu ) return;
+
+  SDL_RenderClear(pSDL_Renderer);
+
+  vSDL_DrawRectShadow(pSDL_Renderer, (SDL_Rect*)&pstScreenMenu->stRect, 6, 6, 80);
+  SDL_SetRenderDrawColor(pSDL_Renderer, 40, 40, 50, 255);
+  SDL_RenderFillRect(pSDL_Renderer, (SDL_Rect*)&pstScreenMenu->stRect);
+  SDL_SetRenderDrawColor(pSDL_Renderer, 220, 220, 230, 255);
+  SDL_RenderDrawRect(pSDL_Renderer, (SDL_Rect*)&pstScreenMenu->stRect);
+
+  vSDL_DrawText(pSDL_Renderer, pstScreenMenu->szText, pstScreenMenu->stRect.x + 20, pstScreenMenu->stRect.y + 20, *(SDL_Color*)&pstScreenMenu->stFgColor);
+
+  iX = pstScreenMenu->stRect.x + 40;
+  iY = pstScreenMenu->stRect.y + 60;
+  for ( ii = 0; ii < pstScreenMenu->iCtItems; ii++ ) {
+    STRUCT_SCREEN_ITEM* pstItem = &pstScreenMenu->astItem[ii];
+    pstItem->stRect.x = iX;
+    pstItem->stRect.y = iY + (ii * 60);
+    pstItem->stRect.w = pstScreenMenu->stRect.w - 80;
+    pstItem->stRect.h = 50;
+    ;
+    /* Fundo do item */
+    if ( ii == pstScreenMenu->iSelectedItemIdx ) SDL_SetRenderDrawColor(pSDL_Renderer, 70, 90, 130, 255);
+    else
+      SDL_SetRenderDrawColor(pSDL_Renderer, 50, 50, 60, 255);
+    SDL_RenderFillRect(pSDL_Renderer, (SDL_Rect*)&pstItem->stRect);
+
+    SDL_SetRenderDrawColor(pSDL_Renderer, 200, 200, 210, 255);
+    SDL_RenderDrawRect(pSDL_Renderer, (SDL_Rect*) &pstItem->stRect);
+
+    /* Nome */
+    vSDL_DrawText(pSDL_Renderer, pstItem->szText, pstItem->stRect.x + 10, pstItem->stRect.y + 15, *(SDL_Color*) &pstItem->stFgColor);
+  }
+  SDL_RenderPresent(pSDL_Renderer);
+}
+
+void vSDL_DrawPause(SDL_Renderer *pSDL_Renderer) {
+  PSTRUCT_ELEMENT pstMenu = NULL;
+  iSCREEN_SetLayout(LAYOUT_PAUSE);
+  pstMenu = pstSCREEN_GetElementByType(ELM_TYPE_MENU);
+  if ( !pstMenu ) {
+    if ( DEBUG_SDL_MORE_MSGS ) vTraceVarArgsFn("Falha ao obter o menu de pausa!");
+    return;
+  }
+  vSDL_DrawMenu(pSDL_Renderer, pstMenu);
+}
+
+int gbPauseOpen = FALSE;
+
+int iSDL_OpenPause(SDL_Renderer *pSDL_Renderer){
+  SDL_Event stEvent;
+  PSTRUCT_ELEMENT pstMenu = NULL;
+  static int bRunning = FALSE;
+
+  if ( DEBUG_SDL_MORE_MSGS ) {
+    vTraceVarArgsFn("begin");
+    vTraceVarArgsFn("gstGame.iStatus [%s]", gkpaszGameStatus[gstGame.iStatus]);
+  }
+  memset(&stEvent  , 0x00, sizeof(stEvent  ));
+
+  if ( gstGame.iStatus != STATUS_PAUSE ) return -1;
+
+  iSCREEN_SetLayout(LAYOUT_PAUSE);
+
+  pstMenu = pstSCREEN_GetElementByType(ELM_TYPE_MENU);
+  if ( !pstMenu ) {
+    if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn("FALHA em pstSCREEN_GetElementByType(ELM_TYPE_MENU)");
+    return -1;
+  }
+
+  if ( pSDL_Renderer == NULL ) return -1;
+  gbPauseOpen = TRUE;
+  bRunning = TRUE;
+  while ( bRunning ) {
+    /* desenha a tela */
+    vSDL_DrawPause(pSDL_Renderer);
+    while ( SDL_PollEvent(&stEvent) ) {
+      if ( stEvent.type == SDL_QUIT ) {
+        gbPauseOpen = FALSE;
+        gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_GAMING : STATUS_PAUSE);
+        return FINISH_PROGRAM;
+      }
+      if ( stEvent.type == SDL_KEYDOWN ) {
+        SDL_Keycode key = stEvent.key.keysym.sym;
+        if ( key == SDLK_DOWN ) {
+          pstMenu->iSelectedItemIdx++;
+          if ( pstMenu->iSelectedItemIdx >= pstMenu->iCtItems ) {
+            pstMenu->iSelectedItemIdx = 0;
+          }
+        }
+        else if ( key == SDLK_UP ) {
+          pstMenu->iSelectedItemIdx--;
+          if (pstMenu->iSelectedItemIdx < 0)
+            pstMenu->iSelectedItemIdx = pstMenu->iCtItems - 1;
+        }
+        else if ( key == SDLK_ESCAPE ) {
+          gbPauseOpen = FALSE;
+          return 0;
+        }
+      }
+      else if ( stEvent.type == SDL_MOUSEBUTTONDOWN ) {
+        int mx = stEvent.button.x;
+        int my = stEvent.button.y;
+        int ii = 0;
+
+        /* Detectar clique nos botoes */
+        for ( ii = 0; ii < pstMenu->iCtItems; ii++ ) {
+          if ( bAreCoordsInSDL_Rect(
+            (SDL_Rect*)&pstMenu->astItem[ii].stRect,
+                                    mx,
+                                    my) ) {
+            pstMenu->iSelectedItemIdx = ii;
+            break;
+          }
+        }
+
+        if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Salvar") ) {
+          bRunning = FALSE;
+          gstGame.iLastStatus = gstGame.iStatus;
+          gstGame.iStatus = STATUS_GAMING;
+          gstGame.stGameContext.stPlayer = gstPlayer;
+          memcpy(gstGame.stGameContext.astMonster, gpastMonster, sizeof(STRUCT_MONSTER) * giCtMonsters);
+          gstGame.stGameContext.iCtMonster = giCtMonsters;
+          iGameSave();
+          gstGame.iStatus = gstGame.iLastStatus;
+          gstGame.iLastStatus = gstGame.iStatus;
+          vMessageBox("Jogo Salvo com sucesso", "Pressione qualquer tecla para continuar!");
+          break;
+        }
+        else if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Salvar e sair") ) {
+          bRunning = FALSE;
+          gstGame.iLastStatus = gstGame.iStatus;
+          gstGame.iStatus = STATUS_GAMING;
+          gstGame.stGameContext.stPlayer = gstPlayer;
+          memcpy(gstGame.stGameContext.astMonster, gpastMonster, sizeof(STRUCT_MONSTER) * giCtMonsters);
+          gstGame.stGameContext.iCtMonster = giCtMonsters;
+          iGameSave();
+          gstGame.iStatus = gstGame.iLastStatus;
+          gstGame.iLastStatus = gstGame.iStatus;
+          vMessageBox("Jogo Salvo com sucesso", "Pressione qualquer tecla para sair do jogo!");
+          gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_GAMING : STATUS_PAUSE);
+          return FINISH_PROGRAM;
+        }
+        else if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Configuracoes") ) {
+          bRunning = FALSE;
+          break;
+        }
+        else if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Voltar") ) {
+          gbPauseOpen = FALSE;
+          bRunning = FALSE;
+          gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_GAMING : STATUS_PAUSE);
+          break;
+        }
+        else {
+          continue;
+        }
+      }
+      else if ( stEvent.type == SDL_MOUSEMOTION ) {
+        int mx = stEvent.button.x;
+        int my = stEvent.button.y;
+        int ii = 0;
+        /* Detectar movimento nos botoes */
+        for ( ii = 0; ii < pstMenu->iCtItems; ii++ ) {
+          if ( bAreCoordsInSDL_Rect(
+            (SDL_Rect*)&pstMenu->astItem[ii].stRect,
+            mx,
+            my) ) {
+            pstMenu->iSelectedItemIdx = ii;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  gbPauseOpen = FALSE;
+
+  return 0;
+}
+
 void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCt) {
   int iRedrawAction;
   int bHasPlayableCards;
@@ -1140,6 +1339,9 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
   if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn(" --- SDL MAIN LOOP");
 
   gbAnimateHandDraw = TRUE;
+
+  gpastMonster = pastMonsters;
+  giCtMonsters = iMonsterCt;
 
   vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
 
@@ -1160,6 +1362,8 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
                           iMonsterCt,
                           pbRunning
                         );
+      gpastMonster = pastMonsters;
+      giCtMonsters = iMonsterCt;
     }
 
     if (!(*pbRunning))
@@ -1168,6 +1372,11 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
     if (gstGame.iStatus == STATUS_PAUSE) {
       vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
       iRedrawAction = REDRAW_NONE;
+      if ( iSDL_OpenPause(pSDL_Renderer) == FINISH_PROGRAM ) {
+        *pbRunning = FALSE;
+        break;
+      }
+      iRedrawAction = REDRAW_TABLE;
       continue;
     }
 
@@ -1184,10 +1393,15 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       iRedrawAction = REDRAW_TABLE;
       vAddPlayerReward(&gstPlayer);
       vEVR_ClearAll();
-      iSDL_OpenShop(pSDL_Renderer, &gstPlayer, pstDeck);
+      if ( iSDL_OpenShop(pSDL_Renderer, &gstPlayer, pstDeck) == SHOP_EXIT ) {
+        *pbRunning = FALSE;
+        break;
+      }
       vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
       giLevel++;
       vInitMonstersForLevel(pastMonsters, giLevel, &iMonsterCt);
+      gpastMonster = pastMonsters;
+      giCtMonsters = iMonsterCt;
       vStartNewTurn(pstDeck);
       vTraceDeck(pstDeck, TRACE_DECK_ALL);
       gbAnimateHandDraw = TRUE;
@@ -1200,6 +1414,8 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
 
       vDoEnemyActions(pastMonsters, iMonsterCt);
+      gpastMonster = pastMonsters;
+      giCtMonsters = iMonsterCt;
       vPrintLine("Iniciando novo turno, aguarde...", INSERT_NEW_LINE);
       vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
       iRedrawAction = REDRAW_NONE;
@@ -1210,7 +1426,7 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
         vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
         iRedrawAction = REDRAW_NONE;
         vSDL_WelcomeInit();
-        if ( iSDL_OpenWelcome(pSDL_Renderer) == WELCOME_EXIT ) {
+        if ( iSDL_OpenWelcome(pSDL_Renderer) == FINISH_PROGRAM ) {
           pbRunning = FALSE;
           break;
         }
@@ -1221,9 +1437,12 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
         giLevel = 1;
         gstGame.iLevel = giLevel;
         gstGame.iStatus = STATUS_WELCOME;
+        gstGame.iLastStatus = STATUS_NONE;
         gstGame.iLastState = STATE_NONE;
         gstGame.iState = STATE_WELCOME_BEGIN;
         vInitMonstersForLevel(pastMonsters, giLevel, &iMonsterCt);
+        gpastMonster = pastMonsters;
+        giCtMonsters = iMonsterCt;
         vInitDialog();
         iRedrawAction = REDRAW_TABLE;
         vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
@@ -1236,6 +1455,7 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       iRedrawAction = REDRAW_TABLE;
     }
 
+    memcpy(gstPlayer.astPlayerCards, pstDeck, sizeof(STRUCT_DECK) * MAX_DECK);
     if (iEVR_Tick(ui64FrameStart) != FALSE) iRedrawAction |= REDRAW_TABLE;
 
     if (iRedrawAction != REDRAW_NONE)

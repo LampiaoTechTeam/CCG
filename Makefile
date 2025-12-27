@@ -141,7 +141,11 @@ SDL_OBJ = \
     $(OBJ_DIR)/sdl_animation.o \
     $(OBJ_DIR)/image.o \
     $(OBJ_DIR)/event_render.o \
-    $(OBJ_DIR)/event.o
+    $(OBJ_DIR)/event.o \
+    $(OBJ_DIR)/welcome.o \
+    $(OBJ_DIR)/hud.o \
+    $(OBJ_DIR)/rect.o \
+    $(OBJ_DIR)/screen.o
 endif
 
 CARD_GAME_EXEC = card_game
@@ -162,10 +166,7 @@ OBJS = \
     $(OBJ_DIR)/trace.o \
     $(OBJ_DIR)/conf.o \
     $(OBJ_DIR)/game.o \
-    $(OBJ_DIR)/xml.o \
-    $(OBJ_DIR)/welcome.o \
-    $(OBJ_DIR)/hud.o \
-    $(OBJ_DIR)/rect.o
+    $(OBJ_DIR)/xml.o
 
 doc:
 	@mkdir -p doc/doxygen
