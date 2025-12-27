@@ -1,3 +1,11 @@
+/**
+ * cmdline.c
+ *
+ * Written by Gustavo Bacagine <gustavo.bacagine@protonmail.com> in Dec 2025
+ *
+ * Description: Command line parser with getopt_long
+ */
+
 #include <cmdline.h>
 #include <strings.h>
 #include <stdio.h>

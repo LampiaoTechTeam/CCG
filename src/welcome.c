@@ -1,4 +1,13 @@
+/**
+ * welcome.c
+ *
+ * Written by Gustavo Bacagine <gustavo.bacagine@protonmail.com>
+ *
+ * Description: Initial screen of the game
+ */
+
 #include <stdio.h>
+#include <sys_interface.h>
 #include <card_game.h>
 #include <debuff.h>
 #include <deck.h>
@@ -19,6 +28,7 @@
 #include <xml.h>
 #include <screen.h>
 #include <game.h>
+#include <msg.h>
 
 int gbWelcomeOpen = FALSE;
 
@@ -29,58 +39,10 @@ int gbWelcomeOpen = FALSE;
 
   /* Desenha o Welcome completo */
   int iWelcomeDraw(SDL_Renderer *pSDL_Renderer){
-    SDL_Rect* pstPanel;
-    SDL_Rect* pstItem;
-    int i;
-    int iX;
-    int iY;
-    SDL_Color stCorBranco = {255, 255, 255, 255};
     PSTRUCT_ELEMENT pstMenu;
-
     if ( pSDL_Renderer == NULL ) return -1;
-
     pstMenu = pstSCREEN_GetElementByType(ELM_TYPE_MENU);
-
-    // vSDL_DrawMenu(pSDL_Renderer, pstMenu);
-// #if 0
-    SDL_RenderClear(pSDL_Renderer);
-
-    /* Painel principal */
-    pstPanel = (SDL_Rect*)&pstMenu->stRect;
-
-    vSDL_DrawRectShadow(pSDL_Renderer, pstPanel, 6, 6, 80);
-    SDL_SetRenderDrawColor(pSDL_Renderer, 40, 40, 50, 255);
-    SDL_RenderFillRect(pSDL_Renderer, pstPanel);
-    SDL_SetRenderDrawColor(pSDL_Renderer, 220, 220, 230, 255);
-    SDL_RenderDrawRect(pSDL_Renderer, pstPanel);
-
-    /* Título */
-    vSDL_DrawText(pSDL_Renderer, pstMenu->szText, pstPanel->x + 20, pstPanel->y + 20, stCorBranco);
-
-    /* Itens do menu */
-    iX = pstPanel->x + 40;
-    iY = pstPanel->y + 60;
-
-    for ( i = 0; i < pstMenu->iCtItems; i++ ) {
-      pstMenu->astItem[i].stRect.x = iX;
-      pstMenu->astItem[i].stRect.y = iY + (i * 60);
-      pstMenu->astItem[i].stRect.w = pstPanel->w - 80;
-      pstMenu->astItem[i].stRect.h = 50;
-      pstItem = (SDL_Rect*)&pstMenu->astItem[i].stRect;
-      /* Fundo do item */
-      if ( i == pstMenu->iSelectedItemIdx ) SDL_SetRenderDrawColor(pSDL_Renderer, 70, 90, 130, 255);
-      else
-        SDL_SetRenderDrawColor(pSDL_Renderer, 50, 50, 60, 255);
-      SDL_RenderFillRect(pSDL_Renderer, pstItem);
-
-      SDL_SetRenderDrawColor(pSDL_Renderer, 200, 200, 210, 255);
-      SDL_RenderDrawRect(pSDL_Renderer, pstItem);
-
-      /* Nome */
-      vSDL_DrawText(pSDL_Renderer, pstMenu->astItem[i].szText, pstItem->x + 10, pstItem->y + 15, stCorBranco);
-    }
-    SDL_RenderPresent(pSDL_Renderer);
-// #endif
+    vSDL_DrawMenu(pSDL_Renderer, pstMenu);
     return 0;
   }
 
@@ -152,7 +114,7 @@ int gbWelcomeOpen = FALSE;
               gbLoadGameFromFile = TRUE;
             }
             else {
-              vMessageBox("Nenhum save para carregar!", "Pressione qualquer tecla para continuar");
+              vSDL_MessageBox(MSG(MSG_NOT_FOUND_GAME_SAVE), MSG(MSG_PRESS_ANY_KEY_TO_CONTINUE));
             }
             break;
           }

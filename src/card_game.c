@@ -1,3 +1,11 @@
+/**
+ * card_game.c
+ *
+ * Written by Renato Fermi <repiazza@gmail.com>
+ *
+ * Description: Main source of the project
+ */
+
 #include <stdio.h>
 #include <debuff.h>
 #include <deck.h>
@@ -18,6 +26,7 @@
 #ifdef USE_SDL2
   #include <sdl_api.h>
 #endif
+#include <sys_interface.h>
 #include <card_game.h>
 #include <game.h>
 #include <welcome.h>
@@ -27,6 +36,7 @@
 #include <getopt.h>
 #include <cmdline.h>
 #include <xml.h>
+#include <msg.h>
 
 /** === Globals === */
 char *gkpszProgramName;
@@ -100,6 +110,7 @@ STRUCT_XML astCCGXml[] = {
   { "DEBUG_LEVEL", XMLTYPE_STRING, sizeof(gstGlobalPrm.szDebugLevel), gstGlobalPrm.szDebugLevel, NULL            },
   { "WRK_DIR"    , XMLTYPE_STRING, sizeof(gstGlobalPrm.szWrkDir)    , gstGlobalPrm.szWrkDir    , NULL            },
   { "FONT_DIR"   , XMLTYPE_STRING, sizeof(gstGlobalPrm.szFontsDir)  , gstGlobalPrm.szFontsDir  , NULL            },
+  { "TRACE_ON_TERMINAL", XMLTYPE_STRING, sizeof(gstGlobalPrm.szTraceOnTerminal), gstGlobalPrm.szTraceOnTerminal, NULL            },
   { NULL         , XMLTYPE_NULL  , 0                                , NULL                     , NULL            }
 };
 int icbackCCGXml(xmlNodePtr pstNode, void* pData __attribute__((unused))) {
@@ -143,6 +154,8 @@ int bInitGlobals(void) {
 
   memset(szConfFile   , 0x00, sizeof(szConfFile));
 
+  if ( DEBUG_MSGS ) vTraceBegin();
+
   snprintf(szConfFile   , sizeof(szConfFile), "%s%cccg.xml", gstGlobalPrm.szConfDir, DIR_SEPARATOR);
 
   giLevel = 1;
@@ -173,6 +186,12 @@ int bInitGlobals(void) {
 
   snprintf(gszDebugLevel, sizeof(gszDebugLevel), "%s", gstGlobalPrm.szDebugLevel);
 
+  if ( !bStrIsEmpty(gstGlobalPrm.szTraceOnTerminal) ) {
+    gbTraceOnTerminal = atoi(gstGlobalPrm.szTraceOnTerminal);
+  }
+
+  if ( DEBUG_MSGS ) vTraceEnd();
+
   return 1;
 }
 
@@ -199,7 +218,9 @@ static void vShowVersion(void) {
 #endif
 }
 
+#ifdef USE_SDL2
 int iSDL_OpenShop(SDL_Renderer *pSDL_Renderer, PSTRUCT_PLAYER pstPlayer, PSTRUCT_DECK pstDeck);
+#endif
 
 /**
  *
@@ -266,6 +287,11 @@ int CCG_Main(int argc, char *argv[]){
   }
 
   vInitLogs(gstGlobalPrm.szTrace, gstGlobalPrm.szDebugLevel);
+
+  if ( !bLoadMsgXml() ) {
+    fprintf(stderr, "Erro ao ler o arquivo msg.xml!\n");
+    return 0;
+  }
      
   #ifdef USE_SDL2
     if ( gbSDL_Mode ) {
@@ -297,17 +323,6 @@ int CCG_Main(int argc, char *argv[]){
   }
   else {
     vGameLoadCtxVars(&gstGame.stGameContext, &stDeck, &gstPlayer, astMonsters, &iMonsterCount);
-    /**
-    vTraceVarArgsFn("memcpy(&stDeck, gstGame.stGameContext.stPlayer.astPlayerCards, sizeof(STRUCT_DECK));");
-    memcpy(&stDeck, gstGame.stGameContext.stPlayer.astPlayerCards, sizeof(STRUCT_DECK));
-    vTraceVarArgsFn("memcpy(&gstPlayer, &gstGame.stGameContext.stPlayer, sizeof(STRUCT_PLAYER));");
-    memcpy(&gstPlayer, &gstGame.stGameContext.stPlayer, sizeof(STRUCT_PLAYER));
-    vTraceVarArgsFn("memcpy(&astMonsters, &gstGame.stGameContext.astMonster, sizeof(STRUCT_MONSTER) * gstGame.stGameContext.iCtMonster);");
-    memcpy(&astMonsters, &gstGame.stGameContext.astMonster, sizeof(STRUCT_MONSTER) * gstGame.stGameContext.iCtMonster);
-    vTraceVarArgsFn("iMonsterCount = gstGame.stGameContext.iCtMonster;");
-    iMonsterCount = gstGame.stGameContext.iCtMonster;
-    vTraceVarArgsFn("FINISH");
-     */
   }
  
   #ifdef FAKE
@@ -336,3 +351,4 @@ int CCG_Main(int argc, char *argv[]){
 
   return 0;
 }
+

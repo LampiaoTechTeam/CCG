@@ -1,3 +1,11 @@
+/**
+ * cmdline.h
+ *
+ * Written by Gustavo Bacagine <gustavo.bacagine@protonmail.com> in Dec 2025
+ *
+ * Description: Command line parser with getopt_long
+ */
+
 #ifndef _CMDLINE_H_
 #define _CMDLINE_H_
 

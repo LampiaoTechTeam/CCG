@@ -1,3 +1,11 @@
+/**
+ * event.h
+ *
+ * Written by Renato Fermi <repiazza@gmail.com>
+ *
+ * Description: Events of the game
+ */
+
 #ifndef _EVENT_H_
   #define _EVENT_H_
 

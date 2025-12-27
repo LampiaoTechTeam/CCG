@@ -12,7 +12,7 @@
   #ifdef USE_SDL2
 
     // #include <card_game.h>
-    
+
     #define DESTROY_TEXTURES_NONE 0
     #define DESTROY_TEXTURES      1
     
@@ -30,7 +30,7 @@
     
     void vTXTR_RenderCopy( SDL_Renderer *renderer, int iDeg ) {
       STRUCT_TEXTURE_LIST *pstWrkTxtr;
-      
+
       if ( DEBUG_MSGS ) vTraceBegin();
 
       for ( pstWrkTxtr = &gstTextureList; pstWrkTxtr != NULL; pstWrkTxtr = pstWrkTxtr->pstNext ) {
@@ -43,7 +43,7 @@
           }
         }
       }
-      
+
       if ( DEBUG_MSGS ) vTraceEnd();
 
       return;
@@ -54,12 +54,12 @@
 
       if ( DEBUG_MSGS ) vTraceBegin();
       for ( pstWrkTxtr = &gstTextureList; pstWrkTxtr->pstNext != NULL; pstWrkTxtr = pstWrkTxtr->pstNext );
-    
+
       if ( pstWrkTxtr != &gstTextureList || gstTextureList.pSDL_Texture != NULL ) {
         if ( (pstWrkTxtr->pstNext = ( PSTRUCT_TEXTURE_LIST ) malloc( sizeof( STRUCT_TEXTURE_LIST ) ) ) == NULL )
           return NULL;
-          
-        pstWrkTxtr = pstWrkTxtr->pstNext; 
+
+        pstWrkTxtr = pstWrkTxtr->pstNext;
       }
 
       memset( pstWrkTxtr, 0x00, sizeof( STRUCT_TEXTURE_LIST ) );
@@ -68,7 +68,7 @@
         SDL_Surface* pSDLSurface = SDL_CreateRGBSurface( 0, 800, 800, 8, 0, 0, 0, 0 );
         pSDLSurface =  pSDL_SRFC_LoadImage( pszImgPath );
         pstWrkTxtr->pSDL_Texture = SDL_CreateTextureFromSurface( renderer, pSDLSurface );
-        if ( pstWrkTxtr->pSDL_Texture ){  
+        if ( pstWrkTxtr->pSDL_Texture ){
           vTraceVarArgsFn("SDL Error: %s\n", SDL_GetError());
           return NULL;
         }
@@ -76,7 +76,7 @@
       }
       else if ( pSDL_Rect != NULL ) {    // Rect type Txtr
         pstWrkTxtr->pSDL_Texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, pSDL_Rect->w, pSDL_Rect->h );
-        if ( pstWrkTxtr->pSDL_Texture ){  
+        if ( pstWrkTxtr->pSDL_Texture ){
           vTraceVarArgsFn("SDL Error: %s\n", SDL_GetError());
           return NULL;
         }
@@ -85,7 +85,7 @@
         SDL_Surface* surface = SDL_CreateRGBSurface( 0, 800, 800, 8, 0, 0, 0, 0 );
         SDL_SetSurfaceBlendMode( surface, SDL_BLENDMODE_BLEND );
         pstWrkTxtr->pSDL_Texture = SDL_CreateTextureFromSurface( renderer, surface );
-        if ( pstWrkTxtr->pSDL_Texture ){  
+        if ( pstWrkTxtr->pSDL_Texture ){
           vTraceVarArgsFn("SDL Error: %s\n", SDL_GetError());
           return NULL;
         }

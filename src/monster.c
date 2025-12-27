@@ -1,6 +1,15 @@
+/**
+ * monster.c
+ *
+ * Written by Renato Fermi <repiazza@gmail.com>
+ *
+ * Description: Monster module
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys_interface.h>
 #include <card_game.h>
 #include <debuff.h>
 #include <deck.h>

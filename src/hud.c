@@ -17,6 +17,7 @@
 #include <dialog.h>
 #include <monster.h>
 #include <player.h>
+#include <sys_interface.h>
 #include <card_game.h>
 #include <hud.h>
 

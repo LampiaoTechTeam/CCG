@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <sys_interface.h>
 #include <card_game.h>
 #include <deck.h>
 #include <debuff.h>

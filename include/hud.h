@@ -6,6 +6,7 @@
  * Hud data structures and rendering
  * 
  */
+
 #ifndef _HUD_H_
   #define _HUD_H_
   #ifdef USE_SDL2

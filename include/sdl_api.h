@@ -1,7 +1,15 @@
+/**
+ * sdl_api.h
+ *
+ * Written by Renato Fermi <repiazza@gmail.com>
+ *
+ * Description: SDL API
+ */
+
 #ifndef SDL_API_H
   #define SDL_API_H
   #ifdef USE_SDL2
-  // #include <card_game.h>
+
   #include <font.h>
   #include <dialog.h>
     
@@ -84,7 +92,13 @@
     int iSDL_MonsterIndexFromPoint(int iX, int iY, PSTRUCT_MONSTER pastMonsters, int iMonsterCt);
     int bAreCoordsInSDL_Rect( SDL_Rect *pSDL_RECT, int iX, int iY );
     int iSDL_DialogHandleMouse(SDL_Event *pEv, PSTRUCT_SDL_DIALOG_LAYOUT pLayout);
-    void vMessageBox(const char *kpszMsg, const char *kpszFooterMsg);
+    /**
+     * @brief Show message box in window
+     *
+     * @param kpszMsg Message
+     * @param kpszFooterMsg Footer message
+     */
+    void vSDL_MessageBox(const char *kpszMsg, const char *kpszFooterMsg);
     extern STRUCT_SDL_DIALOG_LAYOUT gstDialogLayout;
     typedef struct { Uint32 type; const char *name; } SDLEventName;
     extern int gbSelectingTarget;

@@ -23,7 +23,11 @@
     { NULL        , XMLTYPE_NULL  , 0                         , NULL               , NULL           }
   };
   int icbackImageXml(xmlNode* pstNode, void* pData __attribute__((unused))) {
-    if ( !strcasecmp((char*)pstNode->name, "IMAGE") || !strcasecmp((char*)pstNode->name, "IMAGE_LIST") ) {
+    if ( !strcasecmp((char*)pstNode->name, "IMAGE_LIST") ) {
+      memset(&stWrkImage, 0x00, sizeof(stWrkImage));
+      iParseXmlFields(pstNode, astImageXml);
+    }
+    if ( !strcasecmp((char*)pstNode->name, "IMAGE") ) {
       memset(&stWrkImage, 0x00, sizeof(stWrkImage));
       if ( giImageCount >= MAX_IMAGES ) return 1;
       iParseXmlFields(pstNode, astImageXml);

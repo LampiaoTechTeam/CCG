@@ -1,10 +1,18 @@
+/**
+ * sdl_api.c
+ *
+ * Written by Renato Fermi <repiazza@gmail.com>
+ *
+ * Description: SDL API
+ */
+
 #ifdef USE_SDL2
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
 #include <stdint.h>
-
+#include <sys_interface.h>
 #include <card_game.h>
 #include <deck.h>
 #include <debuff.h>
@@ -30,6 +38,7 @@
 #include <event_render.h>
 #include <game.h>
 #include <screen.h>
+#include <msg.h>
 
 /* ---------------------------------------------  */
 /*                   Locals                       */
@@ -1025,9 +1034,12 @@ void vRedraw(SDL_Renderer *pSDL_Renderer,
   bRedrawDialog = (iRedrawAction & REDRAW_DIALOG) != 0;
   bRedrawTable  = (iRedrawAction & REDRAW_TABLE)  != 0;
 
-  if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn("bRedrawDialog=%d bRedrawTable=%d gbAnimateHandDraw=%d",
-                  bRedrawDialog, bRedrawTable, gbAnimateHandDraw);
 
+  if ( DEBUG_SDL_MSGS ) {
+    vTraceVarArgsFn("gstGame.iStatus=[%s]", gkpaszGameStatus[gstGame.iStatus]);
+    vTraceVarArgsFn("bRedrawDialog=%d bRedrawTable=%d gbAnimateHandDraw=%d",
+                  bRedrawDialog, bRedrawTable, gbAnimateHandDraw);
+  }
   if (bRedrawDialog == 0 && bRedrawTable == 0)
     return;
 
@@ -1049,7 +1061,7 @@ void vRedraw(SDL_Renderer *pSDL_Renderer,
   SDL_RenderPresent(pSDL_Renderer);
 }
 
-void vMessageBox(const char *kpszMsg, const char *kpszFooterMsg) {
+void vSDL_MessageBox(const char *kpszMsg, const char *kpszFooterMsg) {
   SDL_Surface* pstMsgBoxTextSurface = NULL;
   SDL_Texture* pstMsgBoxTextTexture = NULL;
   SDL_Rect stFooterTextRect = { 0 };
@@ -1128,8 +1140,8 @@ void vMessageBox(const char *kpszMsg, const char *kpszFooterMsg) {
       SDL_RenderCopy(gpSDL_Renderer, pstFooterTextTexture, NULL, &stFooterTextRect);
       SDL_RenderPresent(gpSDL_Renderer);
       if ( DEBUG_SDL_ALL ) {
-        vTraceVarArgsFn("vMessageBox - %s", kpszMsg);
-        vTraceVarArgsFn("vMessageBox - %s", kpszFooterMsg);
+        vTraceVarArgsFn("vSDL_MessageBox - %s", kpszMsg);
+        vTraceVarArgsFn("vSDL_MessageBox - %s", kpszFooterMsg);
       }
       bRenderer = FALSE;
     }
@@ -1152,9 +1164,9 @@ void vSDL_DrawMenu(SDL_Renderer* pSDL_Renderer, void* pstMenu) {
   SDL_RenderClear(pSDL_Renderer);
 
   vSDL_DrawRectShadow(pSDL_Renderer, (SDL_Rect*)&pstScreenMenu->stRect, 6, 6, 80);
-  SDL_SetRenderDrawColor(pSDL_Renderer, 40, 40, 50, 255);
+  SDL_SetRenderDrawColor(pSDL_Renderer, pstScreenMenu->stBgColor.r, pstScreenMenu->stBgColor.g, pstScreenMenu->stBgColor.b, pstScreenMenu->stBgColor.a);
   SDL_RenderFillRect(pSDL_Renderer, (SDL_Rect*)&pstScreenMenu->stRect);
-  SDL_SetRenderDrawColor(pSDL_Renderer, 220, 220, 230, 255);
+  SDL_SetRenderDrawColor(pSDL_Renderer, pstScreenMenu->stBorderColor.r, pstScreenMenu->stBorderColor.g, pstScreenMenu->stBorderColor.b, pstScreenMenu->stBorderColor.a);
   SDL_RenderDrawRect(pSDL_Renderer, (SDL_Rect*)&pstScreenMenu->stRect);
 
   vSDL_DrawText(pSDL_Renderer, pstScreenMenu->szText, pstScreenMenu->stRect.x + 20, pstScreenMenu->stRect.y + 20, *(SDL_Color*)&pstScreenMenu->stFgColor);
@@ -1167,7 +1179,7 @@ void vSDL_DrawMenu(SDL_Renderer* pSDL_Renderer, void* pstMenu) {
     pstItem->stRect.y = iY + (ii * 60);
     pstItem->stRect.w = pstScreenMenu->stRect.w - 80;
     pstItem->stRect.h = 50;
-    ;
+
     /* Fundo do item */
     if ( ii == pstScreenMenu->iSelectedItemIdx ) SDL_SetRenderDrawColor(pSDL_Renderer, 70, 90, 130, 255);
     else
@@ -1177,7 +1189,6 @@ void vSDL_DrawMenu(SDL_Renderer* pSDL_Renderer, void* pstMenu) {
     SDL_SetRenderDrawColor(pSDL_Renderer, 200, 200, 210, 255);
     SDL_RenderDrawRect(pSDL_Renderer, (SDL_Rect*) &pstItem->stRect);
 
-    /* Nome */
     vSDL_DrawText(pSDL_Renderer, pstItem->szText, pstItem->stRect.x + 10, pstItem->stRect.y + 15, *(SDL_Color*) &pstItem->stFgColor);
   }
   SDL_RenderPresent(pSDL_Renderer);
@@ -1273,7 +1284,7 @@ int iSDL_OpenPause(SDL_Renderer *pSDL_Renderer){
           iGameSave();
           gstGame.iStatus = gstGame.iLastStatus;
           gstGame.iLastStatus = gstGame.iStatus;
-          vMessageBox("Jogo Salvo com sucesso", "Pressione qualquer tecla para continuar!");
+          vSDL_MessageBox(MSG(MSG_GAME_SAVE_WITH_SUCCESS), MSG(MSG_PRESS_ANY_KEY_TO_CONTINUE));
           break;
         }
         else if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Salvar e sair") ) {
@@ -1286,7 +1297,7 @@ int iSDL_OpenPause(SDL_Renderer *pSDL_Renderer){
           iGameSave();
           gstGame.iStatus = gstGame.iLastStatus;
           gstGame.iLastStatus = gstGame.iStatus;
-          vMessageBox("Jogo Salvo com sucesso", "Pressione qualquer tecla para sair do jogo!");
+          vSDL_MessageBox(MSG(MSG_GAME_SAVE_WITH_SUCCESS), MSG(MSG_EXIT_GAME));
           gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_GAMING : STATUS_PAUSE);
           return FINISH_PROGRAM;
         }
@@ -1298,6 +1309,7 @@ int iSDL_OpenPause(SDL_Renderer *pSDL_Renderer){
           gbPauseOpen = FALSE;
           bRunning = FALSE;
           gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_GAMING : STATUS_PAUSE);
+          printf("%s gstGame.iStatus [%s]\n", __FUNCTION__, gkpaszGameStatus[gstGame.iStatus]);
           break;
         }
         else {
@@ -1377,7 +1389,7 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
         break;
       }
       iRedrawAction = REDRAW_TABLE;
-      continue;
+      // continue;
     }
 
     if (iRedrawAction == -2) {
@@ -1421,8 +1433,8 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       iRedrawAction = REDRAW_NONE;
 
       if ( gstPlayer.iHP <= 0 ) {
-        vPrintLine("Voce morreu!", INSERT_NEW_LINE);
-        vMessageBox("Voce morreu!", "Pressione qualquer tecla para continuar");
+        vPrintLine(MSG(MSG_YOU_LOSE), INSERT_NEW_LINE);
+        vSDL_MessageBox(MSG(MSG_YOU_LOSE), MSG(MSG_PRESS_ANY_KEY_TO_CONTINUE));
         vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
         iRedrawAction = REDRAW_NONE;
         iGameDelete();

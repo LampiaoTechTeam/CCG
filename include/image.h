@@ -2,9 +2,6 @@
   #define _IMAGE_H_
   #ifdef USE_SDL2
 
-    // #include <card_game.h>
-    // #include <SDL2/SDL.h>
-    // #include <SDL2/SDL_image.h>
     #include <xml.h>
 
     #define MAX_IMAGES 64

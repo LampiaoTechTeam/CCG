@@ -55,6 +55,7 @@ typedef struct STRUCT_ELEMENT {
   STRUCT_SCREEN_RECT stRect;
   STRUCT_SCREEN_COLOR stFgColor;
   STRUCT_SCREEN_COLOR stBgColor;
+  STRUCT_SCREEN_COLOR stBorderColor;
   char szFont[32];
   int iFontSize;
   int iCtItems;
@@ -82,6 +83,10 @@ typedef struct STRUCT_SCREEN {
   int iCtLayouts;
   STRUCT_LAYOUT astLayout[MAX_LAYOUTS];
 } STRUCT_SCREEN, *PSTRUCT_SCREEN;
+
+typedef STRUCT_ELEMENT STRUCT_BUTTON;
+typedef STRUCT_ELEMENT STRUCT_MENU;
+typedef STRUCT_SCREEN_ITEM STRUCT_MENU_BUTTON;
 
 extern STRUCT_SCREEN gstScreen;
 

@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys_interface.h>
 #include <card_game.h>
 
 #include <trace.h>
@@ -29,6 +30,7 @@ char gszTraceFileDialog[2048];
 char gszDebugLevel[32];
 char gszConfFile[_MAX_PATH];
 int  giNoNL = FALSE;
+int gbTraceOnTerminal = FALSE;
 
 #ifdef _WIN32
 
@@ -77,10 +79,14 @@ void vTraceMsg(char *szMsg) {
   if ((pfLog = fopen(gszTraceFile, "a+")) == NULL){
     return;
   }
-  if (giNoNL == TRUE)
+  if (giNoNL == TRUE) {
     fprintf(pfLog, "%s", szMsg);
-  else
+    if ( gbTraceOnTerminal ) fprintf(stdout, "%s", szMsg);
+  }
+  else {
     fprintf(pfLog, "%s%s\n", szDateTimeNow_us, szMsg);
+    if ( gbTraceOnTerminal ) fprintf(stdout, "%s%s\n", szDateTimeNow_us, szMsg);
+  }
 
   fclose(pfLog);
   pfLog = NULL;
@@ -95,6 +101,7 @@ void _vTraceMsgDialog(char *szMsg, ...) {
       return;
     }
     vfprintf(pfLog, szMsg, args);
+    if ( gbTraceOnTerminal ) vfprintf(stdout, szMsg, args);
 
     va_end(args);
     fclose(pfLog);
@@ -171,6 +178,7 @@ void _vTraceVarArgsFn(char *pszModuleName, const int kiLine, const char *kpszFun
   
   strcat(szDbg, "\n");
   vfprintf(pfLog, szDbg, args);
+  if ( gbTraceOnTerminal ) vfprintf(stdout, szDbg, args);
 
   va_end(args);
 

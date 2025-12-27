@@ -10,7 +10,6 @@
 #ifndef _RECT_H_
   #define _RECT_H_
   #ifdef USE_SDL2
-    // #include <card_game.h>
 
     // Definições de proporções como percentuais da tela
     #define HUD_X_FACTOR      0.06  // Porcentagem da largura da tela

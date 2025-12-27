@@ -1,3 +1,11 @@
+/**
+ * game.c
+ *
+ * Written by Gustavo Bacagine <gustavo.bacagine@protonmail.com> in Nov 2025
+ *
+ * Description: Game state machine
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -62,24 +70,19 @@ char* gkpaszGameStates[] = {
 int gbLoadGameFromFile = FALSE;
 
 void vTraceGame(void) {
-  vTraceVarArgsFn("gstGame.iStatus: [%s]", gkpaszGameStatus[gstGame.iStatus]);
+  vTraceVarArgsFn("gstGame.iStatus....: [%s]", gkpaszGameStatus[gstGame.iStatus]);
   vTraceVarArgsFn("gstGame.iLastStatus: [%s]", gkpaszGameStatus[gstGame.iLastStatus]);
-  vTraceVarArgsFn("gstGame.iState.: [%s]", gkpaszGameStates[gstGame.iState]);
+  vTraceVarArgsFn("gstGame.iState.....: [%s]", gkpaszGameStates[gstGame.iState]);
   vTraceVarArgsFn("gstGame.iLastState.: [%s]", gkpaszGameStates[gstGame.iLastState]);
   vTraceMonsters(gstGame.stGameContext.astMonster, gstGame.stGameContext.iCtMonster);
   vTracePlayer(&gstGame.stGameContext.stPlayer);
 }
 
 void vGameLoadCtxVars(PSTRUCT_GAME_CONTEXT pstGameCtx, PSTRUCT_DECK pstDeck, PSTRUCT_PLAYER pstPlayer, PSTRUCT_MONSTER pastMonster, int *piMonsterCt){
-   vTraceVarArgsFn("memcpy(&stDeck, gstGame.stGameContext.stPlayer.astPlayerCards, sizeof(STRUCT_DECK));");
-    memcpy(pstDeck, pstGameCtx->stPlayer.astPlayerCards, sizeof(STRUCT_DECK));
-    vTraceVarArgsFn("memcpy(&gstPlayer, &gstGame.stGameContext.stPlayer, sizeof(STRUCT_PLAYER));");
-    memcpy(pstPlayer, &pstGameCtx->stPlayer, sizeof(STRUCT_PLAYER));
-    vTraceVarArgsFn("memcpy(&astMonsters, &gstGame.stGameContext.astMonster, sizeof(STRUCT_MONSTER) * gstGame.stGameContext.iCtMonster);");
-    memcpy(pastMonster, pstGameCtx->astMonster, sizeof(STRUCT_MONSTER) * pstGameCtx->iCtMonster);
-    vTraceVarArgsFn("iMonsterCount = gstGame.stGameContext.iCtMonster;");
-    *piMonsterCt = pstGameCtx->iCtMonster;
-    vTraceVarArgsFn("FINISH");
+  memcpy(pstDeck, pstGameCtx->stPlayer.astPlayerCards, sizeof(STRUCT_DECK));
+  memcpy(pstPlayer, &pstGameCtx->stPlayer, sizeof(STRUCT_PLAYER));
+  memcpy(pastMonster, pstGameCtx->astMonster, sizeof(STRUCT_MONSTER) * pstGameCtx->iCtMonster);
+  *piMonsterCt = pstGameCtx->iCtMonster;
 }
 
 int iGameSave(void) {

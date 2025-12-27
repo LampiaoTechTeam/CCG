@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <sys_interface.h>
 #include <card_game.h>
 #include <debuff.h>
 #include <deck.h>

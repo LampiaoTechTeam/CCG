@@ -1,9 +1,18 @@
+/**
+ * event.c
+ *
+ * Written by Renato Fermi <repiazza@gmail.com>
+ *
+ * Description: Events of the game
+ */
+
 #ifdef USE_SDL2
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <sys_interface.h>
 #include <card_game.h>
 #include <deck.h>
 #include <debuff.h>
@@ -128,7 +137,7 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
         break;
       }
       vMaybeToggleFullscreen(pSDL_EVENT_Ev);
-      iRedrawReturnStatus |= REDRAW_ALL; /* troca de fullscreen pede full redraw */
+      iRedrawReturnStatus |= REDRAW_TABLE; /* troca de fullscreen pede full redraw */
       break;
     }
     case SDL_MOUSEMOTION: {

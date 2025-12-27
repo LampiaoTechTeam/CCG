@@ -1,0 +1,23 @@
+<?xml version='1.0'?>
+<MSG_LIST>
+  <MSG>
+    <ID>1</ID>
+    <TEXT>Jogo Salvo Com Sucesso</TEXT>
+  </MSG>
+  <MSG>
+    <ID>2</ID>
+    <TEXT>Pressione qualquer tecla para continuar</TEXT>
+  </MSG>
+  <MSG>
+    <ID>3</ID>
+    <TEXT>Pressione qualquer tecla para sair do jogo</TEXT>
+  </MSG>
+  <MSG>
+    <ID>4</ID>
+    <TEXT>Voce Morreu!</TEXT>
+  </MSG>
+  <MSG>
+    <ID>5</ID>
+    <TEXT>Nenhum jogo salvo para carregar</TEXT>
+  </MSG>
+</MSG_LIST>

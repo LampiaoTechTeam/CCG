@@ -94,6 +94,7 @@ STRUCT_XML astElementXml[] = {
   { "RECT"     , XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
   { "FG_COLOR" , XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
   { "BG_COLOR" , XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
+  { "BORDER_COLOR" , XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
   { "ITEM_LIST", XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
   { NULL       , XMLTYPE_NULL  , 0                          , NULL                   , NULL             }
 };
@@ -122,6 +123,12 @@ int icbackElementXml(xmlNodePtr pstNode, void* pData __attribute__((unused))) {
     memset(&stWrkColor, 0x00, sizeof(stWrkColor));
     iParseXmlFields(pstNode, astColorXml);
     stWrkElement.stBgColor = stWrkColor;
+  }
+
+  if ( !strcasecmp((char*)pstNode->name, "BORDER_COLOR") ) {
+    memset(&stWrkColor, 0x00, sizeof(stWrkColor));
+    iParseXmlFields(pstNode, astColorXml);
+    stWrkElement.stBorderColor = stWrkColor;
   }
 
   if ( !strcasecmp((char*)pstNode->name, "ITEM_LIST") ) {

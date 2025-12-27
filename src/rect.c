@@ -8,6 +8,7 @@
  */
 
 #include <stdio.h>
+#include <sys_interface.h>
 #include <card_game.h>
 #ifdef USE_SDL2
 #include <SDL2/SDL.h>

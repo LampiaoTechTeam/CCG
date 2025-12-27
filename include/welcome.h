@@ -1,3 +1,11 @@
+/**
+ * welcome.h
+ *
+ * Written by Gustavo Bacagine <gustavo.bacagine@protonmail.com>
+ *
+ * Description: Initial screen of the game
+ */
+
 #ifndef WELCOME_H
   #define WELCOME_H
 

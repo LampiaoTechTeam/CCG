@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-// #include <card_game.h>
 #include <game.h>
 
 void vCCG_GetVariable(char* pszRsl, long int lRslSize, char* pszVar);

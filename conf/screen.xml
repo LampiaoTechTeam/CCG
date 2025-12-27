@@ -12,16 +12,29 @@
     <TITLE>Menu Principal</TITLE>
     <FONT>FiraCode.ttf</FONT>
     <FONT_SIZE></FONT_SIZE>
+    <BG_IMAGE></BG_IMAGE>
     <ELEMENT_LIST>
       <ELEMENT>
         <ID>1</ID>
         <TYPE>1</TYPE> <!-- MENU -->
         <FG_COLOR>
           <R>255</R>
-          <G>225</G>
-          <B>225</B>
-          <A>225</A>
+          <G>255</G>
+          <B>255</B>
+          <A>255</A>
         </FG_COLOR>
+        <BG_COLOR>
+          <R>40</R>
+          <G>40</G>
+          <B>50</B>
+          <A>255</A>
+        </BG_COLOR>
+        <BORDER_COLOR>
+          <R>220</R>
+          <G>220</G>
+          <B>230</B>
+          <A>255</A>
+        </BORDER_COLOR>
         <NAME>PANEL</NAME>
         <TEXT>WELCOME</TEXT>
         <FONT>FiraCode.ttf</FONT>
@@ -40,6 +53,12 @@
             <FONT>FiraCode.ttf</FONT>
             <FONT_SIZE></FONT_SIZE>
             <RECT><H></H><W></W><X></X><Y></Y></RECT>
+            <FG_COLOR>
+              <R>255</R>
+              <G>255</G>
+              <B>255</B>
+              <A>255</A>
+            </FG_COLOR>
           </ITEM>
           <ITEM>
             <ID>2</ID>
@@ -48,6 +67,12 @@
             <FONT>FiraCode.ttf</FONT>
             <FONT_SIZE></FONT_SIZE>
             <RECT><H></H><W></W><X></X><Y></Y></RECT>
+            <FG_COLOR>
+              <R>255</R>
+              <G>255</G>
+              <B>255</B>
+              <A>255</A>
+            </FG_COLOR>
           </ITEM>
           <ITEM>
             <ID>3</ID>
@@ -56,6 +81,12 @@
             <FONT>FiraCode.ttf</FONT>
             <FONT_SIZE></FONT_SIZE>
             <RECT><H></H><W></W><X></X><Y></Y></RECT>
+            <FG_COLOR>
+              <R>255</R>
+              <G>255</G>
+              <B>255</B>
+              <A>255</A>
+            </FG_COLOR>
           </ITEM>
           <ITEM>
             <ID>4</ID>
@@ -64,6 +95,12 @@
             <FONT>FiraCode.ttf</FONT>
             <FONT_SIZE></FONT_SIZE>
             <RECT><H></H><W></W><X></X><Y></Y></RECT>
+            <FG_COLOR>
+              <R>255</R>
+              <G>255</G>
+              <B>255</B>
+              <A>255</A>
+            </FG_COLOR>
           </ITEM>
         </ITEM_LIST>
       </ELEMENT>
@@ -214,10 +251,22 @@
         <TYPE>1</TYPE> <!-- Menu -->
         <FG_COLOR>
           <R>255</R>
-          <G>225</G>
-          <B>225</B>
-          <A>225</A>
+          <G>255</G>
+          <B>255</B>
+          <A>255</A>
         </FG_COLOR>
+        <BG_COLOR>
+          <R>40</R>
+          <G>40</G>
+          <B>50</B>
+          <A>255</A>
+        </BG_COLOR>
+        <BORDER_COLOR>
+          <R>220</R>
+          <G>220</G>
+          <B>230</B>
+          <A>255</A>
+        </BORDER_COLOR>
         <NAME>PAUSE</NAME>
         <TEXT>PAUSE</TEXT>
         <FONT>FiraCode.ttf</FONT>
@@ -233,26 +282,56 @@
             <ID>1</ID>
             <NAME>Salvar</NAME>
             <TEXT>Salvar</TEXT>
+            <FG_COLOR>
+              <R>255</R>
+              <G>255</G>
+              <B>255</B>
+              <A>255</A>
+            </FG_COLOR>
           </ITEM>
           <ITEM>
             <ID>2</ID>
             <NAME>Salvar e sair</NAME>
             <TEXT>Salvar e sair</TEXT>
+            <FG_COLOR>
+              <R>255</R>
+              <G>255</G>
+              <B>255</B>
+              <A>255</A>
+            </FG_COLOR>
           </ITEM>
           <ITEM>
             <ID>3</ID>
             <NAME>Inventario</NAME>
             <TEXT>Inventario</TEXT>
+            <FG_COLOR>
+              <R>255</R>
+              <G>255</G>
+              <B>255</B>
+              <A>255</A>
+            </FG_COLOR>
           </ITEM>
           <ITEM>
             <ID>4</ID>
             <NAME>Configuracoes</NAME>
             <TEXT>Configuracoes</TEXT>
+            <FG_COLOR>
+              <R>255</R>
+              <G>255</G>
+              <B>255</B>
+              <A>255</A>
+            </FG_COLOR>
           </ITEM>
           <ITEM>
             <ID>5</ID>
             <NAME>Voltar</NAME>
             <TEXT>Voltar</TEXT>
+            <FG_COLOR>
+              <R>255</R>
+              <G>255</G>
+              <B>255</B>
+              <A>255</A>
+            </FG_COLOR>
           </ITEM>
         </ITEM_LIST>
       </ELEMENT>

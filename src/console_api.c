@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <sys_interface.h>
 #include <card_game.h>
 #include <debuff.h>
 #include <deck.h>

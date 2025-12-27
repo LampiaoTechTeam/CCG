@@ -1,6 +1,13 @@
+/**
+ * monster.h
+ *
+ * Written by Renato Fermi <repiazza@gmail.com>
+ *
+ * Description: Monster module
+ */
+
 #ifndef MONSTER_H
   #define MONSTER_H
-  // #include <card_game.h>
 
   #define MAX_MONSTERS             20
   #define MONSTER_INITAL_HP_MAX    50

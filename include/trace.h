@@ -16,7 +16,6 @@
  *                                                                            *
  ******************************************************************************/ 
   #include <errno.h>
-  // #include <card_game.h>
   #include <sys_interface.h>
 
   #ifdef _WIN32
@@ -85,6 +84,7 @@
   extern char gszConfFile[_MAX_PATH];
   extern char *szTokenName[];
   extern char gszRootPathFromBin[_MAX_PATH];
+  extern int gbTraceOnTerminal;
 
 /******************************************************************************
  *                                                                            *

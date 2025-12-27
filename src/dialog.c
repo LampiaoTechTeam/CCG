@@ -9,6 +9,7 @@
 #include <deck.h>
 #include <monster.h>
 #include <player.h>
+#include <sys_interface.h>
 #include <card_game.h>
 #include <trace.h>
 #include <time.h>

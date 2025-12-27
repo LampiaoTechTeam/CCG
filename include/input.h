@@ -1,6 +1,5 @@
 #ifndef INPUT_H
   #define INPUT_H
-  // #include <card_game.h>
 
   #define ACTION_PLAY       'p'
  
