@@ -86,7 +86,7 @@
    */
   typedef struct STRUCT_GLOBAL_PRM {
     char szWrkDir[_MAX_PATH];   /**< Diretorio de arquivos temporarios e recuperacao de estados */
-    char szTrace[256];          /**< Caminho do arquivo de log                                  */
+    char szTrace[_MAX_PATH];    /**< Caminho do arquivo de log                                  */
     char szDebugLevel[32];      /**< Nivel de puracao                                           */
     char szFontsDir[_MAX_PATH]; /**< Caminho para o diretorio das fontes                        */
     char szConfDir[_MAX_PATH];  /**< Caminho para o diretorio de configuracao                   */
