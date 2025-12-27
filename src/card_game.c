@@ -50,7 +50,7 @@ typedef struct STRUCT_CMDLINE {
 
 STRUCT_CMDLINE gstCmdLine;
 
-char* gpszOptStr = "hvd:s";
+char* gpszOptStr = "hvt:d:sc:";
 /*
    Long Short has_arg pDataType exemple
     bSet default pData iDataSize
@@ -95,7 +95,7 @@ STRUCT_COMMANDLINE_OPTIONS astCmdOpt[] = {
 
 int icbackCCGXml(xmlNodePtr pstNode, void* pData __attribute__((unused)));
 STRUCT_XML astCCGXml[] = {
-  { "CCG"        , XMLTYPE_PROC  , 0                                , NULL                     , icbackCCGXml },
+  { "CCG"        , XMLTYPE_PROC  , 0                                , NULL                     , icbackCCGXml    },
   { "TRACE"      , XMLTYPE_STRING, sizeof(gstGlobalPrm.szTrace)     , gstGlobalPrm.szTrace     , NULL            },
   { "DEBUG_LEVEL", XMLTYPE_STRING, sizeof(gstGlobalPrm.szDebugLevel), gstGlobalPrm.szDebugLevel, NULL            },
   { "WRK_DIR"    , XMLTYPE_STRING, sizeof(gstGlobalPrm.szWrkDir)    , gstGlobalPrm.szWrkDir    , NULL            },
@@ -140,10 +140,8 @@ void vSetProgramName(char *argv[]){
 
 int bInitGlobals(void) {
   char szConfFile[512] = "";
-  char szGameDatPath[512] = "";
 
   memset(szConfFile   , 0x00, sizeof(szConfFile));
-  memset(szGameDatPath, 0x00, sizeof(szGameDatPath));
 
   snprintf(szConfFile   , sizeof(szConfFile), "%s%cccg.xml", gstGlobalPrm.szConfDir, DIR_SEPARATOR);
 
@@ -173,12 +171,7 @@ int bInitGlobals(void) {
     snprintf(gstGlobalPrm.szDebugLevel, sizeof(gstGlobalPrm.szDebugLevel), "%s", gstCmdLine.szDebugLevel);
   }
 
-  snprintf(szGameDatPath, sizeof(szGameDatPath), "%s%cGAME.dat", gstGlobalPrm.szWrkDir, DIR_SEPARATOR);
   snprintf(gszDebugLevel, sizeof(gszDebugLevel), "%s", gstGlobalPrm.szDebugLevel);
-
-  if ( iDIR_IsDir(szGameDatPath) == 0 ) {
-    iGameLoad();
-  }
 
   return 1;
 }
@@ -232,6 +225,7 @@ int CCG_Main(int argc, char *argv[]){
 
   memset(&gstGlobalPrm, 0x00, sizeof(gstGlobalPrm));
   memset(&gstGame     , 0x00, sizeof(gstGame     ));
+  memset(&gstCmdLine  , 0x00, sizeof(gstCmdLine  ));
 
   vSetProgramName(argv);
 

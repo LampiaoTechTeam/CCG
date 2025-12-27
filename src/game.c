@@ -111,7 +111,15 @@ int iGameLoad(void) {
     vTraceGame();
   }
 
-  if ( DEBUG_ALL ) vTraceBegin();
+  if ( DEBUG_ALL ) vTraceEnd();
 
+  return 1;
+}
+
+int iGameDelete(void) {
+  char szGameDatPath[512] = "";
+  memset(szGameDatPath, 0x00, sizeof(szGameDatPath));
+  snprintf(szGameDatPath, sizeof(szGameDatPath), "%s%cGAME.dat", gstGlobalPrm.szWrkDir, DIR_SEPARATOR);
+  remove(szGameDatPath);
   return 1;
 }

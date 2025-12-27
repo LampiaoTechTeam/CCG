@@ -1425,6 +1425,7 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
         vMessageBox("Voce morreu!", "Pressione qualquer tecla para continuar");
         vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
         iRedrawAction = REDRAW_NONE;
+        iGameDelete();
         vSDL_WelcomeInit();
         if ( iSDL_OpenWelcome(pSDL_Renderer) == FINISH_PROGRAM ) {
           pbRunning = FALSE;
@@ -1435,6 +1436,7 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
         iDrawMultipleCard(INIT_HAND_CARDS, pstDeck);
         vInitPlayer(pstDeck, !gbSDL_Mode);
         giLevel = 1;
+        memset(&gstGame, 0x00, sizeof(gstGame));
         gstGame.iLevel = giLevel;
         gstGame.iStatus = STATUS_WELCOME;
         gstGame.iLastStatus = STATUS_NONE;

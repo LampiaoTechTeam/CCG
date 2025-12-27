@@ -143,19 +143,22 @@ int gbWelcomeOpen = FALSE;
           if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Comecar Novo Jogo") ) {
             bRunning = FALSE;
             memset(&gstGame, 0x00, sizeof(gstGame));
-            iGameSave();
             break;
           }
           else if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Carregar Jogo") ) {
-            bRunning = FALSE;
             memset(&gstGame, 0x00, sizeof(gstGame));
-            iGameLoad();
-            gbLoadGameFromFile = TRUE;
+            if ( iGameLoad() ) {
+              bRunning = FALSE;
+              gbLoadGameFromFile = TRUE;
+            }
+            else {
+              vMessageBox("Nenhum save para carregar!", "Pressione qualquer tecla para continuar");
+            }
             break;
           }
 
           else if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Configuracoes") ) {
-            bRunning = FALSE;
+            // bRunning = FALSE;
             break;
           }
           else if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Sair") ) {

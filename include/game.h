@@ -46,5 +46,12 @@ int iGameSave(void);
  */
 int iGameLoad(void);
 
+/**
+ * @brief ...
+ *
+ * @return int
+ */
+int iGameDelete(void);
+
 #endif
 
