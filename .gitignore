@@ -8,3 +8,7 @@
 *.o
 *.kdev4
 *.dat
+/packages
+*.orig
+*.old
+/doc/man*
