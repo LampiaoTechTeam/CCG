@@ -74,7 +74,7 @@ void vInitPlayer(PSTRUCT_DECK pstGameDeck, int bReadName){
   if ( bReadName )
     vReadPlayerName(gstPlayer.szPlayerName, PLAYER_NAME_SIZE);
 
-  memcpy(gstPlayer.astPlayerCards, pstGameDeck, sizeof(STRUCT_DECK) * MAX_DECK);
+  memcpy(gstPlayer.astPlayerCards, pstGameDeck, sizeof(STRUCT_DECK));
 }
 
 

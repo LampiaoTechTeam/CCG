@@ -24,6 +24,9 @@
 #include <consts.h>
 #include <conf.h>
 #include <screen.h>
+#include <getopt.h>
+#include <cmdline.h>
+#include <xml.h>
 
 /** === Globals === */
 char *gkpszProgramName;
@@ -38,6 +41,74 @@ int bShowHelp = FALSE;
 STRUCT_GAME gstGame;
 
 STRUCT_GLOBAL_PRM gstGlobalPrm;
+
+typedef struct STRUCT_CMDLINE {
+  char szTrace[_MAX_PATH];
+  char szDebugLevel[32];
+  char szConfDir[_MAX_PATH];
+} STRUCT_CMDLINE, *PSTRUCT_CMDLINE;
+
+STRUCT_CMDLINE gstCmdLine;
+
+char* gpszOptStr = "hvd:s";
+/*
+   Long Short has_arg pDataType exemple
+    bSet default pData iDataSize
+   Help
+*/
+STRUCT_COMMANDLINE_OPTIONS astCmdOpt[] = {
+  /* 00 */
+  { "help", 'h', no_argument, CMDLINETYPE_NULL, "",
+     FALSE,  "",  NULL,        0,
+    "Show this message and exit"
+  },
+  /* 01 */
+  { "version", 'v', no_argument, CMDLINETYPE_NULL, "",
+     FALSE,     "",  NULL,        0,
+    "Show the version and exit"
+  },
+  /* 02 */
+  { "trace", 't',    required_argument, CMDLINETYPE_STRING, "<number>",
+    FALSE,   "", gstCmdLine.szTrace,     sizeof(gstCmdLine.szTrace),
+    "<number> Set the trace file path"
+  },
+  /* 03 */
+  { "debug", 'd',    required_argument, CMDLINETYPE_STRING, "<number>",
+     FALSE,   "", gstCmdLine.szDebugLevel,     sizeof(gstCmdLine.szDebugLevel),
+    "<number> Set the debug level (disable by default)"
+  },
+  /* 04 */
+  { "sdl",   's', no_argument, CMDLINETYPE_NULL, "",
+     FALSE,   "",  NULL,        0,
+    "Start program in GUI mode (disable by default)"
+  },
+  /* 05 */
+  { "conf-dir",   'c', required_argument,    CMDLINETYPE_NULL, "",
+    FALSE,         "",  gstCmdLine.szConfDir, sizeof(gstCmdLine.szConfDir),
+    "Set the path of conf directory"
+  },
+  { NULL, 0, no_argument, CMDLINETYPE_NULL, NULL,
+     FALSE, NULL, NULL, 0,
+    NULL
+  }
+};
+
+int icbackCCGXml(xmlNodePtr pstNode, void* pData __attribute__((unused)));
+STRUCT_XML astCCGXml[] = {
+  { "CCG"        , XMLTYPE_PROC  , 0                                , NULL                     , icbackCCGXml },
+  { "TRACE"      , XMLTYPE_STRING, sizeof(gstGlobalPrm.szTrace)     , gstGlobalPrm.szTrace     , NULL            },
+  { "DEBUG_LEVEL", XMLTYPE_STRING, sizeof(gstGlobalPrm.szDebugLevel), gstGlobalPrm.szDebugLevel, NULL            },
+  { "WRK_DIR"    , XMLTYPE_STRING, sizeof(gstGlobalPrm.szWrkDir)    , gstGlobalPrm.szWrkDir    , NULL            },
+  { "FONT_DIR"   , XMLTYPE_STRING, sizeof(gstGlobalPrm.szFontsDir)  , gstGlobalPrm.szFontsDir  , NULL            },
+  { NULL         , XMLTYPE_NULL  , 0                                , NULL                     , NULL            }
+};
+int icbackCCGXml(xmlNodePtr pstNode, void* pData __attribute__((unused))) {
+  if ( !strcasecmp((char*)pstNode->name, "CCG") ) {
+    memset(&gstGlobalPrm, 0x00, sizeof(gstGlobalPrm));
+    iParseXmlFields(pstNode, astCCGXml);
+  }
+  return 1;
+}
 
 STRUCT_CONF_FILE astConfFile[] = {
   { "trace"      , gstGlobalPrm.szTrace     , sizeof(gstGlobalPrm.szTrace)     , DATATYPE_STRING, "log/card_game.log" },
@@ -74,8 +145,7 @@ int bInitGlobals(void) {
   memset(szConfFile   , 0x00, sizeof(szConfFile));
   memset(szGameDatPath, 0x00, sizeof(szGameDatPath));
 
-  snprintf(szConfFile   , sizeof(szConfFile), "./conf/ccg.conf");
-  snprintf(szGameDatPath, sizeof(szGameDatPath), "%s%cGAME.dat", gstGlobalPrm.szWrkDir, DIR_SEPARATOR);
+  snprintf(szConfFile   , sizeof(szConfFile), "%s%cccg.xml", gstGlobalPrm.szConfDir, DIR_SEPARATOR);
 
   giLevel = 1;
   gstGame.iLevel = giLevel;
@@ -87,10 +157,24 @@ int bInitGlobals(void) {
   gbSDL_Mode = FALSE;
   gkpszProgramName = NULL;
 
-  if ( !bReadConfFile(szConfFile, astConfFile) ) {
-    fprintf(stderr, "Falha ao carregar parametros globais!\n");
-    return 0;
+  if ( !bLoadXmlFromFile(szConfFile, astCCGXml) ) {
+    snprintf(szConfFile   , sizeof(szConfFile), "%s%cccg.conf", gstCmdLine.szConfDir, DIR_SEPARATOR);
+    if ( !bReadConfFile(szConfFile, astConfFile) ) {
+      fprintf(stderr, "Falha ao carregar parametros globais!\n");
+      return 0;
+    }
   }
+
+  if ( !bStrIsEmpty(gstCmdLine.szTrace) ) {
+    snprintf(gstGlobalPrm.szTrace, sizeof(gstGlobalPrm.szTrace), "%s", gstCmdLine.szTrace);
+  }
+
+  if ( !bStrIsEmpty(gstCmdLine.szDebugLevel) ) {
+    snprintf(gstGlobalPrm.szDebugLevel, sizeof(gstGlobalPrm.szDebugLevel), "%s", gstCmdLine.szDebugLevel);
+  }
+
+  snprintf(szGameDatPath, sizeof(szGameDatPath), "%s%cGAME.dat", gstGlobalPrm.szWrkDir, DIR_SEPARATOR);
+  snprintf(gszDebugLevel, sizeof(gszDebugLevel), "%s", gstGlobalPrm.szDebugLevel);
 
   if ( iDIR_IsDir(szGameDatPath) == 0 ) {
     iGameLoad();
@@ -122,97 +206,17 @@ static void vShowVersion(void) {
 #endif
 }
 
-static void vShowHelp(void) {
-  printf(
-    "Usage: %s --argument=<parameter>\n"
-    "  -h, --help\n"
-    "    Show the version and exit.\n"
-    "  -v, --version\n"
-    "    Show the version and exit.\n"
-    "  --debug=<number>\n"
-    "    Set the debug level\n"
-    "  --sdl\n"
-    "    Start program in GUI mode\n",
-    gkpszProgramName
-  );
-}
-
-void vParseCmdlineArgs(int argc, char *argv[]){
-  char *pTok = NULL;
-  int bLongArgument = FALSE;
-  int bShortArgument = FALSE;
-
-  vSetProgramName(argv);
-  
-  if (argc <= 1)
-    return ;
-
-  if (bStrIsEmpty(argv[1]) ) {
-    return;
-  }
-
-  if ( strstr(argv[1], "-") && strstr(argv[1], "--") == NULL ) {
-    bShortArgument = TRUE;
-    pTok = strtok(argv[1], "-");
-  }
-  else {
-    if ( strstr(argv[1], "--") ) {
-      bLongArgument = TRUE;
-      pTok = strtok(argv[1], "--");
-    }
-  }
-
-  if ( bShortArgument ) {
-    if ( !memcmp(pTok, "h", 1) ) {
-      bShowHelp = TRUE;
-      return;
-    }
-
-    if ( !memcmp(pTok, "v", 1) ) {
-      bShowVersion = TRUE;
-      return;
-    }
-  }
-
-  if ( bLongArgument ) {
-    if ( !memcmp(pTok, "help", 4) ) {
-      bShowHelp = TRUE;
-      return;
-    }
-
-    if ( !memcmp(pTok, "version", 7) ) {
-      bShowVersion = TRUE;
-      return;
-    }
-
-    if (!memcmp(pTok, "sdl", 3))
-      gbSDL_Mode = TRUE;
-  }
-
-  if (bStrIsEmpty(argv[2]) || strstr(argv[2], "--") == NULL)
-    return ;
-  
-  pTok = strtok(argv[2], "--");
-
-  if (!memcmp(pTok, "debug=", 6)){
-    pTok += 6;
-    pTok = strtok(argv[2]," \n\r\t");
-    if ( bStrIsNumeric(pTok) )
-      snprintf(gszDebugLevel, sizeof(gszDebugLevel), "%s", pTok);
-  }
-}
-
 int iSDL_OpenShop(SDL_Renderer *pSDL_Renderer, PSTRUCT_PLAYER pstPlayer, PSTRUCT_DECK pstDeck);
 
 /**
- * 
- *  Main 
- * 
- *  CCG_Main is a Macro defined to use SDL_Main when 
+ *
+ *  Main
+ *
+ *  CCG_Main is a Macro defined to use SDL_Main when
  *  USE_SDL2 is defined.
- * 
+ *
  *  Otherwise(console mode) uses traditional main()
- * 
+ *
  */
 int CCG_Main(int argc, char *argv[]){
   STRUCT_DECK stDeck;
@@ -224,25 +228,47 @@ int CCG_Main(int argc, char *argv[]){
   SDL_Renderer *pSDL_Rnd = NULL;
   SDL_Event SDL_Ev;
 #endif
+  char* pszRootDir = NULL;
 
   memset(&gstGlobalPrm, 0x00, sizeof(gstGlobalPrm));
   memset(&gstGame     , 0x00, sizeof(gstGame     ));
+
+  vSetProgramName(argv);
+
+  pszRootDir = getenv("CCG_ROOT_DIR");
+
+  if ( bStrIsEmpty(pszRootDir) ) {
+    pszRootDir = ".";
+  }
+
+  snprintf(gstCmdLine.szConfDir, sizeof(gstCmdLine.szConfDir), "%s%cconf", pszRootDir, DIR_SEPARATOR);
+
+  /** Reading cmdline options like using SDL2 or not, debug level ... */
+  if ( !bParseCommandLine(argc, argv, astCmdOpt) ) {
+    vPrintUsage(argv, astCmdOpt);
+    return -1;
+  }
+
+  if ( !bStrIsEmpty(gstCmdLine.szConfDir) ) {
+    snprintf(gstGlobalPrm.szConfDir, sizeof(gstGlobalPrm.szConfDir), "%s", gstCmdLine.szConfDir);
+  }
 
   if ( !bInitGlobals() ) {
     return -1;
   }
 
-  /** Reading cmdline options like using SDL2 or not, debug level ... */
-  vParseCmdlineArgs(argc, argv);
-
-  if ( bShowHelp ) {
-    vShowHelp();
+  if ( astCmdOpt[0].bSet ) {
+    vPrintUsage(argv, astCmdOpt);
     return 0;
   }
 
-  if ( bShowVersion ) {
+  if ( astCmdOpt[1].bSet ) {
     vShowVersion();
     return 0;
+  }
+
+  if ( astCmdOpt[4].bSet ) {
+    gbSDL_Mode = 1;
   }
 
   vInitLogs(gstGlobalPrm.szTrace, gstGlobalPrm.szDebugLevel);

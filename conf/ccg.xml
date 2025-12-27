@@ -1,0 +1,10 @@
+<?xml version='1.0'?>
+<CCG>
+  <TRACE>./log/card_game.log</TRACE>
+  <!-- 0: Global 1: SDL 2: XML 3: SCREEN
+               GSXs -->
+  <DEBUG_LEVEL>9809</DEBUG_LEVEL>
+  <WRK_DIR>./</WRK_DIR>
+  <FONTS_DIR>./fonts</FONTS_DIR>
+</CCG>
+

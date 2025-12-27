@@ -1256,8 +1256,8 @@ int iSDL_OpenPause(SDL_Renderer *pSDL_Renderer){
         for ( ii = 0; ii < pstMenu->iCtItems; ii++ ) {
           if ( bAreCoordsInSDL_Rect(
             (SDL_Rect*)&pstMenu->astItem[ii].stRect,
-                                    mx,
-                                    my) ) {
+            mx,
+            my) ) {
             pstMenu->iSelectedItemIdx = ii;
             break;
           }
@@ -1455,7 +1455,7 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       iRedrawAction = REDRAW_TABLE;
     }
 
-    memcpy(gstPlayer.astPlayerCards, pstDeck, sizeof(STRUCT_DECK) * MAX_DECK);
+    memcpy(gstPlayer.astPlayerCards, pstDeck, sizeof(STRUCT_DECK));
     if (iEVR_Tick(ui64FrameStart) != FALSE) iRedrawAction |= REDRAW_TABLE;
 
     if (iRedrawAction != REDRAW_NONE)

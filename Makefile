@@ -166,7 +166,8 @@ OBJS = \
     $(OBJ_DIR)/trace.o \
     $(OBJ_DIR)/conf.o \
     $(OBJ_DIR)/game.o \
-    $(OBJ_DIR)/xml.o
+    $(OBJ_DIR)/xml.o \
+    $(OBJ_DIR)/cmdline.o
 
 doc:
 	@mkdir -p doc/doxygen

@@ -154,10 +154,7 @@ void _vTraceVarArgsFn(char *pszModuleName, const int kiLine, const char *kpszFun
   gettimeofday(&tv, NULL);
 
   if ((pfLog = fopen(gszTraceFile, "a+")) == NULL) {
-    fprintf(stderr, "E: Impossible create or open file %s!\n"
-            "%s\n",
-            gszTraceFile, strerror(errno));
-    exit(EXIT_FAILURE);
+    return;
   }
 
   va_start(args, kpszFmt);

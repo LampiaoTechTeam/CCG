@@ -35,6 +35,10 @@ int iParseXmlFields(xmlNodePtr pstNode, STRUCT_XML astXml[]) {
             *(int*)astXml[ii].pData = atoi((char*)pszContent);
             break;
           }
+          case XMLTYPE_CHAR: {
+            *(char*)astXml[ii].pData = pszContent[0];
+            break;
+          }
           case XMLTYPE_DOUBLE: {
             *(double*)astXml[ii].pData = atof((char*)pszContent);
             break;
