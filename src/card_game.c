@@ -18,7 +18,6 @@
   #include <SDL2/SDL_ttf.h>
 #endif
 #include <player.h>
-#include <hud.h>
 #include <dialog.h>
 #include <input.h>
 #include <trace.h>
@@ -43,12 +42,6 @@ char *gkpszProgramName;
 int gbLogLevel = 1;
 int giLevel;
 int gbSDL_Mode;
-STRUCT_PLAYER gstPlayer;
-
-int bShowVersion = FALSE;
-int bShowHelp = FALSE;
-
-STRUCT_GAME gstGame;
 
 STRUCT_GLOBAL_PRM gstGlobalPrm;
 
@@ -62,10 +55,10 @@ STRUCT_CMDLINE gstCmdLine;
 
 char* gpszOptStr = "hvt:d:sc:";
 /*
-   Long Short has_arg pDataType exemple
-    bSet default pData iDataSize
-   Help
-*/
+ *  Long Short has_arg pDataType exemple
+ *   bSet default pData iDataSize
+ *  Help
+ */
 STRUCT_COMMANDLINE_OPTIONS astCmdOpt[] = {
   /* 00 */
   { "help", 'h', no_argument, CMDLINETYPE_NULL, "",

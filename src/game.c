@@ -26,6 +26,8 @@
 #include <consts.h>
 #include <card_game.h>
 
+STRUCT_GAME gstGame;
+
 char* gkpaszGameStatus[] = {
   "STATUS_WELCOME", "STATUS_NEW_GAME",
   "STATUS_GAMING" , "STATUS_SHOP",

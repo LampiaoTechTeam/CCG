@@ -145,7 +145,8 @@ SDL_OBJ = \
     $(OBJ_DIR)/welcome.o \
     $(OBJ_DIR)/hud.o \
     $(OBJ_DIR)/rect.o \
-    $(OBJ_DIR)/screen.o
+    $(OBJ_DIR)/screen.o \
+    $(OBJ_DIR)/font.o
 endif
 
 CARD_GAME_EXEC = card_game
@@ -170,11 +171,11 @@ OBJS = \
     $(OBJ_DIR)/cmdline.o \
     $(OBJ_DIR)/msg.o
 
+all: clean directories $(BIN_DIR)/$(CARD_GAME_EXEC)
+
 doc:
 	@mkdir -p doc/doxygen
 	@doxygen Doxyfile
-
-all: clean directories $(BIN_DIR)/$(CARD_GAME_EXEC)
 
 clean:
 	@$(RM_CMD) $(OBJ_DIR) $(BIN_DIR) $(LOG_DIR)

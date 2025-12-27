@@ -30,6 +30,8 @@
   SDL_Rect gSDL_Player_Rect;
 #endif
 
+STRUCT_PLAYER gstPlayer;
+
 void vStartNewTurn(PSTRUCT_DECK pstDeck) {
   int iCardsToDraw;
 

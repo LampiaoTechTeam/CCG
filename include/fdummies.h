@@ -3,7 +3,6 @@
 
   #include <deck.h>
   #include <player.h>
-  // #include <card_game.h>
 
   void vFakeOpenShopEarly(PSTRUCT_DECK pstDeck){
       PSTRUCT_CARD pstCard = pstDeck->astHand;

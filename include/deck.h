@@ -1,6 +1,5 @@
 #ifndef DECK_H
   #define DECK_H
-  // #include <card_game.h>
 
   #define MAX_DECK             50
   #define INIT_HAND_CARDS       6

@@ -11,8 +11,6 @@
   #define _SDL_ANIMATION_H_
   #ifdef USE_SDL2
 
-    // #include <card_game.h>
-
     typedef struct STRUCT_ANIMATE_FLIP {
       int bIsFlipping;             /* 1 = animando, 0 = parado */
       int bIsFront;                /* 1 = frente visível, 0 = verso */
