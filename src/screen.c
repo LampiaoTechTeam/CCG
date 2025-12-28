@@ -282,12 +282,18 @@ int bLoadScreenXml() {
     }
     for ( jj = 0; jj < gstScreen.astLayout[ii].iCtElements; jj++ ) {
       if ( bStrIsEmpty(gstScreen.astLayout[ii].astElement[jj].szFont) ) {
-        snprintf(gstScreen.astLayout[ii].astElement[jj].szFont, sizeof(gstScreen.astLayout[ii].astElement[jj].szFont), "%s", gstScreen.astLayout[ii].szFont);
+        char szDefaultFont[32] = "";
+        memset(szDefaultFont, 0x00, sizeof(szDefaultFont));
+        snprintf(szDefaultFont, sizeof(szDefaultFont), "%s", gstScreen.astLayout[ii].szFont);
+        snprintf(gstScreen.astLayout[ii].astElement[jj].szFont, sizeof(gstScreen.astLayout[ii].astElement[jj].szFont), "%s", szDefaultFont);
         gstScreen.astLayout[ii].iFontSize = gstScreen.astLayout[ii].iFontSize;
       }
       for ( kk = 0; kk < gstScreen.astLayout[ii].astElement[jj].iCtItems; kk++ ) {
         if ( bStrIsEmpty(gstScreen.astLayout[ii].astElement[jj].astItem[kk].szFont) ) {
-          snprintf(gstScreen.astLayout[ii].astElement[jj].astItem[kk].szFont, sizeof(gstScreen.astLayout[ii].astElement[jj].astItem[kk].szFont), "%s", gstScreen.astLayout[ii].astElement[jj].szFont);
+          char szDefaultFont[32] = "";
+          memset(szDefaultFont, 0x00, sizeof(szDefaultFont));
+          snprintf(szDefaultFont, sizeof(szDefaultFont), "%s", gstScreen.astLayout[ii].astElement[jj].szFont);
+          snprintf(gstScreen.astLayout[ii].astElement[jj].astItem[kk].szFont, sizeof(gstScreen.astLayout[ii].astElement[jj].astItem[kk].szFont), "%s", szDefaultFont);
           gstScreen.astLayout[ii].astElement[jj].astItem[kk].iFontSize = gstScreen.astLayout[ii].astElement[jj].iFontSize;
         }
       }
