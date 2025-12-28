@@ -50,6 +50,7 @@
             <ID>1</ID>
             <NAME>Comecar Novo Jogo</NAME>
             <TEXT>Comecar Novo Jogo</TEXT>
+            <ACTION>1</ACTION>
             <FONT>FiraCode.ttf</FONT>
             <FONT_SIZE></FONT_SIZE>
             <RECT><H></H><W></W><X></X><Y></Y></RECT>
@@ -64,6 +65,7 @@
             <ID>2</ID>
             <NAME>Carregar Jogo</NAME>
             <TEXT>Carregar Jogo</TEXT>
+            <ACTION>2</ACTION>
             <FONT>FiraCode.ttf</FONT>
             <FONT_SIZE></FONT_SIZE>
             <RECT><H></H><W></W><X></X><Y></Y></RECT>
@@ -78,6 +80,7 @@
             <ID>3</ID>
             <NAME>Configuracoes</NAME>
             <TEXT>Configuracoes</TEXT>
+            <ACTION>3</ACTION>
             <FONT>FiraCode.ttf</FONT>
             <FONT_SIZE></FONT_SIZE>
             <RECT><H></H><W></W><X></X><Y></Y></RECT>
@@ -92,6 +95,7 @@
             <ID>4</ID>
             <TEXT>Sair</TEXT>
             <NAME>Sair</NAME>
+            <ACTION>4</ACTION>
             <FONT>FiraCode.ttf</FONT>
             <FONT_SIZE></FONT_SIZE>
             <RECT><H></H><W></W><X></X><Y></Y></RECT>
@@ -282,6 +286,7 @@
             <ID>1</ID>
             <NAME>Salvar</NAME>
             <TEXT>Salvar</TEXT>
+            <ACTION>5</ACTION>
             <FG_COLOR>
               <R>255</R>
               <G>255</G>
@@ -293,6 +298,7 @@
             <ID>2</ID>
             <NAME>Salvar e sair</NAME>
             <TEXT>Salvar e sair</TEXT>
+            <ACTION>6</ACTION>
             <FG_COLOR>
               <R>255</R>
               <G>255</G>
@@ -304,6 +310,7 @@
             <ID>3</ID>
             <NAME>Inventario</NAME>
             <TEXT>Inventario</TEXT>
+            <ACTION>7</ACTION>
             <FG_COLOR>
               <R>255</R>
               <G>255</G>
@@ -315,6 +322,7 @@
             <ID>4</ID>
             <NAME>Configuracoes</NAME>
             <TEXT>Configuracoes</TEXT>
+            <ACTION>3</ACTION>
             <FG_COLOR>
               <R>255</R>
               <G>255</G>
@@ -326,6 +334,7 @@
             <ID>5</ID>
             <NAME>Voltar</NAME>
             <TEXT>Voltar</TEXT>
+            <ACTION>8</ACTION>
             <FG_COLOR>
               <R>255</R>
               <G>255</G>

@@ -51,6 +51,7 @@ STRUCT_XML astItemXml[] = {
   { "RECT"     , XMLTYPE_PROC  , 0                       , NULL                , icbackItemXml },
   { "FG_COLOR" , XMLTYPE_PROC  , 0                       , NULL                , icbackItemXml },
   { "BG_COLOR" , XMLTYPE_PROC  , 0                       , NULL                , icbackItemXml },
+  { "ACTION"   , XMLTYPE_INT   , 0                       , &stWrkItem.iAction  , NULL          },
   { NULL       , XMLTYPE_NULL  , 0                       , NULL                , NULL          }
 };
 int icbackItemXml(xmlNodePtr pstNode, void* pData __attribute__((unused))) {
@@ -84,19 +85,20 @@ int icbackItemXml(xmlNodePtr pstNode, void* pData __attribute__((unused))) {
 
 int icbackElementXml(xmlNodePtr pstNode, void* pData __attribute__((unused)));
 STRUCT_XML astElementXml[] = {
-  { "ELEMENT"  , XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
-  { "ID"       , XMLTYPE_INT   , 0                          , &stWrkElement.iID      , NULL             },
-  { "TYPE"     , XMLTYPE_INT   , 0                          , &stWrkElement.iType    , NULL             },
-  { "NAME"     , XMLTYPE_STRING, sizeof(stWrkElement.szName), stWrkElement.szName    , NULL             },
-  { "TEXT"     , XMLTYPE_STRING, sizeof(stWrkElement.szText), stWrkElement.szText    , NULL             },
-  { "FONT"     , XMLTYPE_STRING, sizeof(stWrkElement.szFont), stWrkElement.szFont    , NULL             },
-  { "FONT_SIZE", XMLTYPE_INT   , 0                          , &stWrkElement.iFontSize, NULL             },
-  { "RECT"     , XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
-  { "FG_COLOR" , XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
-  { "BG_COLOR" , XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
-  { "BORDER_COLOR" , XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
-  { "ITEM_LIST", XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
-  { NULL       , XMLTYPE_NULL  , 0                          , NULL                   , NULL             }
+  { "ELEMENT"     , XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
+  { "ID"          , XMLTYPE_INT   , 0                          , &stWrkElement.iID      , NULL             },
+  { "TYPE"        , XMLTYPE_INT   , 0                          , &stWrkElement.iType    , NULL             },
+  { "NAME"        , XMLTYPE_STRING, sizeof(stWrkElement.szName), stWrkElement.szName    , NULL             },
+  { "TEXT"        , XMLTYPE_STRING, sizeof(stWrkElement.szText), stWrkElement.szText    , NULL             },
+  { "FONT"        , XMLTYPE_STRING, sizeof(stWrkElement.szFont), stWrkElement.szFont    , NULL             },
+  { "FONT_SIZE"   , XMLTYPE_INT   , 0                          , &stWrkElement.iFontSize, NULL             },
+  { "RECT"        , XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
+  { "FG_COLOR"    , XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
+  { "BG_COLOR"    , XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
+  { "BORDER_COLOR", XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
+  { "ITEM_LIST"   , XMLTYPE_PROC  , 0                          , NULL                   , icbackElementXml },
+  { "ACTION"      , XMLTYPE_INT   , 0                          , &stWrkElement.iAction  , NULL             },
+  { NULL          , XMLTYPE_NULL  , 0                          , NULL                   , NULL             }
 };
 int icbackElementXml(xmlNodePtr pstNode, void* pData __attribute__((unused))) {
   if ( !strcasecmp((char*)pstNode->name, "ELEMENT") ) {

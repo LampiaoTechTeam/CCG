@@ -40,6 +40,16 @@
   #define MSG_YOU_LOSE                  4
   #define MSG_NOT_FOUND_GAME_SAVE       5
 
+  #define ACTION_START_NEW_GAME 1
+  #define ACTION_LOAD_GAME      2
+  #define ACTION_SETTINGS       3
+  #define ACTION_EXIT           4
+  #define ACTION_SAVE           5
+  #define ACTION_SAVE_AND_EXIT  6
+  #define ACTION_INVENTARY      7
+  #define ACTION_BACK           8
+
+
   /**
    * @struct STRUCT_GLOBAL_PRM
    * @brief Parametros globais

@@ -1301,6 +1301,67 @@ void vSDL_DrawPause(SDL_Renderer *pSDL_Renderer) {
 
 int gbPauseOpen = FALSE;
 
+static int iPauseMenuButtonAction(int *pbRunning, PSTRUCT_ELEMENT pstMenu, SDL_Event stEvent);
+static int iPauseMenuButtonAction(int *pbRunning, PSTRUCT_ELEMENT pstMenu, SDL_Event stEvent) {
+  int mx = stEvent.button.x;
+  int my = stEvent.button.y;
+  int ii = 0;
+
+  /* Detectar clique nos botoes */
+  for ( ii = 0; ii < pstMenu->iCtItems; ii++ ) {
+    if ( bAreCoordsInSDL_Rect(
+      (SDL_Rect*)&pstMenu->astItem[ii].stRect,
+      mx,
+      my) ) {
+      pstMenu->iSelectedItemIdx = ii;
+      break;
+    }
+  }
+
+  switch ( pstMenu->astItem[pstMenu->iSelectedItemIdx].iAction ) {
+    case ACTION_SAVE: {
+      *pbRunning = FALSE;
+      gstGame.iLastStatus = gstGame.iStatus;
+      gstGame.iStatus = STATUS_GAMING;
+      gstGame.stGameContext.stPlayer = gstPlayer;
+      memcpy(gstGame.stGameContext.astMonster, gpastMonster, sizeof(STRUCT_MONSTER) * giCtMonsters);
+      gstGame.stGameContext.iCtMonster = giCtMonsters;
+      iGameSave();
+      gstGame.iStatus = gstGame.iLastStatus;
+      gstGame.iLastStatus = gstGame.iStatus;
+      vSDL_MessageBox(MSG(MSG_GAME_SAVE_WITH_SUCCESS), MSG(MSG_PRESS_ANY_KEY_TO_CONTINUE));
+      break;
+    }
+    case ACTION_SAVE_AND_EXIT: {
+      *pbRunning = FALSE;
+      gstGame.iLastStatus = gstGame.iStatus;
+      gstGame.iStatus = STATUS_GAMING;
+      gstGame.stGameContext.stPlayer = gstPlayer;
+      memcpy(gstGame.stGameContext.astMonster, gpastMonster, sizeof(STRUCT_MONSTER) * giCtMonsters);
+      gstGame.stGameContext.iCtMonster = giCtMonsters;
+      iGameSave();
+      gstGame.iStatus = gstGame.iLastStatus;
+      gstGame.iLastStatus = gstGame.iStatus;
+      vSDL_MessageBox(MSG(MSG_GAME_SAVE_WITH_SUCCESS), MSG(MSG_EXIT_GAME));
+      gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_GAMING : STATUS_PAUSE);
+      return FINISH_PROGRAM;
+    }
+    case ACTION_SETTINGS: {
+      *pbRunning = FALSE;
+      break;
+    }
+    case ACTION_BACK: {
+      gbPauseOpen = FALSE;
+      *pbRunning = FALSE;
+      gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_GAMING : STATUS_PAUSE);
+      break;
+    }
+    default: break;
+  }
+
+  return 0;
+}
+
 int iSDL_OpenPause(SDL_Renderer *pSDL_Renderer){
   SDL_Event stEvent;
   PSTRUCT_ELEMENT pstMenu = NULL;
@@ -1351,62 +1412,15 @@ int iSDL_OpenPause(SDL_Renderer *pSDL_Renderer){
           gbPauseOpen = FALSE;
           return 0;
         }
-      }
-      else if ( stEvent.type == SDL_MOUSEBUTTONDOWN ) {
-        int mx = stEvent.button.x;
-        int my = stEvent.button.y;
-        int ii = 0;
-
-        /* Detectar clique nos botoes */
-        for ( ii = 0; ii < pstMenu->iCtItems; ii++ ) {
-          if ( bAreCoordsInSDL_Rect(
-            (SDL_Rect*)&pstMenu->astItem[ii].stRect,
-            mx,
-            my) ) {
-            pstMenu->iSelectedItemIdx = ii;
-            break;
+        else if ( key == SDLK_RETURN || key == SDLK_KP_ENTER ) {
+          if ( iPauseMenuButtonAction(&bRunning, pstMenu, stEvent) == FINISH_PROGRAM ) {
+            return FINISH_PROGRAM;
           }
         }
-
-        if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Salvar") ) {
-          bRunning = FALSE;
-          gstGame.iLastStatus = gstGame.iStatus;
-          gstGame.iStatus = STATUS_GAMING;
-          gstGame.stGameContext.stPlayer = gstPlayer;
-          memcpy(gstGame.stGameContext.astMonster, gpastMonster, sizeof(STRUCT_MONSTER) * giCtMonsters);
-          gstGame.stGameContext.iCtMonster = giCtMonsters;
-          iGameSave();
-          gstGame.iStatus = gstGame.iLastStatus;
-          gstGame.iLastStatus = gstGame.iStatus;
-          vSDL_MessageBox(MSG(MSG_GAME_SAVE_WITH_SUCCESS), MSG(MSG_PRESS_ANY_KEY_TO_CONTINUE));
-          break;
-        }
-        else if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Salvar e sair") ) {
-          bRunning = FALSE;
-          gstGame.iLastStatus = gstGame.iStatus;
-          gstGame.iStatus = STATUS_GAMING;
-          gstGame.stGameContext.stPlayer = gstPlayer;
-          memcpy(gstGame.stGameContext.astMonster, gpastMonster, sizeof(STRUCT_MONSTER) * giCtMonsters);
-          gstGame.stGameContext.iCtMonster = giCtMonsters;
-          iGameSave();
-          gstGame.iStatus = gstGame.iLastStatus;
-          gstGame.iLastStatus = gstGame.iStatus;
-          vSDL_MessageBox(MSG(MSG_GAME_SAVE_WITH_SUCCESS), MSG(MSG_EXIT_GAME));
-          gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_GAMING : STATUS_PAUSE);
+      }
+      else if ( stEvent.type == SDL_MOUSEBUTTONDOWN ) {
+        if ( iPauseMenuButtonAction(&bRunning, pstMenu, stEvent) == FINISH_PROGRAM ) {
           return FINISH_PROGRAM;
-        }
-        else if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Configuracoes") ) {
-          bRunning = FALSE;
-          break;
-        }
-        else if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Voltar") ) {
-          gbPauseOpen = FALSE;
-          bRunning = FALSE;
-          gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_GAMING : STATUS_PAUSE);
-          break;
-        }
-        else {
-          continue;
         }
       }
       else if ( stEvent.type == SDL_MOUSEMOTION ) {

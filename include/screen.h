@@ -42,6 +42,7 @@ typedef struct STRUCT_SCREEN_ITEM {
   int iFontSize;
   char szName[32];
   char szText[32];
+  int iAction;
   STRUCT_SCREEN_RECT stRect;
   STRUCT_SCREEN_COLOR stFgColor;
   STRUCT_SCREEN_COLOR stBgColor;
@@ -60,6 +61,7 @@ typedef struct STRUCT_ELEMENT {
   int iFontSize;
   int iCtItems;
   int iSelectedItemIdx;
+  int iAction;
   STRUCT_SCREEN_ITEM astItem[MAX_SCREEN_ITEMS];
 } STRUCT_ELEMENT, *PSTRUCT_ELEMENT;
 

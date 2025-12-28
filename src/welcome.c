@@ -37,6 +37,56 @@ int gbWelcomeOpen = FALSE;
     return;
   }
 
+  // 0 - continue
+  // 1 - Finish program
+  static int iWelcomeMenuButtonAction(int *pbRunning, PSTRUCT_ELEMENT pstMenu, SDL_Event stEvent);
+  static int iWelcomeMenuButtonAction(int *pbRunning, PSTRUCT_ELEMENT pstMenu, SDL_Event stEvent) {
+    int mx = stEvent.button.x;
+    int my = stEvent.button.y;
+    int ii = 0;
+
+    /* Detectar clique nos botoes */
+    for ( ii = 0; ii < pstMenu->iCtItems; ii++ ) {
+      if ( bAreCoordsInSDL_Rect(
+        (SDL_Rect*)&pstMenu->astItem[ii].stRect,
+                                mx,
+                                my) ) {
+        pstMenu->iSelectedItemIdx = ii;
+        break;
+      }
+    }
+
+    switch ( pstMenu->astItem[pstMenu->iSelectedItemIdx].iAction ) {
+      case ACTION_START_NEW_GAME: {
+        *pbRunning = FALSE;
+        memset(&gstGame, 0x00, sizeof(gstGame));
+        break;
+      }
+      case ACTION_LOAD_GAME: {
+        memset(&gstGame, 0x00, sizeof(gstGame));
+        if ( iGameLoad() ) {
+          *pbRunning = FALSE;
+          gbLoadGameFromFile = TRUE;
+        }
+        else {
+          vSDL_MessageBox(MSG(MSG_NOT_FOUND_GAME_SAVE), MSG(MSG_PRESS_ANY_KEY_TO_CONTINUE));
+        }
+        break;
+      }
+      case ACTION_SETTINGS: {
+        // pbRunning = FALSE;
+        break;
+      }
+      case ACTION_EXIT: {
+        gbWelcomeOpen = FALSE;
+        *pbRunning = FALSE;
+        return FINISH_PROGRAM;
+      }
+      default: break;
+    }
+    return 0;
+  }
+
   /* Desenha o Welcome completo */
   int iWelcomeDraw(SDL_Renderer *pSDL_Renderer){
     PSTRUCT_ELEMENT pstMenu;
@@ -85,6 +135,11 @@ int gbWelcomeOpen = FALSE;
             if (pstMenu->iSelectedItemIdx < 0)
               pstMenu->iSelectedItemIdx = pstMenu->iCtItems - 1;
           }
+          else if ( key == SDLK_RETURN || key == SDLK_KP_ENTER ) {
+            if ( iWelcomeMenuButtonAction(&bRunning, pstMenu, stEvent) == FINISH_PROGRAM ) {
+              return FINISH_PROGRAM;
+            }
+          }
         }
         else if ( stEvent.type == SDL_MOUSEBUTTONDOWN ) {
           int mx = stEvent.button.x;
@@ -102,34 +157,8 @@ int gbWelcomeOpen = FALSE;
             }
           }
 
-          if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Comecar Novo Jogo") ) {
-            bRunning = FALSE;
-            memset(&gstGame, 0x00, sizeof(gstGame));
-            break;
-          }
-          else if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Carregar Jogo") ) {
-            memset(&gstGame, 0x00, sizeof(gstGame));
-            if ( iGameLoad() ) {
-              bRunning = FALSE;
-              gbLoadGameFromFile = TRUE;
-            }
-            else {
-              vSDL_MessageBox(MSG(MSG_NOT_FOUND_GAME_SAVE), MSG(MSG_PRESS_ANY_KEY_TO_CONTINUE));
-            }
-            break;
-          }
-
-          else if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Configuracoes") ) {
-            // bRunning = FALSE;
-            break;
-          }
-          else if ( !strcasecmp(pstMenu->astItem[pstMenu->iSelectedItemIdx].szText, "Sair") ) {
-            gbWelcomeOpen = FALSE;
-            bRunning = FALSE;
+          if ( iWelcomeMenuButtonAction(&bRunning, pstMenu, stEvent) == FINISH_PROGRAM ) {
             return FINISH_PROGRAM;
-          }
-          else {
-            continue;
           }
         }
         else if ( stEvent.type == SDL_MOUSEMOTION ) {
