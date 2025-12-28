@@ -20,7 +20,9 @@ ifndef _WIN32
     endif
 endif
 
--include build/config.mk
+BUILD_DIR = build
+
+-include $(BUILD_DIR)/config.mk
 
 MSYS_PREFIX     ?= /mingw64
 MSYS_WIN_PREFIX ?= D:/msys64/mingw64
@@ -171,7 +173,7 @@ OBJS = \
     $(OBJ_DIR)/cmdline.o \
     $(OBJ_DIR)/msg.o
 
-all: clean directories $(BIN_DIR)/$(CARD_GAME_EXEC)
+all: clean directories $(BIN_DIR)/$(CARD_GAME_EXEC) cleanbuild
 
 doc:
 	@mkdir -p doc/doxygen
@@ -190,6 +192,9 @@ $(OBJ_DIR)/%.o: $(SRC_PATH)/%.c
 	$(CC) -c $(CCOPT) $(DEBUG_ADD_FLAGS) $(INC_DIR) $< -o $@
 
 distclean: clean
+
+cleanbuild:
+	@$(RM_CMD) $(BUILD_DIR)
 
 .PHONY: all clean distclean directories
 
