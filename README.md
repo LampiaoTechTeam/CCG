@@ -23,6 +23,8 @@ O projeto é pensado para ser **leve, didático e open source**, servindo tanto 
 ## 📂 Estrutura do projeto
 
 ```
+├── assets/           # imagens (.png)
+├── conf/             # xmls de configuracao (.xml)
 ├── include/          # Cabeçalhos (.h)
 ├── src/              # Implementações (.c)
 ├── fonts/            # Fontes/texto (.ttf)
@@ -35,6 +37,8 @@ O projeto é pensado para ser **leve, didático e open source**, servindo tanto 
 ## 📂 Diretorios temporários
 
 ```
+
+├── build/            # arquivos de inclusao de makefile (.mk)
 ├── obj/              # Arquivos objetos da compilacao (.o)
 ├── log/              # Registros da execucao (.log)
 └── bin/              # Local onde o executavel sera gerado
