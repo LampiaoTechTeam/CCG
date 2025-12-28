@@ -101,5 +101,6 @@
   void _vTraceVarArgsFn(char *pszModuleName, const int kiLine, const char *kpszFunctionName, const char *kpszFmt, ...);
   void vTraceMainLoopEnd();
   void vTraceMainLoopInit();
+  void vSetRootPathFromCwd();
    
 #endif /* _TRACE_H */

@@ -103,7 +103,7 @@ STRUCT_XML astCCGXml[] = {
   { "DEBUG_LEVEL", XMLTYPE_STRING, sizeof(gstGlobalPrm.szDebugLevel), gstGlobalPrm.szDebugLevel, NULL            },
   { "WRK_DIR"    , XMLTYPE_STRING, sizeof(gstGlobalPrm.szWrkDir)    , gstGlobalPrm.szWrkDir    , NULL            },
   { "FONT_DIR"   , XMLTYPE_STRING, sizeof(gstGlobalPrm.szFontsDir)  , gstGlobalPrm.szFontsDir  , NULL            },
-  { "TRACE_ON_TERMINAL", XMLTYPE_STRING, sizeof(gstGlobalPrm.szTraceOnTerminal), gstGlobalPrm.szTraceOnTerminal, NULL            },
+  { "ASSETS_DIR" , XMLTYPE_STRING, sizeof(gstGlobalPrm.szAssetsDir)  , gstGlobalPrm.szAssetsDir, NULL            },
   { NULL         , XMLTYPE_NULL  , 0                                , NULL                     , NULL            }
 };
 int icbackCCGXml(xmlNodePtr pstNode, void* pData __attribute__((unused))) {
@@ -179,9 +179,6 @@ int bInitGlobals(void) {
 
   snprintf(gszDebugLevel, sizeof(gszDebugLevel), "%s", gstGlobalPrm.szDebugLevel);
 
-  if ( !bStrIsEmpty(gstGlobalPrm.szTraceOnTerminal) ) {
-    gbTraceOnTerminal = atoi(gstGlobalPrm.szTraceOnTerminal);
-  }
 
   if ( DEBUG_MSGS ) vTraceEnd();
 
@@ -278,7 +275,7 @@ int CCG_Main(int argc, char *argv[]){
   if ( astCmdOpt[4].bSet ) {
     gbSDL_Mode = 1;
   }
-
+  
   vInitLogs(gstGlobalPrm.szTrace, gstGlobalPrm.szDebugLevel);
 
   if ( !bLoadMsgXml() ) {
@@ -300,10 +297,12 @@ int CCG_Main(int argc, char *argv[]){
   #endif
 
   #ifdef USE_SDL2
-    vSDL_WelcomeInit();
-    if ( iSDL_OpenWelcome(pSDL_Rnd) == FINISH_PROGRAM ) {
-      if ( gbSDL_Mode ) vSDL_MainQuit();
-      return 0;
+    if ( gbSDL_Mode ){
+      vSDL_WelcomeInit();
+      if ( iSDL_OpenWelcome(pSDL_Rnd) == FINISH_PROGRAM ) {
+        vSDL_MainQuit();
+        return 0;
+      }
     }
   #endif
 

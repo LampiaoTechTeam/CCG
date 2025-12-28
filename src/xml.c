@@ -82,36 +82,73 @@ int bLoadXml(char* pszXml, STRUCT_XML astXml[]) {
   return bRsl;
 }
 
-int bLoadXmlFromFile(char* pszFilePath, STRUCT_XML astXml[]) {
+int bLoadXmlFromFile(char* pszFilePath, STRUCT_XML astXml[])
+{
   char* pszXml = NULL;
   FILE* fpXml = NULL;
+  long lSize = 0;
+  size_t zRead = 0;
   int bRsl = 0;
-  if ( DEBUG_XML_MSGS ) vTraceBegin();
+
+  if (DEBUG_XML_MSGS) vTraceBegin();
+
   giXmlSizeof = 0;
-  if ( DEBUG_XML_MORE_MSGS ) vTraceVarArgsFn("Open the file [%s]", pszFilePath);
-  if ( (fpXml = fopen(pszFilePath, "r")) == NULL ) {
-    if ( DEBUG_XML_MSGS ) vTraceVarArgsFn("end FALSE");
+
+  if (DEBUG_XML_MORE_MSGS) vTraceVarArgsFn("Open the file [%s]", pszFilePath);
+
+  /* IMPORTANT: binary mode on Windows */
+  fpXml = fopen(pszFilePath, "rb");
+  if (!fpXml) {
+    if (DEBUG_XML_MSGS) vTraceVarArgsFn("end FALSE");
     return 0;
   }
-  fseek(fpXml, 0, SEEK_END);
-  giXmlSizeof = ftell(fpXml);
-  if ( DEBUG_XML_MORE_MSGS ) vTraceVarArgsFn("XML size [%ld]", giXmlSizeof);
-  fseek(fpXml, 0, SEEK_SET);
-  pszXml = (char*)calloc(1, sizeof(char) * giXmlSizeof);
-  if ( !pszXml ) {
+
+  if (fseek(fpXml, 0, SEEK_END) != 0) {
     fclose(fpXml);
-    fpXml = NULL;
     return 0;
   }
-  fread(pszXml, giXmlSizeof, 1, fpXml);
+
+  lSize = ftell(fpXml);
+  if (lSize < 0) {
+    fclose(fpXml);
+    return 0;
+  }
+
+  if (DEBUG_XML_MORE_MSGS) vTraceVarArgsFn("XML size [%ld]", lSize);
+
+  if (fseek(fpXml, 0, SEEK_SET) != 0) {
+    fclose(fpXml);
+    return 0;
+  }
+
+  /* +1 to guarantee NULL terminator for logs */
+  pszXml = (char*)malloc((size_t)lSize + 1);
+  if (!pszXml) {
+    fclose(fpXml);
+    return 0;
+  }
+
+  zRead = fread(pszXml, 1, (size_t)lSize, fpXml);
   fclose(fpXml);
   fpXml = NULL;
-  if ( DEBUG_XML_ALL ) vTraceVarArgsFn("XML CONTENT: [%s]", pszXml);
+
+  /* If short read, shrink to what we really got */
+  giXmlSizeof = (int)zRead;
+
+  /* Always terminate so DEBUG print as string is safe */
+  pszXml[zRead] = '\0';
+
+  if (DEBUG_XML_ALL) vTraceVarArgsFn("XML CONTENT: [%s]", pszXml);
+
   bRsl = bLoadXml(pszXml, astXml);
+
   free(pszXml);
   pszXml = NULL;
-  if ( DEBUG_XML_MSGS ) vTraceVarArgsFn("bRsl [%s]", bRsl ? "TRUE" : "FALSE");
-  if ( DEBUG_XML_MSGS ) vTraceEnd();
+
+  if (DEBUG_XML_MSGS) vTraceVarArgsFn("bRsl [%s]", bRsl ? "TRUE" : "FALSE");
+  if (DEBUG_XML_MSGS) vTraceEnd();
+
   return bRsl;
 }
+
 

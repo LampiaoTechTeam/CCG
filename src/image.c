@@ -8,6 +8,8 @@
   #include <sys_interface.h>
   #include <string.h>
   #include <stdlib.h>
+  #include <card_game.h>
+  
 
   STRUCT_IMAGE stWrkImage;
   STRUCT_IMAGE gstImages[MAX_IMAGES];
@@ -68,13 +70,24 @@
   SDL_Texture *pSDL_LoadTextureFromPath(SDL_Renderer *pSDL_Renderer, char *pszPath){
     SDL_Surface *pSDL_Srfc;
     SDL_Texture *pSDL_Txtr;
+    char szPath[_MAX_PATH*4];
+    char szName[_MAX_PATH];
+    char szExt[_MAX_PATH];
 
     if ( bStrIsEmpty(pszPath) )
       return NULL;
 
-    pSDL_Srfc = pSDL_SRFC_LoadImage(pszPath);
+    vSetRootPathFromCwd();
+    
+    iDIR_SplitFilename(pszPath, szPath, szName, szExt);
+    snprintf(szPath, sizeof(szPath), "%s/%s/%s%s", gszRootPathFromBin, gstGlobalPrm.szAssetsDir, szName, szExt);
+    if ( iDIR_IsDir(szPath) < 0 ){
+      snprintf(szPath, sizeof(szPath), "../%s/%s%s", gstGlobalPrm.szAssetsDir, szName, szExt);
+    }
+
+    pSDL_Srfc = pSDL_SRFC_LoadImage(szPath);
     if ( pSDL_Srfc == NULL ) {
-      vTraceVarArgsFn("IMG_Load falhou: [%s] err=%s", pszPath, IMG_GetError());
+      vTraceVarArgsFn("IMG_Load falhou: [%s] err=%s", szPath, IMG_GetError());
       return NULL;
     }
 

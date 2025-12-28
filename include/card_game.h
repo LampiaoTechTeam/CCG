@@ -55,12 +55,12 @@
    * @brief Parametros globais
    */
   typedef struct STRUCT_GLOBAL_PRM {
-    char szWrkDir[_MAX_PATH];   /**< Diretorio de arquivos temporarios e recuperacao de estados */
-    char szTrace[_MAX_PATH];    /**< Caminho do arquivo de log                                  */
-    char szDebugLevel[32];      /**< Nivel de puracao                                           */
-    char szFontsDir[_MAX_PATH]; /**< Caminho para o diretorio das fontes                        */
-    char szConfDir[_MAX_PATH];  /**< Caminho para o diretorio de configuracao                   */
-    char szTraceOnTerminal[2];
+    char szWrkDir[_MAX_PATH];    /** Diretorio de arquivos temporarios e recuperacao de estados */
+    char szTrace[_MAX_PATH];     /** Caminho do arquivo de log                                  */
+    char szDebugLevel[32];       /** Nivel de puracao                                           */
+    char szFontsDir[_MAX_PATH];  /** Caminho para o diretorio das fontes                        */
+    char szConfDir[_MAX_PATH];   /** Caminho para o diretorio de configuracao                   */
+    char szAssetsDir[_MAX_PATH]; /** Caminho para o diretorio de assets                         */
   } STRUCT_GLOBAL_PRM, *PSTRUCT_GLOBAL_PRM;
 
   extern STRUCT_GLOBAL_PRM gstGlobalPrm;

@@ -30,7 +30,6 @@ char gszTraceFileDialog[2048];
 char gszDebugLevel[32];
 char gszConfFile[_MAX_PATH];
 int  giNoNL = FALSE;
-int gbTraceOnTerminal = FALSE;
 
 #ifdef _WIN32
 
@@ -81,11 +80,9 @@ void vTraceMsg(char *szMsg) {
   }
   if (giNoNL == TRUE) {
     fprintf(pfLog, "%s", szMsg);
-    if ( gbTraceOnTerminal ) fprintf(stdout, "%s", szMsg);
   }
   else {
     fprintf(pfLog, "%s%s\n", szDateTimeNow_us, szMsg);
-    if ( gbTraceOnTerminal ) fprintf(stdout, "%s%s\n", szDateTimeNow_us, szMsg);
   }
 
   fclose(pfLog);
@@ -101,12 +98,6 @@ void _vTraceMsgDialog(char *szMsg, ...) {
       return;
     }
     vfprintf(pfLog, szMsg, args);
-    if ( gbTraceOnTerminal ) {
-      va_list args_terminal;
-      va_start(args_terminal, szMsg);
-      vfprintf(stdout, szMsg, args_terminal);
-      va_end(args_terminal);
-    }
 
     va_end(args);
     fclose(pfLog);
@@ -183,13 +174,6 @@ void _vTraceVarArgsFn(char *pszModuleName, const int kiLine, const char *kpszFun
   
   strcat(szDbg, "\n");
   vfprintf(pfLog, szDbg, args);
-  if ( gbTraceOnTerminal ) {
-    va_list args_terminal;
-    va_start(args_terminal, kpszFmt);
-    vfprintf(stdout, szDbg, args_terminal);
-    va_end(args_terminal);
-  }
-
   va_end(args);
 
   fclose(pfLog);
@@ -213,8 +197,6 @@ void vInitLogs(char* pszTrace, const char* pszDebugLevel) {
   memset(szPath, 0x00, sizeof(szPath));
   memset(szName, 0x00, sizeof(szName));
   memset(szExt, 0x00, sizeof(szExt));
-
-  
   
   vSetRootPathFromCwd();
   if ( bStrIsEmpty(pszTrace) ) {
