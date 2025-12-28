@@ -1403,7 +1403,6 @@ int iSDL_OpenPause(SDL_Renderer *pSDL_Renderer){
           gbPauseOpen = FALSE;
           bRunning = FALSE;
           gstGame.iStatus = (gstGame.iStatus == STATUS_PAUSE ? STATUS_GAMING : STATUS_PAUSE);
-          printf("%s gstGame.iStatus [%s]\n", __FUNCTION__, gkpaszGameStatus[gstGame.iStatus]);
           break;
         }
         else {

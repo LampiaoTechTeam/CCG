@@ -101,7 +101,12 @@ void _vTraceMsgDialog(char *szMsg, ...) {
       return;
     }
     vfprintf(pfLog, szMsg, args);
-    if ( gbTraceOnTerminal ) vfprintf(stdout, szMsg, args);
+    if ( gbTraceOnTerminal ) {
+      va_list args_terminal;
+      va_start(args_terminal, szMsg);
+      vfprintf(stdout, szMsg, args_terminal);
+      va_end(args_terminal);
+    }
 
     va_end(args);
     fclose(pfLog);
@@ -178,7 +183,12 @@ void _vTraceVarArgsFn(char *pszModuleName, const int kiLine, const char *kpszFun
   
   strcat(szDbg, "\n");
   vfprintf(pfLog, szDbg, args);
-  if ( gbTraceOnTerminal ) vfprintf(stdout, szDbg, args);
+  if ( gbTraceOnTerminal ) {
+    va_list args_terminal;
+    va_start(args_terminal, kpszFmt);
+    vfprintf(stdout, szDbg, args_terminal);
+    va_end(args_terminal);
+  }
 
   va_end(args);
 
