@@ -1496,6 +1496,7 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
         break;
       }
       iRedrawAction = REDRAW_TABLE;
+      vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
       // continue;
     }
 
