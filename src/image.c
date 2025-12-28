@@ -43,16 +43,16 @@
   SDL_Surface *pSDL_SRFC_LoadImage(char *pszImgPath) {
     SDL_Surface *SDL_SRFC_Img = IMG_Load(pszImgPath);
 
-    vTraceVarArgsFn("begin");
+    if ( DEBUG_LVL_MORE_DETAILS ) vTraceVarArgsFn("begin");
 
     if ( SDL_SRFC_Img == NULL ) {
-      vTraceVarArgsFn("Error loading image: %s\n", IMG_GetError());
-      vTraceVarArgsFn("%s - end return NULL", __func__);
+      if ( DEBUG_LVL_DETAILS ) vTraceVarArgsFn("Error loading image: %s\n", IMG_GetError());
+      if ( DEBUG_LVL_MORE_DETAILS ) vTraceVarArgsFn("end return NULL");
 
       return NULL;
     }
 
-    vTraceVarArgsFn("end");
+    if ( DEBUG_LVL_MORE_DETAILS ) vTraceVarArgsFn("end");
 
     return SDL_SRFC_Img;
   } /* pSDL_SRFC_LoadImage */
@@ -60,10 +60,12 @@
   int bLoadImgListFromFile() {
     char szPath[_MAX_PATH+_MAX_PATH];
     int bLoaded = FALSE;
-    vTraceVarArgsFn("begin");
+    if ( DEBUG_LVL_MORE_DETAILS ) vTraceVarArgsFn("begin");
+
     sprintf(szPath, "%s/%s/%s", gszRootPathFromBin, CONF_DIR, IMG_PATH_TITLE);
     bLoaded = bLoadXmlFromFile(szPath, astImageXml);
-    vTraceVarArgsFn("end");
+
+    if ( DEBUG_LVL_MORE_DETAILS ) vTraceVarArgsFn("end");
     return bLoaded;
   }
 
@@ -87,7 +89,7 @@
 
     pSDL_Srfc = pSDL_SRFC_LoadImage(szPath);
     if ( pSDL_Srfc == NULL ) {
-      vTraceVarArgsFn("IMG_Load falhou: [%s] err=%s", szPath, IMG_GetError());
+      if ( DEBUG_LVL_DETAILS ) vTraceVarArgsFn("IMG_Load falhou: [%s] err=%s", szPath, IMG_GetError());
       return NULL;
     }
 
@@ -95,7 +97,7 @@
     SDL_FreeSurface(pSDL_Srfc);
 
     if ( pSDL_Txtr == NULL ) {
-      vTraceVarArgsFn("SDL_CreateTextureFromSurface falhou: %s", SDL_GetError());
+      if ( DEBUG_LVL_DETAILS ) vTraceVarArgsFn("SDL_CreateTextureFromSurface falhou: %s", SDL_GetError());
       return NULL;
     }
 
@@ -124,8 +126,8 @@
       }
       iImageCount++;
     }
-    vTraceVarArgsFn("iIMG_LoadAll: giImageCount=%d", iImageCount);
-    vIMG_TraceList();
+    if ( DEBUG_LVL_DETAILS ) vTraceVarArgsFn("iIMG_LoadAll: giImageCount=%d", iImageCount);
+    if ( DEBUG_LVL_MORE_DETAILS ) vIMG_TraceList();
     return bAnyLoaded;
   }
 

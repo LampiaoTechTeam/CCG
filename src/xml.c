@@ -19,13 +19,13 @@ int iParseXmlFields(xmlNodePtr pstNode, STRUCT_XML astXml[]) {
   int ii = 0;
   for ( pstCurrentXmlNode = pstNode->children; pstCurrentXmlNode; pstCurrentXmlNode = pstCurrentXmlNode->next ) {
     for ( ii = 0; astXml[ii].pszTag; ii++ ) {
-      if ( DEBUG_XML_MORE_MSGS ) vTraceVarArgsFn("pstCurrentXmlNode->type [%d]", (int) pstCurrentXmlNode->type);
+      if ( DEBUG_XML_ALL ) vTraceVarArgsFn("pstCurrentXmlNode->type [%d]", (int) pstCurrentXmlNode->type);
       if ( pstCurrentXmlNode->type != XML_ELEMENT_NODE ) continue;
-      if ( DEBUG_XML_MORE_MSGS ) vTraceVarArgsFn("pstCurrentXmlNode->name [%s]", pstCurrentXmlNode->name);
+      if ( DEBUG_XML_ALL ) vTraceVarArgsFn("pstCurrentXmlNode->name [%s]", pstCurrentXmlNode->name);
       if ( !xmlStrcasecmp(pstCurrentXmlNode->name, (xmlChar*)astXml[ii].pszTag) ) {
         xmlChar* pszContent = xmlNodeGetContent(pstCurrentXmlNode);
         if ( bStrIsEmpty((char*)pszContent) ) continue;
-        vTraceVarArgsFn("pszContent [%s]", pszContent);
+        if ( DEBUG_XML_ALL ) vTraceVarArgsFn("pszContent [%s]", pszContent);
         switch ( astXml[ii].eType ) {
           case XMLTYPE_BOOL: {
             *(int*)astXml[ii].pData = atoi((char*)pszContent);

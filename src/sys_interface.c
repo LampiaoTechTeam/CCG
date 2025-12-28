@@ -90,16 +90,20 @@ void vWaitChild() {
     strcat(szPath, szDir);
     return 0;
   }
+
   int iDIR_IsDir(char *szDir) {
     HANDLE hArquivo;
     WIN32_FIND_DATA wfdArquivo;
+
     hArquivo = FindFirstFile(szDir, &wfdArquivo);
     if (hArquivo == INVALID_HANDLE_VALUE)
-      return 0;
+      return -1; /* não existe */
+
     FindClose(hArquivo);
     if (wfdArquivo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-      return 1;
-    return 0;
+      return 1; /* diretório */
+
+    return 0;   /* arquivo */
   }
 #else /** LINUX */
 /*
@@ -110,9 +114,12 @@ void vWaitChild() {
 int iDIR_IsDir(char *szDir) {
   struct stat stStat;
   if (stat(szDir, &stStat) != 0)
-    return 0;
+    return -1;
   if (S_ISDIR(stStat.st_mode))
-    return 1;
+    return  1;
+  if (S_ISREG(stStat.st_mode))
+    return  0;  /* arquivo regular */
+  
   return 0;
 }
 int iDIR_SplitFilename(char *szFilename, char *szPath, char *szName,

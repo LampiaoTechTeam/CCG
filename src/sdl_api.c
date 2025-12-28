@@ -1129,7 +1129,7 @@ void vRedraw(SDL_Renderer *pSDL_Renderer,
   bRedrawTable  = (iRedrawAction & REDRAW_TABLE)  != 0;
 
 
-  if ( DEBUG_SDL_MSGS ) {
+  if ( DEBUG_LVL_ALL ) {
     vTraceVarArgsFn("gstGame.iStatus=[%s]", gkpaszGameStatus[gstGame.iStatus]);
     vTraceVarArgsFn("bRedrawDialog=%d bRedrawTable=%d gbAnimateHandDraw=%d",
                   bRedrawDialog, bRedrawTable, gbAnimateHandDraw);

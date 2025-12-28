@@ -130,9 +130,14 @@ void vSetRootPathFromCwd(){
   memset(gszRootPathFromBin, 0, sizeof(gszRootPathFromBin));
   sprintf(gszRootPathFromBin, "%s", ROOT_PATH_FROM_BIN);
   sprintf(szTestPath,"%s/bin", gszRootPathFromBin);
-  if ( !iDIR_IsDir(szTestPath) )
+  if ( iDIR_IsDir(szTestPath) <= 0 ){
     sprintf(gszRootPathFromBin, "%s", ".");
-    
+    sprintf(szTestPath,"%s/bin", gszRootPathFromBin);
+    if ( iDIR_IsDir(szTestPath) <= 0 ){
+      fprintf(stderr, "E: while setting root path. not found neither [.] or [..]!\n");
+      exit(EXIT_FAILURE);
+    }
+  }
 }
 
 void _vTraceVarArgsFn(char *pszModuleName, const int kiLine, const char *kpszFunctionName, const char *kpszFmt, ...) {
@@ -204,31 +209,29 @@ void vInitLogs(char* pszTrace, const char* pszDebugLevel) {
     iDIR_SplitFilename(gszTraceFile, szPath, szName, szExt);
     snprintf(szPath, sizeof(szPath), "%s/log", gszRootPathFromBin);
     sprintf(gszTraceFile, "%s/%s%s",szPath,szName,szExt);
+    printf("1\n");
   }
   else {
     iDIR_SplitFilename(pszTrace, szPath, szName, szExt);
     snprintf(gszTraceFile, sizeof(gszTraceFile), "%s", pszTrace);
   }
-  if ( !iDIR_IsDir(szPath) ) {
+
+  if ( strlen(szPath) > 1 && szPath[strlen(szPath)-1] == '/')
+    szPath[strlen(szPath)-1] = 0;    
+  
+  if ( iDIR_IsDir(szPath) <= 0 ) {
     if ( !iDIR_MkDir(szPath) ) {
-      sprintf(gszRootPathFromBin, "%s", ROOT_PATH_FROM_BIN);
-      snprintf(szPath, sizeof(szPath), "%s/log", gszRootPathFromBin);
-      sprintf(gszTraceFile, "%s/%s%s",szPath,szName,szExt);
-      
-      if ( !iDIR_IsDir(szPath) ) {
-        if ( !iDIR_MkDir(szPath) ) {
-          fprintf(stderr, "E: Impossible create dir [%s]!\n"
-          "%s\n",
-          szPath, strerror(errno));
-          exit(EXIT_FAILURE);
-        }
-      }
+      fprintf(stderr, "E: Impossible create dir [%s]!\n"
+      "%s\n",
+      szPath, strerror(errno));
+      exit(EXIT_FAILURE);
     }
   }
   if ( pszDebugLevel ) snprintf(gszDebugLevel, sizeof(gszDebugLevel), "%s", pszDebugLevel);
 
   iDIR_SplitFilename(gszTraceFileDialog, szPath2, szName, szExt);
   sprintf(gszTraceFileDialog, "%s/%s%s",szPath,szName,szExt);
+  if ( DEBUG_LVL_DETAILS ) vTraceVarArgsFn("Load OK=[%s]", gszTraceFile);
 } /* vInitLogs */
 
 void vTraceMainLoopInit(){

@@ -89,7 +89,7 @@ int iHandlePlayerActionByCard(PSTRUCT_CARD pstCard, PSTRUCT_MONSTER pastMonsters
   int bUsed = FALSE;
   int iAliveCt = 0;
 
-  vTraceVarArgsFn("Card Type=%d", pstCard->iType);
+  if ( DEBUG_LVL_DETAILS ) vTraceVarArgsFn("Card Type=%d", pstCard->iType);
   
   if ( (iAliveCt = iAliveMonsterQty(pastMonsters, iMonsterCt)) == 0 ){
     return CARD_NONE;
@@ -114,7 +114,7 @@ int iHandlePlayerActionByCard(PSTRUCT_CARD pstCard, PSTRUCT_MONSTER pastMonsters
           /* SDL2: Selected by click */
           if (gbSDL_Mode) {
             iTarget = giSelectedMonster;
-            vTraceVarArgsFn("SDL Target [%d]", iTarget);
+            if ( DEBUG_LVL_DETAILS ) vTraceVarArgsFn("Card Target [%d]", iTarget);
           }
           else{
             /* console mode, asks for user input */
