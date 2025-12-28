@@ -142,21 +142,6 @@ int gbWelcomeOpen = FALSE;
           }
         }
         else if ( stEvent.type == SDL_MOUSEBUTTONDOWN ) {
-          int mx = stEvent.button.x;
-          int my = stEvent.button.y;
-          int ii = 0;
-
-          /* Detectar clique nos botoes */
-          for ( ii = 0; ii < pstMenu->iCtItems; ii++ ) {
-            if ( bAreCoordsInSDL_Rect(
-                  (SDL_Rect*)&pstMenu->astItem[ii].stRect,
-                  mx,
-                  my) ) {
-              pstMenu->iSelectedItemIdx = ii;
-              break;
-            }
-          }
-
           if ( iWelcomeMenuButtonAction(&bRunning, pstMenu, stEvent) == FINISH_PROGRAM ) {
             return FINISH_PROGRAM;
           }
