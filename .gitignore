@@ -12,3 +12,4 @@
 *.orig
 *.old
 /doc/man*
+/build
