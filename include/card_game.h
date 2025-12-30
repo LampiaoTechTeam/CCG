@@ -60,6 +60,7 @@
     char szDebugLevel[32];       /** Nivel de puracao                                           */
     char szFontsDir[_MAX_PATH];  /** Caminho para o diretorio das fontes                        */
     char szConfDir[_MAX_PATH];   /** Caminho para o diretorio de configuracao                   */
+    char szTraceOnTerminal[2];
     char szAssetsDir[_MAX_PATH]; /** Caminho para o diretorio de assets                         */
   } STRUCT_GLOBAL_PRM, *PSTRUCT_GLOBAL_PRM;
 

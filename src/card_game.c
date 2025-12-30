@@ -98,13 +98,14 @@ STRUCT_COMMANDLINE_OPTIONS astCmdOpt[] = {
 
 int icbackCCGXml(xmlNodePtr pstNode, void* pData __attribute__((unused)));
 STRUCT_XML astCCGXml[] = {
-  { "CCG"        , XMLTYPE_PROC  , 0                                , NULL                     , icbackCCGXml    },
-  { "TRACE"      , XMLTYPE_STRING, sizeof(gstGlobalPrm.szTrace)     , gstGlobalPrm.szTrace     , NULL            },
-  { "DEBUG_LEVEL", XMLTYPE_STRING, sizeof(gstGlobalPrm.szDebugLevel), gstGlobalPrm.szDebugLevel, NULL            },
-  { "WRK_DIR"    , XMLTYPE_STRING, sizeof(gstGlobalPrm.szWrkDir)    , gstGlobalPrm.szWrkDir    , NULL            },
-  { "FONT_DIR"   , XMLTYPE_STRING, sizeof(gstGlobalPrm.szFontsDir)  , gstGlobalPrm.szFontsDir  , NULL            },
-  { "ASSETS_DIR" , XMLTYPE_STRING, sizeof(gstGlobalPrm.szAssetsDir)  , gstGlobalPrm.szAssetsDir, NULL            },
-  { NULL         , XMLTYPE_NULL  , 0                                , NULL                     , NULL            }
+  { "CCG"              , XMLTYPE_PROC  , 0                                     , NULL                          , icbackCCGXml    },
+  { "TRACE"            , XMLTYPE_STRING, sizeof(gstGlobalPrm.szTrace)          , gstGlobalPrm.szTrace          , NULL            },
+  { "DEBUG_LEVEL"      , XMLTYPE_STRING, sizeof(gstGlobalPrm.szDebugLevel)     , gstGlobalPrm.szDebugLevel     , NULL            },
+  { "WRK_DIR"          , XMLTYPE_STRING, sizeof(gstGlobalPrm.szWrkDir)         , gstGlobalPrm.szWrkDir         , NULL            },
+  { "FONT_DIR"         , XMLTYPE_STRING, sizeof(gstGlobalPrm.szFontsDir)       , gstGlobalPrm.szFontsDir       , NULL            },
+  { "TRACE_ON_TERMINAL", XMLTYPE_STRING, sizeof(gstGlobalPrm.szTraceOnTerminal), gstGlobalPrm.szTraceOnTerminal, NULL            },
+  { "ASSETS_DIR"       , XMLTYPE_STRING, sizeof(gstGlobalPrm.szAssetsDir)      , gstGlobalPrm.szAssetsDir      , NULL            },
+  { NULL               , XMLTYPE_NULL  , 0                                     , NULL                          , NULL            }
 };
 int icbackCCGXml(xmlNodePtr pstNode, void* pData __attribute__((unused))) {
   if ( !strcasecmp((char*)pstNode->name, "CCG") ) {
@@ -179,6 +180,9 @@ int bInitGlobals(void) {
 
   snprintf(gszDebugLevel, sizeof(gszDebugLevel), "%s", gstGlobalPrm.szDebugLevel);
 
+  if ( !bStrIsEmpty(gstGlobalPrm.szTraceOnTerminal) ) {
+    gbTraceOnTerminal = atoi(gstGlobalPrm.szTraceOnTerminal);
+  }
 
   if ( DEBUG_MSGS ) vTraceEnd();
 

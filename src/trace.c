@@ -30,6 +30,7 @@ char gszTraceFileDialog[2048];
 char gszDebugLevel[32];
 char gszConfFile[_MAX_PATH];
 int  giNoNL = FALSE;
+int gbTraceOnTerminal = FALSE;
 
 #ifdef _WIN32
 
@@ -80,9 +81,11 @@ void vTraceMsg(char *szMsg) {
   }
   if (giNoNL == TRUE) {
     fprintf(pfLog, "%s", szMsg);
+    if ( gbTraceOnTerminal ) fprintf(stdout, "%s", szMsg);
   }
   else {
     fprintf(pfLog, "%s%s\n", szDateTimeNow_us, szMsg);
+    if ( gbTraceOnTerminal ) fprintf(stdout, "%s%s\n", szDateTimeNow_us, szMsg);
   }
 
   fclose(pfLog);
@@ -97,7 +100,15 @@ void _vTraceMsgDialog(char *szMsg, ...) {
     if ((pfLog = fopen(gszTraceFileDialog, "a+")) == NULL){
       return;
     }
+
     vfprintf(pfLog, szMsg, args);
+
+    if ( gbTraceOnTerminal ) {
+      va_list args_terminal;
+      va_start(args_terminal, szMsg);
+      vfprintf(stdout, szMsg, args_terminal);
+      va_end(args_terminal);
+    }
 
     va_end(args);
     fclose(pfLog);
@@ -119,6 +130,7 @@ void vTracePid(char *szMsg, int iMsgLen) {
   sprintf(pszMyMsg, "%d %s", iPid, szMsg);
 
   vTraceMsg(pszMyMsg);
+  if ( gbTraceOnTerminal ) printf("%s\n", pszMyMsg);
 
   free(pszMyMsg);
   pszMyMsg = NULL;
@@ -179,6 +191,14 @@ void _vTraceVarArgsFn(char *pszModuleName, const int kiLine, const char *kpszFun
   
   strcat(szDbg, "\n");
   vfprintf(pfLog, szDbg, args);
+
+  if ( gbTraceOnTerminal ) {
+    va_list args_terminal;
+    va_start(args_terminal, kpszFmt);
+    vfprintf(stdout, szDbg, args_terminal);
+    va_end(args_terminal);
+  }
+
   va_end(args);
 
   fclose(pfLog);

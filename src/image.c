@@ -72,26 +72,35 @@
   SDL_Texture *pSDL_LoadTextureFromPath(SDL_Renderer *pSDL_Renderer, char *pszPath){
     SDL_Surface *pSDL_Srfc;
     SDL_Texture *pSDL_Txtr;
+#ifdef _WIN32
     char szPath[_MAX_PATH*4];
     char szName[_MAX_PATH];
     char szExt[_MAX_PATH];
+#endif
 
     if ( bStrIsEmpty(pszPath) )
       return NULL;
 
+#ifdef _WIN32
     vSetRootPathFromCwd();
-    
+
     iDIR_SplitFilename(pszPath, szPath, szName, szExt);
     snprintf(szPath, sizeof(szPath), "%s/%s/%s%s", gszRootPathFromBin, gstGlobalPrm.szAssetsDir, szName, szExt);
     if ( iDIR_IsDir(szPath) < 0 ){
       snprintf(szPath, sizeof(szPath), "../%s/%s%s", gstGlobalPrm.szAssetsDir, szName, szExt);
     }
-
     pSDL_Srfc = pSDL_SRFC_LoadImage(szPath);
     if ( pSDL_Srfc == NULL ) {
-      if ( DEBUG_LVL_DETAILS ) vTraceVarArgsFn("IMG_Load falhou: [%s] err=%s", szPath, IMG_GetError());
+      if ( DEBUG_LVL_DETAILS ) vTraceVarArgsFn("IMG_Load falhou: [%s] err=%s", pszPath, IMG_GetError());
       return NULL;
     }
+#else
+    pSDL_Srfc = pSDL_SRFC_LoadImage(pszPath);
+    if ( pSDL_Srfc == NULL ) {
+      if ( DEBUG_LVL_DETAILS ) vTraceVarArgsFn("IMG_Load falhou: [%s] err=%s", pszPath, IMG_GetError());
+      return NULL;
+    }
+#endif
 
     pSDL_Txtr = SDL_CreateTextureFromSurface(pSDL_Renderer, pSDL_Srfc);
     SDL_FreeSurface(pSDL_Srfc);
