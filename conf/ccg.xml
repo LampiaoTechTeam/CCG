@@ -1,11 +1,12 @@
 <?xml version='1.0'?>
 <CCG>
   <TRACE>./log/card_game.log</TRACE>
-  <!-- 0: Global 1: SDL 2: XML 3: SCREEN
-               GSXs -->
-  <DEBUG_LEVEL>9809</DEBUG_LEVEL>
+  <!-- 0: Global 1: SDL 2: XML 3: SCREEN GSXs -->
+  <DEBUG_LEVEL>7707</DEBUG_LEVEL>
   <WRK_DIR>./</WRK_DIR>
-  <FONTS_DIR>./fonts</FONTS_DIR>
+  <!-- Caminho para raiz. Ex: '.' ou '..' -->
+  <BASE_DIR>./</BASE_DIR>
+  <FONTS_DIR>fonts</FONTS_DIR>
+  <ASSETS_DIR>assets</ASSETS_DIR>
   <TRACE_ON_TERMINAL>0</TRACE_ON_TERMINAL>
 </CCG>
-

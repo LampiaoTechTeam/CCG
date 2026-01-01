@@ -62,7 +62,7 @@
     int bLoaded = FALSE;
     if ( DEBUG_LVL_MORE_DETAILS ) vTraceVarArgsFn("begin");
 
-    sprintf(szPath, "%s/%s/%s", gszRootPathFromBin, CONF_DIR, IMG_PATH_TITLE);
+    sprintf(szPath, "%s/%s/%s", gszBaseDir, CONF_DIR, IMG_PATH_TITLE);
     bLoaded = bLoadXmlFromFile(szPath, astImageXml);
 
     if ( DEBUG_LVL_MORE_DETAILS ) vTraceVarArgsFn("end");
@@ -82,13 +82,9 @@
       return NULL;
 
 #ifdef _WIN32
-    vSetRootPathFromCwd();
-
     iDIR_SplitFilename(pszPath, szPath, szName, szExt);
-    snprintf(szPath, sizeof(szPath), "%s/%s/%s%s", gszRootPathFromBin, gstGlobalPrm.szAssetsDir, szName, szExt);
-    if ( iDIR_IsDir(szPath) < 0 ){
-      snprintf(szPath, sizeof(szPath), "../%s/%s%s", gstGlobalPrm.szAssetsDir, szName, szExt);
-    }
+    snprintf(szPath, sizeof(szPath), "%s/%s/%s%s", gszBaseDir, gstGlobalPrm.szAssetsDir, szName, szExt);
+;
     pSDL_Srfc = pSDL_SRFC_LoadImage(szPath);
     if ( pSDL_Srfc == NULL ) {
       if ( DEBUG_LVL_DETAILS ) vTraceVarArgsFn("IMG_Load falhou: [%s] err=%s", pszPath, IMG_GetError());

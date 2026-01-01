@@ -42,13 +42,15 @@ char *gkpszProgramName;
 int gbLogLevel = 1;
 int giLevel;
 int gbSDL_Mode;
+char gszBaseDir[_MAX_PATH];
 
 STRUCT_GLOBAL_PRM gstGlobalPrm;
 
 typedef struct STRUCT_CMDLINE {
   char szTrace[_MAX_PATH];
   char szDebugLevel[32];
-  char szConfDir[_MAX_PATH];
+  char szConfDir[_MAX_PATH+32];
+  char szBaseDir[_MAX_PATH];
 } STRUCT_CMDLINE, *PSTRUCT_CMDLINE;
 
 STRUCT_CMDLINE gstCmdLine;
@@ -90,6 +92,11 @@ STRUCT_COMMANDLINE_OPTIONS astCmdOpt[] = {
     FALSE,         "",  gstCmdLine.szConfDir, sizeof(gstCmdLine.szConfDir),
     "Set the path of conf directory"
   },
+  /* 06 */
+  { "base-dir",   'b', optional_argument,    CMDLINETYPE_NULL, "",
+    FALSE,         "",  gstCmdLine.szBaseDir, sizeof(gstCmdLine.szBaseDir),
+    "Set the root path of the project"
+  },
   { NULL, 0, no_argument, CMDLINETYPE_NULL, NULL,
      FALSE, NULL, NULL, 0,
     NULL
@@ -102,6 +109,7 @@ STRUCT_XML astCCGXml[] = {
   { "TRACE"            , XMLTYPE_STRING, sizeof(gstGlobalPrm.szTrace)          , gstGlobalPrm.szTrace          , NULL            },
   { "DEBUG_LEVEL"      , XMLTYPE_STRING, sizeof(gstGlobalPrm.szDebugLevel)     , gstGlobalPrm.szDebugLevel     , NULL            },
   { "WRK_DIR"          , XMLTYPE_STRING, sizeof(gstGlobalPrm.szWrkDir)         , gstGlobalPrm.szWrkDir         , NULL            },
+  { "BASE_DIR"         , XMLTYPE_STRING, sizeof(gstGlobalPrm.szBaseDir)        , gstGlobalPrm.szBaseDir        , NULL            },
   { "FONT_DIR"         , XMLTYPE_STRING, sizeof(gstGlobalPrm.szFontsDir)       , gstGlobalPrm.szFontsDir       , NULL            },
   { "TRACE_ON_TERMINAL", XMLTYPE_STRING, sizeof(gstGlobalPrm.szTraceOnTerminal), gstGlobalPrm.szTraceOnTerminal, NULL            },
   { "ASSETS_DIR"       , XMLTYPE_STRING, sizeof(gstGlobalPrm.szAssetsDir)      , gstGlobalPrm.szAssetsDir      , NULL            },
@@ -125,6 +133,27 @@ STRUCT_CONF_FILE astConfFile[] = {
 };
 
 /** === Procedures === */
+
+int iSetBaseDir(void){
+  char *pszRootDir = NULL;
+  
+  memset(gszBaseDir, 0x00, sizeof(gszBaseDir));
+  if ( (pszRootDir = getenv("CCG_ROOT_DIR")) != NULL && iDIR_IsDir(pszRootDir) ){
+    snprintf(gszBaseDir, sizeof(gszBaseDir), "%s", pszRootDir);
+    return 0;
+  }
+  if ( !bStrIsEmpty(gstGlobalPrm.szBaseDir) && iDIR_IsDir(gstGlobalPrm.szBaseDir) ){
+    snprintf(gszBaseDir, sizeof(gszBaseDir), "%s", gstGlobalPrm.szBaseDir);
+    return 1;
+  }
+  if ( !bStrIsEmpty(gstCmdLine.szBaseDir) && iDIR_IsDir(gstCmdLine.szBaseDir) ){
+    snprintf(gszBaseDir, sizeof(gszBaseDir), "%s", gstCmdLine.szBaseDir);
+    return 2;
+  }
+  
+  return -1;
+}
+
 void vFreeProgramName(){
   if (gkpszProgramName != NULL)
     free(gkpszProgramName);
@@ -144,7 +173,7 @@ void vSetProgramName(char *argv[]){
 }
 
 int bInitGlobals(void) {
-  char szConfFile[512] = "";
+  char szConfFile[_MAX_PATH+_MAX_PATH] = "";
 
   memset(szConfFile   , 0x00, sizeof(szConfFile));
 
@@ -243,12 +272,13 @@ int CCG_Main(int argc, char *argv[]){
   memset(&gstCmdLine  , 0x00, sizeof(gstCmdLine  ));
 
   vSetProgramName(argv);
-
-  pszRootDir = getenv("CCG_ROOT_DIR");
-
-  if ( bStrIsEmpty(pszRootDir) ) {
-    pszRootDir = ".";
+  /**
+   * TODO: Rever logica default '.'
+   */
+  if ( iSetBaseDir() < 0 ){
+    sprintf(gszBaseDir, "%s", ".");
   }
+  pszRootDir = gszBaseDir;
 
   snprintf(gstCmdLine.szConfDir, sizeof(gstCmdLine.szConfDir), "%s%cconf", pszRootDir, DIR_SEPARATOR);
 

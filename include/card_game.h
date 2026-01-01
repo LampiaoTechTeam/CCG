@@ -27,7 +27,8 @@
   extern char *gkpszProgramName;
   extern int giLevel;
   extern int gbSDL_Mode;
-
+  extern char gszBaseDir[_MAX_PATH];
+  
   #define INT_WINDOW_WIDTH  800
   #define INT_WINDOW_HEIGHT 600
   #define WINDOW_RATIO  INT_WINDOW_WIDTH/INT_WINDOW_HEIGHT
@@ -58,12 +59,24 @@
     char szWrkDir[_MAX_PATH];    /** Diretorio de arquivos temporarios e recuperacao de estados */
     char szTrace[_MAX_PATH];     /** Caminho do arquivo de log                                  */
     char szDebugLevel[32];       /** Nivel de puracao                                           */
+    char szBaseDir[_MAX_PATH];   /** Caminho para a raiz do projeto                             */
     char szFontsDir[_MAX_PATH];  /** Caminho para o diretorio das fontes                        */
-    char szConfDir[_MAX_PATH];   /** Caminho para o diretorio de configuracao                   */
+    char szConfDir[_MAX_PATH+64];   /** Caminho para o diretorio de configuracao                   */
     char szTraceOnTerminal[2];
     char szAssetsDir[_MAX_PATH]; /** Caminho para o diretorio de assets                         */
   } STRUCT_GLOBAL_PRM, *PSTRUCT_GLOBAL_PRM;
 
   extern STRUCT_GLOBAL_PRM gstGlobalPrm;
-
+  
+  /**
+  * @brief Sets root project path depending on env setup
+  *
+  * @return  2 : Set from Cmdline
+  * @return  1 : Set from XML
+  * @return  0 : Set from env var CCG_ROOT_DIR
+  * @return -1 : Could not set
+  *
+  */
+  int iSetBaseDir(void);
+    
 #endif

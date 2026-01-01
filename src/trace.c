@@ -24,7 +24,6 @@
   #include <process.h>
 #endif
 
-char gszRootPathFromBin[_MAX_PATH];
 char gszTraceFile[2048];
 char gszTraceFileDialog[2048];
 char gszDebugLevel[32];
@@ -136,21 +135,7 @@ void vTracePid(char *szMsg, int iMsgLen) {
   pszMyMsg = NULL;
 } /* vTracePid */
 
-void vSetRootPathFromCwd(){
-  char szTestPath[_MAX_PATH + _MAX_PATH];
-  memset(szTestPath, 0, sizeof(szTestPath));
-  memset(gszRootPathFromBin, 0, sizeof(gszRootPathFromBin));
-  sprintf(gszRootPathFromBin, "%s", ROOT_PATH_FROM_BIN);
-  sprintf(szTestPath,"%s/bin", gszRootPathFromBin);
-  if ( iDIR_IsDir(szTestPath) <= 0 ){
-    sprintf(gszRootPathFromBin, "%s", ".");
-    sprintf(szTestPath,"%s/bin", gszRootPathFromBin);
-    if ( iDIR_IsDir(szTestPath) <= 0 ){
-      fprintf(stderr, "E: while setting root path. not found neither [.] or [..]!\n");
-      exit(EXIT_FAILURE);
-    }
-  }
-}
+
 
 void _vTraceVarArgsFn(char *pszModuleName, const int kiLine, const char *kpszFunctionName, const char *kpszFmt, ...) {
   va_list args;
@@ -223,13 +208,11 @@ void vInitLogs(char* pszTrace, const char* pszDebugLevel) {
   memset(szName, 0x00, sizeof(szName));
   memset(szExt, 0x00, sizeof(szExt));
   
-  vSetRootPathFromCwd();
   if ( bStrIsEmpty(pszTrace) ) {
     vSetLogFileTitle();
     iDIR_SplitFilename(gszTraceFile, szPath, szName, szExt);
-    snprintf(szPath, sizeof(szPath), "%s/log", gszRootPathFromBin);
+    snprintf(szPath, sizeof(szPath), "%s/log", gszBaseDir);
     sprintf(gszTraceFile, "%s/%s%s",szPath,szName,szExt);
-    printf("1\n");
   }
   else {
     iDIR_SplitFilename(pszTrace, szPath, szName, szExt);
