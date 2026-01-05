@@ -4,23 +4,23 @@ name: Dev Build & Test Pipeline (DISABLED)
 # To re-enable, uncomment the triggers below
 
 on:
-  workflow_dispatch:  # Manual trigger only
-  # push:
-  #   branches:
-  #     - main
-  #     - dev
-  #   paths-ignore:
-  #     - 'docker/**'
-  #     - 'Dockerfile'
-  #     - '*.md'
-  # pull_request:
-  #   branches:
-  #     - main
-  #     - dev
-  #   paths-ignore:
-  #     - 'docker/**'
-  #     - 'Dockerfile'
-  #     - '*.md'
+  # workflow_dispatch:  # Manual trigger only
+  push:
+    branches:
+      - main
+      - dev
+    paths-ignore:
+      - 'docker/**'
+      - 'Dockerfile'
+      - '*.md'
+  pull_request:
+    branches:
+      - main
+      - dev
+    paths-ignore:
+      - 'docker/**'
+      - 'Dockerfile'
+      - '*.md'
 
 env:
   REGISTRY: ghcr.io
