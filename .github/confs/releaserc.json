@@ -1,6 +1,6 @@
 {
   "branches": ["main"],
-  "repositoryUrl": "https://github.com/LampiaoTechTeam/CCG",
+  "repositoryUrl": "https://github.com/repiazza/CCG",
   "tagFormat": "v${version}",
   "plugins": [
     "@semantic-release/commit-analyzer",
