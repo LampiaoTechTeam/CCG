@@ -6,7 +6,7 @@
 # =============================================================================
 FROM ubuntu:24.04 AS dev
 
-LABEL org.opencontainers.image.source="https://github.com/OWNER/CCG"
+LABEL org.opencontainers.image.source="https://github.com/repiazza/CCG"
 LABEL org.opencontainers.image.description="CCG Card Game - Development Environment"
 LABEL org.opencontainers.image.licenses="MIT"
 
@@ -32,7 +32,7 @@ WORKDIR /app
 # =============================================================================
 FROM ubuntu:24.04 AS quality
 
-LABEL org.opencontainers.image.source="https://github.com/OWNER/CCG"
+LABEL org.opencontainers.image.source="https://github.com/repiazza/CCG"
 LABEL org.opencontainers.image.description="CCG Card Game - Quality Environment"
 LABEL org.opencontainers.image.licenses="MIT"
 
