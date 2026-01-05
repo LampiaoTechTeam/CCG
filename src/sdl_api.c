@@ -40,13 +40,17 @@
 #include <screen.h>
 #include <msg.h>
 
+#if SDL_MAJOR_VERSION >=2 && SDL_MINOR_VERSION >= 0 && SDL_PATCHLEVEL >= 18
+  #define u64SDL_GetTicks SDL_GetTicks64
+#else
+  #define u64SDL_GetTicks SDL_GetTicks
+#endif
 /* ---------------------------------------------  */
 /*                   Locals                       */
 /* ---------------------------------------------  */
 static int giCardCount = 0;
 static int giMonsterCount = 0;
 static int giDlgTopIndex = 0;
-static int gbAnimateHandDraw = FALSE;
 static TTF_Font *gFont = NULL;
 STRUCT_SDL_DIALOG_LAYOUT gstDialogLayout;
 
@@ -1131,12 +1135,14 @@ void vRedraw(SDL_Renderer *pSDL_Renderer,
 
   if ( DEBUG_LVL_ALL ) {
     vTraceVarArgsFn("gstGame.iStatus=[%s]", gkpaszGameStatus[gstGame.iStatus]);
-    vTraceVarArgsFn("bRedrawDialog=%d bRedrawTable=%d gbAnimateHandDraw=%d",
-                  bRedrawDialog, bRedrawTable, gbAnimateHandDraw);
+    vTraceVarArgsFn("bRedrawDialog=%d bRedrawTable=%d", bRedrawDialog, bRedrawTable);
   }
   if (bRedrawDialog == 0 && bRedrawTable == 0)
     return;
 
+  if ( gstGame.iStatus == STATUS_GAMING )
+    gstGame.iState = STATE_GAMING_DRAWING;
+    
   if (bRedrawTable) {
     SDL_RenderClear(pSDL_Renderer);
     vSDL_DrawTable(pSDL_Renderer, pstDeck, pastMonsters, iMonsterCt);
@@ -1449,27 +1455,29 @@ int iSDL_OpenPause(SDL_Renderer *pSDL_Renderer){
 void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCt) {
   int iRedrawAction;
   int bHasPlayableCards;
+#if SDL_MAJOR_VERSION >=2 && SDL_MINOR_VERSION >= 0 && SDL_PATCHLEVEL >= 18
   uint64_t ui64FrameStart;
   uint64_t ui64FrameTime;
-
-  iRedrawAction = REDRAW_TABLE;
-  bHasPlayableCards = FALSE;
+#else
+  uint32_t ui64FrameStart;
+  uint32_t ui64FrameTime;
+#endif
 
   if ( DEBUG_SDL_MSGS ) vTraceVarArgsFn(" --- SDL MAIN LOOP");
 
-  gbAnimateHandDraw = TRUE;
-
+  iRedrawAction = REDRAW_TABLE;
+  bHasPlayableCards = FALSE;
   gpastMonster = pastMonsters;
   giCtMonsters = iMonsterCt;
+  
+  gstGame.iStatus = STATUS_GAMING;
 
   vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
 
+  gstGame.iState = STATE_GAMING_PLAYER_TURN;
+
   while (*pbRunning) {
-#if SDL_MAJOR_VERSION >=2 && SDL_MINOR_VERSION >= 0 && SDL_PATCHLEVEL >= 18
-    ui64FrameStart = SDL_GetTicks64();
-#else
-    ui64FrameStart = SDL_GetTicks();
-#endif
+    ui64FrameStart = u64SDL_GetTicks();
 
     while (SDL_PollEvent(pSDL_Event)) {
       iRedrawAction |= iEVENT_HandlePollEv(
@@ -1497,7 +1505,6 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       }
       iRedrawAction = REDRAW_TABLE;
       vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
-      // continue;
     }
 
     if (iRedrawAction == -2) {
@@ -1507,6 +1514,7 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
 
     if (!iAnyMonsterAlive(pastMonsters, iMonsterCt)) {
       char szMsg[128];
+      gstGame.iState = STATE_GAMING_LEVEL_WON;
       memset(szMsg, 0x00, sizeof(szMsg));
       snprintf(szMsg, sizeof(szMsg), "*** Nivel %d completo! ***", giLevel);
       vPrintLine(szMsg, NO_NEW_LINE);
@@ -1524,7 +1532,6 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       giCtMonsters = iMonsterCt;
       vStartNewTurn(pstDeck);
       vTraceDeck(pstDeck, TRACE_DECK_ALL);
-      gbAnimateHandDraw = TRUE;
     }
     else if (gstPlayer.iEnergy <= 0 || !(bHasPlayableCards = bHasAnyPlayableCard(pstDeck))) {
       if ( DEBUG_SDL_MSGS ) {
@@ -1532,14 +1539,17 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
                       gstPlayer.iEnergy, bHasPlayableCards);
       }
       vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
-
+      gstGame.iLastState = gstGame.iState;
+      gstGame.iState = STATE_GAMING_ENEMY_TURN;
       vDoEnemyActions(pastMonsters, iMonsterCt);
+      gstGame.iLastState = gstGame.iState;
+      gstGame.iState = STATE_GAMING_TURN_ENDED;
       gpastMonster = pastMonsters;
       giCtMonsters = iMonsterCt;
       vPrintLine("Iniciando novo turno, aguarde...", INSERT_NEW_LINE);
       vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
       iRedrawAction = REDRAW_NONE;
-
+      iGameSave();
       if ( gstPlayer.iHP <= 0 ) {
         vPrintLine(MSG(MSG_YOU_LOSE), INSERT_NEW_LINE);
         vSDL_MessageBox(MSG(MSG_YOU_LOSE), MSG(MSG_PRESS_ANY_KEY_TO_CONTINUE));
@@ -1571,8 +1581,11 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       }
 
       vStartNewTurn(pstDeck);
+      gstGame.iStatus = STATUS_GAMING;
+      gstGame.iState = STATE_GAMING_PLAYER_TURN;
+      gstGame.iLastStatus = STATUS_NONE;
+      gstGame.iLastState = STATE_NONE;
       vTraceDeck(pstDeck, TRACE_DECK_ALL);
-      gbAnimateHandDraw = TRUE;
 
       iRedrawAction = REDRAW_TABLE;
     }
@@ -1585,11 +1598,8 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
 
     iRedrawAction = REDRAW_NONE;
 
-#if SDL_MAJOR_VERSION >=2 && SDL_MINOR_VERSION >= 0 && SDL_PATCHLEVEL >= 18
-    ui64FrameTime = SDL_GetTicks64() - ui64FrameStart;
-#else
-    ui64FrameTime = SDL_GetTicks() - ui64FrameStart;
-#endif
+    ui64FrameTime = u64SDL_GetTicks() - ui64FrameStart;
+
     if (ui64FrameTime < VSYNC_TIME) {
       SDL_Delay(VSYNC_TIME - ui64FrameTime);
     }
