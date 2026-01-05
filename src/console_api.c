@@ -26,7 +26,7 @@ void vCNSL_MainLoop(int *pbRunning, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMo
     vClearTerminal();
     vSortHandByName(pstDeck);
     vShowTable(pstDeck, pastMonsters, iMonsterCt);
-    vTraceDialog(FALSE);
+    if ( DEBUG_LVL_DETAILS ) vTraceDialog(FALSE);
 
     while (gstPlayer.iEnergy > 0 && iAnyMonsterAlive(pastMonsters, iMonsterCt)) {
       if (iDoPlayerTurn(pbRunning, pstDeck, pastMonsters, iMonsterCt))

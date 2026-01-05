@@ -83,7 +83,6 @@
   extern char gszTraceFile[2048];
   extern char gszConfFile[_MAX_PATH];
   extern char *szTokenName[];
-  extern char gszRootPathFromBin[_MAX_PATH];
   extern int gbTraceOnTerminal;
 
 /******************************************************************************
@@ -101,6 +100,5 @@
   void _vTraceVarArgsFn(char *pszModuleName, const int kiLine, const char *kpszFunctionName, const char *kpszFmt, ...);
   void vTraceMainLoopEnd();
   void vTraceMainLoopInit();
-  void vSetRootPathFromCwd();
    
 #endif /* _TRACE_H */

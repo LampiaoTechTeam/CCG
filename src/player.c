@@ -63,7 +63,7 @@ void vTracePlayer(PSTRUCT_PLAYER pstPlayer){
     pstPlayer->iBlock,
     pstPlayer->iGold
   );
-  vTraceVarArgsFn(szDbg);
+  if ( DEBUG_LVL_DETAILS ) vTraceVarArgsFn(szDbg);
   vTraceDeck(pstPlayer->astPlayerCards, TRACE_DECK_ALL);
   vTraceDebuffList(pstPlayer->stDebuff, pstPlayer->iDebuffCt);
 }

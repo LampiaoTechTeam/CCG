@@ -679,7 +679,7 @@ void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_M
 
   pstTable = pstSCREEN_GetElementByName("TABLE");
   if ( !pstTable ) {
-    vTraceVarArgsFn("Falha ao pegar o elemento TABLE!");
+    if ( DEBUG_SDL_MORE_MSGS ) vTraceVarArgsFn("Falha ao pegar o elemento TABLE!");
     _exit(1);
   }
 

@@ -48,17 +48,19 @@ int iGetMinimumEnergy(PSTRUCT_DECK pstDeck){
 }
 void vTraceCard(PSTRUCT_CARD pstCard){
   if ( pstCard == NULL ){
-    vTraceVarArgsFn("pstCard == NULL");
+    if ( DEBUG_LVL_DETAILS ) vTraceVarArgsFn("pstCard == NULL");
     return;
   }
-  vTraceVarArgsFn(
-  "\t| Name=[%10.10s] Ty=%-6.6s Cost=%02d Val=%02d Targ=%-10.10s",
-      pstCard->szName,
-      pszCardTypeDesc[pstCard->iType],
-      pstCard->iCost,
-      pstCard->iValue,
-      pszTargetableDesc[pstCard->iTarget]
-    );
+  if ( DEBUG_LVL_DETAILS ){
+    vTraceVarArgsFn(
+    "\t| Name=[%10.10s] Ty=%-6.6s Cost=%02d Val=%02d Targ=%-10.10s",
+        pstCard->szName,
+        pszCardTypeDesc[pstCard->iType],
+        pstCard->iCost,
+        pstCard->iValue,
+        pszTargetableDesc[pstCard->iTarget]
+      );
+  }
 }
 void vTraceCardList(STRUCT_CARD astCardList[], int iListCt){
   int ii;

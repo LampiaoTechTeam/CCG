@@ -128,7 +128,7 @@ int iPortableGetchar() {
  */
 void vSleepSeconds(int iSeconds) {
   
-  vTraceVarArgsFn("Sleeping %d seconds", iSeconds);
+  if ( DEBUG_LVL_MORE_DETAILS ) vTraceVarArgsFn("Sleeping %d seconds", iSeconds);
 #ifdef _WIN32
   Sleep(iSeconds * 1000);
 #else
