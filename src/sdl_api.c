@@ -1455,6 +1455,7 @@ int iSDL_OpenPause(SDL_Renderer *pSDL_Renderer){
 void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCt) {
   int iRedrawAction;
   int bHasPlayableCards;
+  
 #if SDL_MAJOR_VERSION >=2 && SDL_MINOR_VERSION >= 0 && SDL_PATCHLEVEL >= 18
   uint64_t ui64FrameStart;
   uint64_t ui64FrameTime;
