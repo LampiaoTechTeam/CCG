@@ -149,23 +149,17 @@ jobs:
         with:
           node-version: "24"
 
-      #      - name: Cache semantic-release packages
-      #        uses: actions/cache@v4
-      #        with:
-      #          path: ~/.npm
-      #          key: ${{ runner.os }}-npm-semantic-${{ hashFiles('.github/workflows/version.yml') }}
-      #          restore-keys: |
-      #            ${{ runner.os }}-npm-semantic-
-      #            ${{ runner.os }}-npm-
+      - name: Cache semantic-release packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-semantic-${{ hashFiles('.github/workflows/version.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-semantic-
+            ${{ runner.os }}-npm-
 
-      - name: Install semantic-release
-        run: |
-          npm install -g semantic-release
-          npm install -g @semantic-release/changelog
-          npm install -g @semantic-release/git
-          npm install -g @semantic-release/github
-          npm install -g conventional-changelog-conventionalcommits
-          npm install -g @semantic-release/release-notes-generator
+      - name: Install dependencies
+        run: npm ci
 
       - name: Download Linux binary
         uses: actions/download-artifact@v4
