@@ -6,16 +6,16 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'docker/**'
-      - 'Dockerfile'
-      - '*.md'
+      - "docker/**"
+      - "Dockerfile"
+      - "*.md"
   pull_request:
     branches:
       - main
     paths-ignore:
-      - 'docker/**'
-      - 'Dockerfile'
-      - '*.md'
+      - "docker/**"
+      - "Dockerfile"
+      - "*.md"
 
 permissions:
   contents: write
@@ -53,7 +53,7 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends gcc make libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
+          sudo apt-get install --no-install-recommends libxml2-dev gcc make libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
 
       - name: Build Linux binary
         run: |
@@ -100,6 +100,7 @@ jobs:
           update: false
           cache: true
           install: >-
+            mingw-w64-x86_64-libxml2
             mingw-w64-x86_64-SDL2
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-SDL2_image
