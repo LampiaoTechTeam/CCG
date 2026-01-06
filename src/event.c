@@ -174,7 +174,6 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
         iY = pSDL_EVENT_Ev->button.y;
 
         /* 1) diálogo (setas ↑/↓) */
-        // iRedrawReturnStatus |= iHandleDialogMouse(pSDL_EVENT_Ev, pSDL_Renderer);
         if ( iRedrawReturnStatus != REDRAW_NONE ) break;
 
         /* 2) clique nas cartas / seleção de alvo */

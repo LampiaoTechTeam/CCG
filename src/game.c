@@ -87,6 +87,13 @@ void vGameLoadCtxVars(PSTRUCT_GAME_CONTEXT pstGameCtx, PSTRUCT_DECK pstDeck, PST
   *piMonsterCt = pstGameCtx->iCtMonster;
 }
 
+void vGameSaveCtxVars(PSTRUCT_GAME_CONTEXT pstGameCtx, PSTRUCT_DECK pstDeck, PSTRUCT_PLAYER pstPlayer, PSTRUCT_MONSTER pastMonster, int iMonsterCt){
+  memcpy(pstGameCtx->stPlayer.astPlayerCards, pstDeck, sizeof(STRUCT_DECK));
+  memcpy(&pstGameCtx->stPlayer, pstPlayer, sizeof(STRUCT_PLAYER));
+  memcpy(pstGameCtx->astMonster, pastMonster, sizeof(STRUCT_MONSTER) * iMonsterCt);
+  pstGameCtx->iCtMonster = iMonsterCt;
+}
+
 int iGameSave(void) {
   FILE* fpGameDat = NULL;
   char szGameDatPath[512] = "";
@@ -95,7 +102,7 @@ int iGameSave(void) {
   if ( (fpGameDat = fopen(szGameDatPath, "wb")) == NULL ) {
     return 0;
   }
-  fwrite(&gstGame, sizeof(gstGame), 1, fpGameDat);
+  fwrite(&gstGame, sizeof(STRUCT_GAME), 1, fpGameDat);
   fflush(fpGameDat);
   #ifdef LINUX
   fsync(fileno(fpGameDat));
@@ -117,7 +124,7 @@ int iGameLoad(void) {
   if ( (fpGameDat = fopen(szGameDatPath, "rb")) == NULL ) {
     return 0;
   }
-  if (fread(&gstGame, sizeof(gstGame), 1, fpGameDat) != 1) {
+  if (fread(&gstGame, sizeof(STRUCT_GAME), 1, fpGameDat) != 1) {
     fclose(fpGameDat);
     return 0;
   }
