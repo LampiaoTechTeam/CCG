@@ -165,6 +165,7 @@ jobs:
           npm install -g @semantic-release/git
           npm install -g @semantic-release/github
           npm install -g conventional-changelog-conventionalcommits
+          npm install -g @semantic-release/release-notes-generator
 
       - name: Download Linux binary
         uses: actions/download-artifact@v4

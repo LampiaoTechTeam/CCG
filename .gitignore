@@ -13,3 +13,4 @@
 *.old
 /doc/man*
 /build
+node_modules/
