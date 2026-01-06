@@ -35,7 +35,7 @@ jobs:
     name: Test (Dev Environment)
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/{{ github.repository_owner }}/ccg:dev-latest
+      image: ghcr.io/${{ github.repository_owner }}/ccg:dev-latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -62,7 +62,7 @@ jobs:
     needs: test-dev
     if: github.base_ref == 'main' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'))
     container:
-      image: ghcr.io/{{ github.repository_owner }}/ccg:quality-latest
+      image: ghcr.io/${{ github.repository_owner }}/ccg:quality-latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
