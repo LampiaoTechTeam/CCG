@@ -670,9 +670,6 @@ void vSDL_DrawHUD(SDL_Renderer *pSDL_Renderer, PSTRUCT_PLAYER pstPlayer) {
   vSDL_DrawText(pSDL_Renderer, szBlock, iXBlock, iY, stColBlock);
 }
 
-STRUCT_MONSTER* gpastMonster;
-int giCtMonsters = 0;
-
 void vSDL_DrawTable(SDL_Renderer *pSDL_Renderer, PSTRUCT_DECK pstDeck, PSTRUCT_MONSTER pastMonsters, int iMonsterCt) {
   int ii = 0;
   PSTRUCT_ELEMENT pstTable = NULL;
@@ -1307,8 +1304,8 @@ void vSDL_DrawPause(SDL_Renderer *pSDL_Renderer) {
 
 int gbPauseOpen = FALSE;
 
-static int iPauseMenuButtonAction(int *pbRunning, PSTRUCT_ELEMENT pstMenu, SDL_Event stEvent);
-static int iPauseMenuButtonAction(int *pbRunning, PSTRUCT_ELEMENT pstMenu, SDL_Event stEvent) {
+static int iPauseMenuButtonAction(int *pbRunning, PSTRUCT_ELEMENT pstMenu, SDL_Event stEvent, PSTRUCT_MONSTER pastMonster, int iCtMonster);
+static int iPauseMenuButtonAction(int *pbRunning, PSTRUCT_ELEMENT pstMenu, SDL_Event stEvent, PSTRUCT_MONSTER pastMonster, int iCtMonster) {
   int mx = stEvent.button.x;
   int my = stEvent.button.y;
   int ii = 0;
@@ -1330,8 +1327,8 @@ static int iPauseMenuButtonAction(int *pbRunning, PSTRUCT_ELEMENT pstMenu, SDL_E
       gstGame.iLastStatus = gstGame.iStatus;
       gstGame.iStatus = STATUS_GAMING;
       gstGame.stGameContext.stPlayer = gstPlayer;
-      memcpy(gstGame.stGameContext.astMonster, gpastMonster, sizeof(STRUCT_MONSTER) * giCtMonsters);
-      gstGame.stGameContext.iCtMonster = giCtMonsters;
+      memcpy(gstGame.stGameContext.astMonster, pastMonster, sizeof(STRUCT_MONSTER) * iCtMonster);
+      gstGame.stGameContext.iCtMonster = iCtMonster;
       iGameSave();
       gstGame.iStatus = gstGame.iLastStatus;
       gstGame.iLastStatus = gstGame.iStatus;
@@ -1343,8 +1340,8 @@ static int iPauseMenuButtonAction(int *pbRunning, PSTRUCT_ELEMENT pstMenu, SDL_E
       gstGame.iLastStatus = gstGame.iStatus;
       gstGame.iStatus = STATUS_GAMING;
       gstGame.stGameContext.stPlayer = gstPlayer;
-      memcpy(gstGame.stGameContext.astMonster, gpastMonster, sizeof(STRUCT_MONSTER) * giCtMonsters);
-      gstGame.stGameContext.iCtMonster = giCtMonsters;
+      memcpy(gstGame.stGameContext.astMonster, pastMonster, sizeof(STRUCT_MONSTER) * iCtMonster);
+      gstGame.stGameContext.iCtMonster = iCtMonster;
       iGameSave();
       gstGame.iStatus = gstGame.iLastStatus;
       gstGame.iLastStatus = gstGame.iStatus;
@@ -1368,7 +1365,7 @@ static int iPauseMenuButtonAction(int *pbRunning, PSTRUCT_ELEMENT pstMenu, SDL_E
   return 0;
 }
 
-int iSDL_OpenPause(SDL_Renderer *pSDL_Renderer){
+int iSDL_OpenPause(SDL_Renderer *pSDL_Renderer, PSTRUCT_MONSTER pastMonster, int iCtMonster){
   SDL_Event stEvent;
   PSTRUCT_ELEMENT pstMenu = NULL;
   static int bRunning = FALSE;
@@ -1419,13 +1416,13 @@ int iSDL_OpenPause(SDL_Renderer *pSDL_Renderer){
           return 0;
         }
         else if ( key == SDLK_RETURN || key == SDLK_KP_ENTER ) {
-          if ( iPauseMenuButtonAction(&bRunning, pstMenu, stEvent) == FINISH_PROGRAM ) {
+          if ( iPauseMenuButtonAction(&bRunning, pstMenu, stEvent, pastMonster, iCtMonster) == FINISH_PROGRAM ) {
             return FINISH_PROGRAM;
           }
         }
       }
       else if ( stEvent.type == SDL_MOUSEBUTTONDOWN ) {
-        if ( iPauseMenuButtonAction(&bRunning, pstMenu, stEvent) == FINISH_PROGRAM ) {
+        if ( iPauseMenuButtonAction(&bRunning, pstMenu, stEvent, pastMonster, iCtMonster) == FINISH_PROGRAM ) {
           return FINISH_PROGRAM;
         }
       }
@@ -1468,8 +1465,6 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
 
   iRedrawAction = REDRAW_TABLE;
   bHasPlayableCards = FALSE;
-  gpastMonster = pastMonsters;
-  giCtMonsters = iMonsterCt;
   
   gstGame.iStatus = STATUS_GAMING;
 
@@ -1490,8 +1485,6 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
                           iMonsterCt,
                           pbRunning
                         );
-      gpastMonster = pastMonsters;
-      giCtMonsters = iMonsterCt;
     }
 
     if (!(*pbRunning))
@@ -1500,7 +1493,7 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
     if (gstGame.iStatus == STATUS_PAUSE) {
       vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
       iRedrawAction = REDRAW_NONE;
-      if ( iSDL_OpenPause(pSDL_Renderer) == FINISH_PROGRAM ) {
+      if ( iSDL_OpenPause(pSDL_Renderer, pastMonsters, iMonsterCt) == FINISH_PROGRAM ) {
         *pbRunning = FALSE;
         break;
       }
@@ -1509,7 +1502,9 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
     }
 
     if (iRedrawAction == -2) {
+      vTraceVarArgsFn("iRedrawAction == -2");
       vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
+      iRedrawAction = REDRAW_NONE;
       continue;
     }
 
@@ -1529,8 +1524,6 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       vRedraw(pSDL_Renderer, iRedrawAction, pstDeck, pastMonsters, iMonsterCt);
       giLevel++;
       vInitMonstersForLevel(pastMonsters, giLevel, &iMonsterCt);
-      gpastMonster = pastMonsters;
-      giCtMonsters = iMonsterCt;
       vStartNewTurn(pstDeck);
       vTraceDeck(pstDeck, TRACE_DECK_ALL);
     }
@@ -1545,8 +1538,6 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
       vDoEnemyActions(pastMonsters, iMonsterCt);
       gstGame.iLastState = gstGame.iState;
       gstGame.iState = STATE_GAMING_TURN_ENDED;
-      gpastMonster = pastMonsters;
-      giCtMonsters = iMonsterCt;
       vPrintLine("Iniciando novo turno, aguarde...", INSERT_NEW_LINE);
       vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);
       iRedrawAction = REDRAW_NONE;
@@ -1574,8 +1565,6 @@ void vSDL_MainLoop(int *pbRunning, SDL_Event *pSDL_Event, SDL_Renderer *pSDL_Ren
         gstGame.iLastState = STATE_NONE;
         gstGame.iState = STATE_WELCOME_BEGIN;
         vInitMonstersForLevel(pastMonsters, giLevel, &iMonsterCt);
-        gpastMonster = pastMonsters;
-        giCtMonsters = iMonsterCt;
         vInitDialog();
         iRedrawAction = REDRAW_TABLE;
         vRedraw(pSDL_Renderer, REDRAW_TABLE, pstDeck, pastMonsters, iMonsterCt);

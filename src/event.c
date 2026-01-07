@@ -90,7 +90,11 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
                         int iMonsterCt,
                         int *pbRunning) {
   int iRedrawReturnStatus;
+
+  if ( DEBUG_SDL_ALL ) vTraceBegin();
+
   UNUSED(pSDL_Renderer);
+
   iRedrawReturnStatus = iRedrawCurrentAction;
 
   if ( gstGame.iStatus == STATUS_PAUSE ) {
@@ -306,6 +310,8 @@ int iEVENT_HandlePollEv(SDL_Event *pSDL_EVENT_Ev,
       break;
     }
   }
+
+  if ( DEBUG_SDL_ALL ) vTraceVarArgsFn("end iRedrawReturnStatus[%d]", iRedrawReturnStatus);
 
   return iRedrawReturnStatus;
 }
