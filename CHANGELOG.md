@@ -1,3 +1,7 @@
+## 9.4.0 (2026-01-07)
+
+* feat: removido variaveis globais dos mosntros no save do jogo para variaveis por parametro ([b711c55](https://github.com/repiazza/CCG/commit/b711c55))
+
 ## <small>9.3.1 (2026-01-07)</small>
 
 * fix: Renderizacao das imagens no linux ([186261e](https://github.com/repiazza/CCG/commit/186261e))
