@@ -1,3 +1,7 @@
+## <small>9.3.1 (2026-01-07)</small>
+
+* fix: Renderizacao das imagens no linux ([186261e](https://github.com/repiazza/CCG/commit/186261e))
+
 ## 9.3.0 (2026-01-06)
 
 * ci: added needed commit-analyzer package for semver ([486292b](https://github.com/repiazza/CCG/commit/486292b))
